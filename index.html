@@ -35,8 +35,6 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
-  
-  /* HEADER */
   .header { background: var(--text); color: white; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
   .header-left { display: flex; align-items: baseline; gap: 16px; }
   .logo { font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #999; }
@@ -48,8 +46,6 @@
   .last-update { font-size: 12px; color: #888; }
   .spin { animation: spin 1s linear infinite; display: inline-block; }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-  /* LOADING */
   .loading-screen { position: fixed; inset: 0; background: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; gap: 20px; transition: opacity 0.4s; }
   .loading-screen.hidden { opacity: 0; pointer-events: none; }
   .loading-logo { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: #666; }
@@ -57,23 +53,15 @@
   .loading-bar-wrap { width: 240px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px; overflow: hidden; }
   .loading-bar { height: 100%; background: white; border-radius: 1px; width: 0%; transition: width 0.3s; }
   .loading-msg { font-size: 12px; color: #666; }
-
-  /* ERROR */
   .error-box { background: var(--red-bg); border: 1px solid #FCA5A5; border-radius: 8px; padding: 16px 20px; margin: 24px 32px; color: var(--red); font-size: 13px; display: none; }
   .error-box.visible { display: block; }
-
-  /* MAIN LAYOUT */
   .main { padding: 24px 32px; max-width: 1400px; }
-
-  /* TABS */
   .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
   .tab { padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none; font-family: 'DM Sans', sans-serif; transition: color 0.15s; letter-spacing: 0.01em; }
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--text); border-bottom-color: var(--text); }
   .panel { display: none; }
   .panel.active { display: block; }
-
-  /* METRICS */
   .kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
   .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
   .kpi-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
@@ -82,18 +70,13 @@
   .kpi-trend { font-size: 12px; margin-top: 4px; font-weight: 500; }
   .kpi-trend.up { color: var(--green); }
   .kpi-trend.dn { color: var(--red); }
-
-  /* CHARTS */
   .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
   .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
-  .chart-card.wide { grid-column: 1 / -1; }
   .chart-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
   .chart-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 16px; }
   .legend-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
   .leg-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
   .leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-
-  /* ABC CARDS */
   .abc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
   .abc-card { border-radius: 10px; padding: 20px; }
   .abc-card.a { background: var(--green-bg); }
@@ -111,8 +94,6 @@
   .abc-card.a .abc-stat { color: #1A4731; }
   .abc-card.b .abc-stat { color: #78350F; }
   .abc-card.c .abc-stat { color: #7F1D1D; }
-
-  /* TABLE */
   .tbl-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   thead th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -125,32 +106,23 @@
   .badge.B { background: var(--amber-bg); color: var(--amber); }
   .badge.C { background: var(--red-bg); color: var(--red); }
   .prod-name { max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  /* SEARCH */
   .filter-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
   .filter-row input, .filter-row select { padding: 8px 13px; font-size: 13px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.15s; }
   .filter-row input { flex: 1; min-width: 200px; }
   .filter-row input:focus, .filter-row select:focus { border-color: #999; }
-
-  /* PAGINATION */
   .pag { display: flex; gap: 8px; margin-top: 14px; align-items: center; }
   .pag-btn { padding: 5px 14px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
   .pag-btn:hover:not(:disabled) { background: var(--surface2); }
   .pag-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .pag-info { font-size: 12px; color: var(--text3); margin: 0 4px; }
-
-  /* PERIOD SELECTOR */
   .period-row { display: flex; gap: 6px; margin-bottom: 20px; }
   .period-btn { padding: 5px 14px; font-size: 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); color: var(--text2); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
   .period-btn.active { background: var(--text); color: white; border-color: var(--text); }
-
-  /* INSIGHT STRIP */
   .insights { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
   .insight-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
   .insight-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
   .insight-chip .dot.amber { background: #F59E0B; }
   .insight-chip .dot.blue { background: #3B82F6; }
-
   @media (max-width: 768px) {
     .main { padding: 16px; }
     .header { padding: 14px 16px; }
@@ -186,9 +158,7 @@
 
 <div class="main" id="mainContent" style="display:none">
   <div class="kpi-row" id="kpis"></div>
-
   <div class="insights" id="insights"></div>
-
   <div class="tabs">
     <button class="tab active" onclick="showTab('visao')">Visão Geral</button>
     <button class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</button>
@@ -196,7 +166,6 @@
     <button class="tab" onclick="showTab('todos')">Todos os SKUs</button>
   </div>
 
-  <!-- VISÃO GERAL -->
   <div id="visao" class="panel active">
     <div class="period-row" id="periodBtns"></div>
     <div class="chart-grid">
@@ -224,7 +193,6 @@
     </div>
   </div>
 
-  <!-- ABC VALOR -->
   <div id="abc-valor" class="panel">
     <div class="abc-grid" id="abcVCards"></div>
     <div class="chart-grid">
@@ -247,7 +215,6 @@
     </div>
   </div>
 
-  <!-- ABC QTD -->
   <div id="abc-qtd" class="panel">
     <div class="abc-grid" id="abcQCards"></div>
     <div class="chart-grid">
@@ -270,7 +237,6 @@
     </div>
   </div>
 
-  <!-- TODOS OS SKUS -->
   <div id="todos" class="panel">
     <div class="chart-card">
       <div class="filter-row">
@@ -338,6 +304,7 @@ function setProgress(pct, msg) {
   document.getElementById('loadMsg').textContent = msg;
 }
 
+// ✅ FUNÇÃO CORRIGIDA — detecta e pula cabeçalhos automaticamente
 async function fetchSheet(sheetName) {
   const url = `${BASE_URL}/${encodeURIComponent(sheetName)}!A:E?key=${API_KEY}`;
   const r = await fetch(url);
@@ -356,25 +323,18 @@ async function loadData() {
   const syncIcon = document.getElementById('syncIcon');
   syncBtn.disabled = true;
   syncIcon.innerHTML = '<span class="spin">↻</span>';
-
   document.getElementById('loadingScreen').classList.remove('hidden');
   document.getElementById('mainContent').style.display = 'none';
   document.getElementById('errorBox').classList.remove('visible');
-
-  // Destroy existing charts
   Object.values(APP.charts).forEach(c => { try { c.destroy(); } catch(e){} });
-  APP.charts = {};
-  APP.monthly = [];
-  APP.allSkus = [];
+  APP.charts = {}; APP.monthly = []; APP.allSkus = [];
 
   try {
-    const rawSales = {}; // sku -> {nome, meses: {label: {v,q}}}
-
+    const rawSales = {};
     for (let i = 0; i < MONTH_SHEETS.length; i++) {
       const { sheet, label } = MONTH_SHEETS[i];
       setProgress(Math.round((i / MONTH_SHEETS.length) * 80), `Lendo ${label}...`);
       const rows = await fetchSheet(sheet);
-
       for (const row of rows) {
         if (!row[0]) continue;
         const skuRaw = String(row[0]).trim().replace('.0','');
@@ -391,8 +351,6 @@ async function loadData() {
     }
 
     setProgress(85, 'Calculando curva ABC...');
-
-    // Build monthly totals
     const monthlyMap = {};
     MONTH_SHEETS.forEach(m => monthlyMap[m.label] = { label: m.label, Valor: 0, Qtd: 0 });
     const skuTotals = [];
@@ -402,52 +360,36 @@ async function loadData() {
       for (const [label, vals] of Object.entries(data.meses)) {
         monthlyMap[label].Valor += vals.v;
         monthlyMap[label].Qtd  += vals.q;
-        tv += vals.v;
-        tq += vals.q;
+        tv += vals.v; tq += vals.q;
       }
       skuTotals.push({ sku: parseInt(sku), nome: data.nome, cat: categorize(data.nome), TotalValor: tv, TotalQtd: tq });
     }
 
     APP.monthly = Object.values(monthlyMap);
-
-    // ABC by Valor
     skuTotals.sort((a,b) => b.TotalValor - a.TotalValor);
     const totalValor = skuTotals.reduce((s,x) => s + x.TotalValor, 0);
     let cumV = 0;
-    skuTotals.forEach(s => {
-      cumV += s.TotalValor;
-      s.abcV = (cumV / totalValor) <= 0.80 ? 'A' : (cumV / totalValor) <= 0.95 ? 'B' : 'C';
-    });
+    skuTotals.forEach(s => { cumV += s.TotalValor; s.abcV = (cumV/totalValor) <= 0.80 ? 'A' : (cumV/totalValor) <= 0.95 ? 'B' : 'C'; });
 
-    // ABC by Qtd
     const byQtd = [...skuTotals].sort((a,b) => b.TotalQtd - a.TotalQtd);
     const totalQtd = byQtd.reduce((s,x) => s + x.TotalQtd, 0);
-    let cumQ = 0;
-    const abcQMap = {};
-    byQtd.forEach(s => {
-      cumQ += s.TotalQtd;
-      abcQMap[s.sku] = (cumQ / totalQtd) <= 0.80 ? 'A' : (cumQ / totalQtd) <= 0.95 ? 'B' : 'C';
-    });
+    let cumQ = 0; const abcQMap = {};
+    byQtd.forEach(s => { cumQ += s.TotalQtd; abcQMap[s.sku] = (cumQ/totalQtd) <= 0.80 ? 'A' : (cumQ/totalQtd) <= 0.95 ? 'B' : 'C'; });
     skuTotals.forEach(s => s.abcQ = abcQMap[s.sku] || 'C');
-
     APP.allSkus = skuTotals;
 
-    // Categories
     const catMap = {};
     skuTotals.forEach(s => {
       if (!catMap[s.cat]) catMap[s.cat] = { Categoria: s.cat, Valor: 0, Qtd: 0 };
-      catMap[s.cat].Valor += s.TotalValor;
-      catMap[s.cat].Qtd   += s.TotalQtd;
+      catMap[s.cat].Valor += s.TotalValor; catMap[s.cat].Qtd += s.TotalQtd;
     });
     APP.categories = Object.values(catMap).sort((a,b) => b.Valor - a.Valor);
 
     setProgress(95, 'Renderizando dashboard...');
     await new Promise(r => setTimeout(r, 200));
-
     buildDashboard();
     setProgress(100, 'Pronto!');
     await new Promise(r => setTimeout(r, 300));
-
     document.getElementById('loadingScreen').classList.add('hidden');
     document.getElementById('mainContent').style.display = 'block';
     document.getElementById('lastUpdate').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
@@ -455,64 +397,37 @@ async function loadData() {
   } catch(err) {
     document.getElementById('loadingScreen').classList.add('hidden');
     const eb = document.getElementById('errorBox');
-    eb.textContent = '⚠ Erro ao carregar dados: ' + err.message + '. Verifique se a planilha está pública e a API Key está correta.';
+    eb.textContent = '⚠ Erro ao carregar dados: ' + err.message;
     eb.classList.add('visible');
     document.getElementById('mainContent').style.display = 'block';
     console.error(err);
   }
-
   syncBtn.disabled = false;
   syncIcon.textContent = '↻';
 }
 
 function getFilteredMonthly() {
   if (activePeriod === 'all') return APP.monthly;
-  const n = parseInt(activePeriod);
-  return APP.monthly.slice(-n);
+  return APP.monthly.slice(-parseInt(activePeriod));
 }
 
 function buildDashboard() {
-  buildKPIs();
-  buildInsights();
-  buildPeriodBtns();
-  buildVisao();
-  buildAbcValor();
-  buildAbcQtd();
-  buildTodos();
+  buildKPIs(); buildInsights(); buildPeriodBtns(); buildVisao(); buildAbcValor(); buildAbcQtd(); buildTodos();
 }
 
 function buildKPIs() {
   const m = APP.monthly;
   const totalV = m.reduce((s,x) => s+x.Valor, 0);
   const totalQ = m.reduce((s,x) => s+x.Qtd, 0);
-  const last = m[m.length-1];
-  const prev = m[m.length-2];
+  const last = m[m.length-1], prev = m[m.length-2];
   const mm = prev && prev.Valor ? ((last.Valor - prev.Valor) / prev.Valor * 100) : 0;
   const ticket = totalQ > 0 ? totalV / totalQ : 0;
   const skuAtivos = APP.allSkus.filter(s => s.TotalValor > 0).length;
-
   document.getElementById('kpis').innerHTML = `
-    <div class="kpi">
-      <div class="kpi-label">Faturamento total</div>
-      <div class="kpi-value">${fmtK(totalV)}</div>
-      <div class="kpi-sub">${m[0].label} — ${m[m.length-1].label}</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Unidades vendidas</div>
-      <div class="kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div>
-      <div class="kpi-sub">${m.length} meses</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">${last.label} — último mês</div>
-      <div class="kpi-value">${fmtK(last.Valor)}</div>
-      <div class="kpi-trend ${mm >= 0 ? 'up' : 'dn'}">${mm >= 0 ? '▲' : '▼'} ${Math.abs(mm).toFixed(1)}% vs mês anterior</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Ticket médio</div>
-      <div class="kpi-value">R$ ${Math.round(ticket).toLocaleString('pt-BR')}</div>
-      <div class="kpi-sub">${skuAtivos} SKUs ativos</div>
-    </div>
-  `;
+    <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">${fmtK(totalV)}</div><div class="kpi-sub">${m[0].label} — ${m[m.length-1].label}</div></div>
+    <div class="kpi"><div class="kpi-label">Unidades vendidas</div><div class="kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div><div class="kpi-sub">${m.length} meses</div></div>
+    <div class="kpi"><div class="kpi-label">${last.label} — último mês</div><div class="kpi-value">${fmtK(last.Valor)}</div><div class="kpi-trend ${mm >= 0 ? 'up' : 'dn'}">${mm >= 0 ? '▲' : '▼'} ${Math.abs(mm).toFixed(1)}% vs mês anterior</div></div>
+    <div class="kpi"><div class="kpi-label">Ticket médio</div><div class="kpi-value">R$ ${Math.round(ticket).toLocaleString('pt-BR')}</div><div class="kpi-sub">${skuAtivos} SKUs ativos</div></div>`;
 }
 
 function buildInsights() {
@@ -522,60 +437,39 @@ function buildInsights() {
   const totalV = APP.allSkus.reduce((s,x) => s+x.TotalValor, 0);
   const m = APP.monthly;
   const growth = m.length >= 2 ? ((m[m.length-1].Valor - m[0].Valor) / m[0].Valor * 100) : 0;
-
   document.getElementById('insights').innerHTML = `
     <div class="insight-chip"><span class="dot"></span>${classA} SKUs (${Math.round(classA/total*100)}% do portfólio) = 80% do faturamento</div>
     <div class="insight-chip"><span class="dot blue"></span>${topCat.Categoria}: ${Math.round(topCat.Valor/totalV*100)}% do faturamento total</div>
-    <div class="insight-chip"><span class="dot ${growth >= 0 ? '' : 'amber'}"></span>Crescimento ${m[0].label}→${m[m.length-1].label}: ${growth >= 0 ? '+' : ''}${Math.round(growth)}%</div>
-  `;
+    <div class="insight-chip"><span class="dot ${growth >= 0 ? '' : 'amber'}"></span>Crescimento ${m[0].label}→${m[m.length-1].label}: ${growth >= 0 ? '+' : ''}${Math.round(growth)}%</div>`;
 }
 
 function buildPeriodBtns() {
   const periods = [{v:'3',l:'3M'},{v:'6',l:'6M'},{v:'all',l:'12M'}];
   document.getElementById('periodBtns').innerHTML = periods.map(p =>
-    `<button class="period-btn ${activePeriod===p.v?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`
-  ).join('');
+    `<button class="period-btn ${activePeriod===p.v?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`).join('');
 }
 
-function setPeriod(p) {
-  activePeriod = p;
-  buildPeriodBtns();
-  rebuildVisaoCharts();
-}
+function setPeriod(p) { activePeriod = p; buildPeriodBtns(); rebuildVisaoCharts(); }
 
-function buildVisao() {
-  rebuildVisaoCharts();
-  buildCatChart();
-}
+function buildVisao() { rebuildVisaoCharts(); buildCatChart(); }
 
 function rebuildVisaoCharts() {
   const data = getFilteredMonthly();
-  ['cFat','cQtd','cTicket'].forEach(id => {
-    if (APP.charts[id]) { APP.charts[id].destroy(); delete APP.charts[id]; }
-  });
-
+  ['cFat','cQtd','cTicket'].forEach(id => { if (APP.charts[id]) { APP.charts[id].destroy(); delete APP.charts[id]; } });
   APP.charts.cFat = new Chart(document.getElementById('cFat'), {
     type: 'bar',
     data: { labels: data.map(m=>m.label), datasets: [{ data: data.map(m=>m.Valor), backgroundColor: '#1A1917', borderRadius: 3, hoverBackgroundColor: '#555' }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-      scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
   });
-
   APP.charts.cQtd = new Chart(document.getElementById('cQtd'), {
     type: 'bar',
     data: { labels: data.map(m=>m.label), datasets: [{ data: data.map(m=>m.Qtd), backgroundColor: '#2D6A4F', borderRadius: 3 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-      scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
   });
-
   APP.charts.cTicket = new Chart(document.getElementById('cTicket'), {
     type: 'line',
-    data: { labels: data.map(m=>m.label), datasets: [{
-      data: data.map(m => m.Qtd > 0 ? Math.round(m.Valor/m.Qtd) : 0),
-      borderColor:'#C2410C', backgroundColor:'rgba(194,65,12,0.06)', fill:true, tension:0.35, pointRadius:4, pointBackgroundColor:'#C2410C'
-    }]},
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-      scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
+    data: { labels: data.map(m=>m.label), datasets: [{ data: data.map(m => m.Qtd > 0 ? Math.round(m.Valor/m.Qtd) : 0), borderColor:'#C2410C', backgroundColor:'rgba(194,65,12,0.06)', fill:true, tension:0.35, pointRadius:4, pointBackgroundColor:'#C2410C' }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
   });
 }
 
@@ -583,93 +477,66 @@ function buildCatChart() {
   const cats = APP.categories;
   const totalV = cats.reduce((s,c) => s+c.Valor, 0);
   document.getElementById('legCat').innerHTML = cats.map((c,i) =>
-    `<span class="leg-item"><span class="leg-dot" style="background:${CAT_COLORS[i%CAT_COLORS.length]}"></span>${c.Categoria} (${Math.round(c.Valor/totalV*100)}%)</span>`
-  ).join('');
-
+    `<span class="leg-item"><span class="leg-dot" style="background:${CAT_COLORS[i%CAT_COLORS.length]}"></span>${c.Categoria} (${Math.round(c.Valor/totalV*100)}%)</span>`).join('');
   APP.charts.cCat = new Chart(document.getElementById('cCat'), {
     type: 'doughnut',
     data: { labels: cats.map(c=>c.Categoria), datasets: [{ data: cats.map(c=>Math.round(c.Valor)), backgroundColor: CAT_COLORS, borderWidth: 2, borderColor: '#fff' }] },
-    options: { responsive:true, maintainAspectRatio:false, cutout:'60%',
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}} }
+    options: { responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}} }
   });
 }
 
 function buildAbcValor() {
   const totalV = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const totalQ = APP.allSkus.reduce((s,x)=>s+x.TotalQtd,0);
   const groups = { A:{skus:0,v:0,q:0}, B:{skus:0,v:0,q:0}, C:{skus:0,v:0,q:0} };
   APP.allSkus.forEach(s => { groups[s.abcV].skus++; groups[s.abcV].v+=s.TotalValor; groups[s.abcV].q+=s.TotalQtd; });
-
   document.getElementById('abcVCards').innerHTML = ['A','B','C'].map(cls => `
     <div class="abc-card ${cls.toLowerCase()}">
       <div class="abc-cls">${cls}</div>
       <div class="abc-desc">${{A:'Alta prioridade',B:'Média prioridade',C:'Baixa prioridade'}[cls]}</div>
       <div class="abc-stat">${groups[cls].skus} SKUs · ${Math.round(groups[cls].v/totalV*100)}% do faturamento</div>
       <div class="abc-stat" style="font-weight:500;margin-top:4px">${fmtK(groups[cls].v)}</div>
-    </div>
-  `).join('');
-
+    </div>`).join('');
   document.getElementById('legAbcV').innerHTML = ['A','B','C'].map(cls =>
-    `<span class="leg-item"><span class="leg-dot" style="background:${ABC_COLORS[cls]}"></span>Classe ${cls} — ${Math.round(groups[cls].v/totalV*100)}%</span>`
-  ).join('');
-
+    `<span class="leg-item"><span class="leg-dot" style="background:${ABC_COLORS[cls]}"></span>Classe ${cls} — ${Math.round(groups[cls].v/totalV*100)}%</span>`).join('');
   APP.charts.cAbcV = new Chart(document.getElementById('cAbcV'), {
     type: 'doughnut',
     data: { labels:['A','B','C'], datasets:[{ data:['A','B','C'].map(c=>Math.round(groups[c].v)), backgroundColor:['#2D6A4F','#B45309','#9B1C1C'], borderWidth:2, borderColor:'#fff' }] },
-    options: { responsive:true, maintainAspectRatio:false, cutout:'60%',
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}} }
+    options: { responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}} }
   });
-
   const top15v = [...APP.allSkus].sort((a,b)=>b.TotalValor-a.TotalValor).slice(0,15).reverse();
   APP.charts.cTop15V = new Chart(document.getElementById('cTop15V'), {
     type: 'bar', indexAxis: 'y',
-    data: { labels: top15v.map(s=>s.nome.length>38?s.nome.slice(0,38)+'…':s.nome),
-      datasets:[{ data:top15v.map(s=>Math.round(s.TotalValor)), backgroundColor:'#1E3A5F', borderRadius:3 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>fmtBRL(ctx.raw)}}},
-      scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}} }
+    data: { labels: top15v.map(s=>s.nome.length>38?s.nome.slice(0,38)+'…':s.nome), datasets:[{ data:top15v.map(s=>Math.round(s.TotalValor)), backgroundColor:'#1E3A5F', borderRadius:3 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>fmtBRL(ctx.raw)}}}, scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}} }
   });
-
-  const classA = APP.allSkus.filter(s=>s.abcV==='A');
-  document.getElementById('tblAbcV').innerHTML = buildTable(classA, 'valor');
+  document.getElementById('tblAbcV').innerHTML = buildTable(APP.allSkus.filter(s=>s.abcV==='A'), 'valor');
 }
 
 function buildAbcQtd() {
   const totalQ = APP.allSkus.reduce((s,x)=>s+x.TotalQtd,0);
-  const totalV = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
   const groups = { A:{skus:0,v:0,q:0}, B:{skus:0,v:0,q:0}, C:{skus:0,v:0,q:0} };
   APP.allSkus.forEach(s => { groups[s.abcQ].skus++; groups[s.abcQ].v+=s.TotalValor; groups[s.abcQ].q+=s.TotalQtd; });
-
   document.getElementById('abcQCards').innerHTML = ['A','B','C'].map(cls => `
     <div class="abc-card ${cls.toLowerCase()}">
       <div class="abc-cls">${cls}</div>
       <div class="abc-desc">${{A:'Alto volume',B:'Volume médio',C:'Baixo volume'}[cls]}</div>
       <div class="abc-stat">${groups[cls].skus} SKUs · ${Math.round(groups[cls].q/totalQ*100)}% do volume</div>
       <div class="abc-stat" style="font-weight:500;margin-top:4px">${Math.round(groups[cls].q).toLocaleString('pt-BR')} un.</div>
-    </div>
-  `).join('');
-
+    </div>`).join('');
   document.getElementById('legAbcQ').innerHTML = ['A','B','C'].map(cls =>
-    `<span class="leg-item"><span class="leg-dot" style="background:${ABC_COLORS[cls]}"></span>Classe ${cls} — ${Math.round(groups[cls].q/totalQ*100)}%</span>`
-  ).join('');
-
+    `<span class="leg-item"><span class="leg-dot" style="background:${ABC_COLORS[cls]}"></span>Classe ${cls} — ${Math.round(groups[cls].q/totalQ*100)}%</span>`).join('');
   APP.charts.cAbcQ = new Chart(document.getElementById('cAbcQ'), {
     type: 'doughnut',
     data: { labels:['A','B','C'], datasets:[{ data:['A','B','C'].map(c=>Math.round(groups[c].q)), backgroundColor:['#2D6A4F','#B45309','#9B1C1C'], borderWidth:2, borderColor:'#fff' }] },
-    options: { responsive:true, maintainAspectRatio:false, cutout:'60%',
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}} }
+    options: { responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}} }
   });
-
   const top15q = [...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).slice(0,15).reverse();
   APP.charts.cTop15Q = new Chart(document.getElementById('cTop15Q'), {
     type: 'bar', indexAxis: 'y',
-    data: { labels: top15q.map(s=>s.nome.length>38?s.nome.slice(0,38)+'…':s.nome),
-      datasets:[{ data:top15q.map(s=>Math.round(s.TotalQtd)), backgroundColor:'#2D6A4F', borderRadius:3 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}},
-      scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}} }
+    data: { labels: top15q.map(s=>s.nome.length>38?s.nome.slice(0,38)+'…':s.nome), datasets:[{ data:top15q.map(s=>Math.round(s.TotalQtd)), backgroundColor:'#2D6A4F', borderRadius:3 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}}, scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}} }
   });
-
-  const classA = [...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).filter(s=>s.abcQ==='A');
-  document.getElementById('tblAbcQ').innerHTML = buildTable(classA, 'qtd');
+  document.getElementById('tblAbcQ').innerHTML = buildTable([...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).filter(s=>s.abcQ==='A'), 'qtd');
 }
 
 function buildTable(data, sortBy) {
@@ -691,9 +558,7 @@ function buildTodos() {
   const cats = [...new Set(APP.allSkus.map(s=>s.cat))].sort();
   const sel = document.getElementById('fCat');
   sel.innerHTML = '<option value="">Todas as categorias</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
-  filteredSkus = [...APP.allSkus];
-  skuPage = 0;
-  renderTodosPage();
+  filteredSkus = [...APP.allSkus]; skuPage = 0; renderTodosPage();
 }
 
 function filterTable() {
@@ -706,20 +571,17 @@ function filterTable() {
     if (q && !s.nome.toLowerCase().includes(q) && !String(s.sku).includes(q)) return false;
     return true;
   });
-  skuPage = 0;
-  renderTodosPage();
+  skuPage = 0; renderTodosPage();
 }
 
 function renderTodosPage() {
   const start = skuPage * PAGE;
   const slice = filteredSkus.slice(start, start + PAGE);
   document.getElementById('tblTodos').innerHTML = buildTable(slice, 'valor');
-  const pag = document.getElementById('pag');
-  pag.innerHTML = `
+  document.getElementById('pag').innerHTML = `
     <button class="pag-btn" onclick="skuPage--;renderTodosPage()" ${skuPage===0?'disabled':''}>← Anterior</button>
     <span class="pag-info">${start+1}–${Math.min(start+PAGE,filteredSkus.length)} de ${filteredSkus.length}</span>
-    <button class="pag-btn" onclick="skuPage++;renderTodosPage()" ${start+PAGE>=filteredSkus.length?'disabled':''}>Próximo →</button>
-  `;
+    <button class="pag-btn" onclick="skuPage++;renderTodosPage()" ${start+PAGE>=filteredSkus.length?'disabled':''}>Próximo →</button>`;
 }
 
 function showTab(id) {
@@ -730,7 +592,6 @@ function showTab(id) {
   document.getElementById(id).classList.add('active');
 }
 
-// Boot
 loadData();
 </script>
 </body>
