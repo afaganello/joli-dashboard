@@ -222,6 +222,36 @@ tbody tr:hover td{background:#FAFAF8}
   .chart-2col,.chart-3col{grid-template-columns:1fr}.abc-cards{grid-template-columns:1fr}
   .nav-tabs{overflow-x:auto;padding:0 16px}
 }
+/* ── ABA ANÁLISE ── */
+.analise-layout{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
+.analise-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0;position:sticky;top:120px;overflow:hidden}
+.analise-sidebar-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:14px 16px 10px;border-bottom:1px solid var(--border);background:#FAFAF8}
+.analise-sidebar-section{padding:12px 16px;border-bottom:1px solid var(--border)}
+.analise-sidebar-section:last-child{border-bottom:none}
+.analise-sidebar-label{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;font-family:'DM Mono',monospace}
+.analise-cat-btn{display:block;width:100%;text-align:left;padding:7px 10px;border-radius:6px;font-size:12px;color:var(--text2);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;transition:background .1s;position:relative}
+.analise-cat-btn:hover{background:var(--bg)}
+.analise-cat-btn.active{background:var(--text);color:#fff;font-weight:500}
+.analise-cat-btn .cat-dot{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:6px;flex-shrink:0}
+.analise-sub-btn{display:block;width:100%;text-align:left;padding:5px 10px 5px 24px;border-radius:5px;font-size:11px;color:var(--text3);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;transition:background .1s}
+.analise-sub-btn:hover{background:var(--bg);color:var(--text2)}
+.analise-sub-btn.active{background:#EFF6FF;color:var(--blue);font-weight:500}
+.analise-period-btns{display:flex;gap:4px;flex-wrap:wrap}
+.analise-period-btn{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .1s}
+.analise-period-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
+.analise-content{min-width:0}
+.analise-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.analise-header-left h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:2px}
+.analise-header-left p{font-size:12px;color:var(--text3)}
+.analise-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.analise-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.analise-kpi-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.analise-kpi-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1}
+.analise-kpi-sub{font-size:10px;color:var(--text3);margin-top:4px}
+.analise-kpi-trend{font-size:11px;font-weight:500;margin-top:4px}
+.analise-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px}
+.analise-empty-icon{font-size:32px;margin-bottom:12px}
+@media(max-width:900px){.analise-layout{grid-template-columns:1fr}.analise-sidebar{position:static}}
 </style>
 </head>
 <body>
@@ -244,8 +274,9 @@ tbody tr:hover td{background:#FAFAF8}
 
 <nav class="nav-tabs">
   <div class="tab active"  onclick="showTab('visao')">Visão Geral</div>
+  <div class="tab" onclick="showTab('analise')">Análise por Categoria</div>
   <div class="tab" onclick="showTab('categorias')">Categorias & Mix</div>
-  <div class="tab" onclick="showTab('desenvolvimento')">Desenvolvimento de Produtos</div>
+  <div class="tab" onclick="showTab('desenvolvimento')">Desenvolvimento</div>
   <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
   <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
@@ -344,6 +375,99 @@ tbody tr:hover td{background:#FAFAF8}
         <div class="chart-subtitle">Participação no faturamento</div>
         <div class="legend" id="legAbcVSmall"></div>
         <div class="chart-wrap"><canvas id="cAbcVSmall"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ANÁLISE POR CATEGORIA ── -->
+  <div class="panel" id="analise">
+    <div class="analise-layout">
+
+      <!-- SIDEBAR FILTROS -->
+      <div class="analise-sidebar">
+        <div class="analise-sidebar-title">Filtrar análise</div>
+
+        <!-- Período -->
+        <div class="analise-sidebar-section">
+          <div class="analise-sidebar-label">Período</div>
+          <div class="analise-period-btns" id="analisePeriodBtns">
+            <button class="analise-period-btn active" onclick="setAnalisePeriod('all',this)">12M</button>
+            <button class="analise-period-btn" onclick="setAnalisePeriod('6',this)">6M</button>
+            <button class="analise-period-btn" onclick="setAnalisePeriod('3',this)">3M</button>
+            <button class="analise-period-btn" onclick="setAnalisePeriod('1',this)">1M</button>
+          </div>
+        </div>
+
+        <!-- Categorias -->
+        <div class="analise-sidebar-section">
+          <div class="analise-sidebar-label">Categoria</div>
+          <div id="analiseCatList"></div>
+        </div>
+
+        <!-- Subcategorias -->
+        <div class="analise-sidebar-section" id="analiseSubcatSection" style="display:none">
+          <div class="analise-sidebar-label">Subcategoria</div>
+          <div id="analiseSubcatList"></div>
+        </div>
+      </div>
+
+      <!-- CONTEÚDO ANÁLISE -->
+      <div class="analise-content">
+
+        <!-- Empty state -->
+        <div class="analise-empty" id="analiseEmpty">
+          <div class="analise-empty-icon">◎</div>
+          <div style="font-weight:500;color:var(--text2);margin-bottom:6px">Selecione uma categoria</div>
+          <div style="font-size:12px">Escolha uma categoria na barra lateral para ver o desempenho detalhado no tempo</div>
+        </div>
+
+        <!-- Content shown when category selected -->
+        <div id="analiseConteudo" style="display:none">
+
+          <!-- Header contextual -->
+          <div class="analise-header">
+            <div class="analise-header-left">
+              <h2 id="analiseHeaderTitle">—</h2>
+              <p id="analiseHeaderSub">—</p>
+            </div>
+            <div id="analiseHeaderBadge"></div>
+          </div>
+
+          <!-- KPIs da seleção -->
+          <div class="analise-kpis" id="analiseKpis"></div>
+
+          <!-- Evolução no tempo -->
+          <div class="chart-box" style="margin-bottom:16px">
+            <div class="chart-title">Evolução no tempo</div>
+            <div class="chart-subtitle" id="analiseChartTitle">Faturamento mensal</div>
+            <div style="display:flex;gap:8px;margin-bottom:16px" id="analiseMetricBtns">
+              <button class="analise-period-btn active" onclick="setAnaliseMetric('valor',this)">Faturamento</button>
+              <button class="analise-period-btn" onclick="setAnaliseMetric('qtd',this)">Unidades</button>
+              <button class="analise-period-btn" onclick="setAnaliseMetric('ticket',this)">Ticket médio</button>
+            </div>
+            <div class="chart-wrap tall"><canvas id="cAnaliseEvol"></canvas></div>
+          </div>
+
+          <!-- Se categoria selecionada: evolução por subcategoria -->
+          <div class="chart-box" style="margin-bottom:16px" id="analiseSubcatChartBox">
+            <div class="chart-title">Participação por subcategoria</div>
+            <div class="chart-subtitle" style="margin-bottom:16px">Evolução do mix interno da categoria</div>
+            <div class="chart-wrap tall"><canvas id="cAnaliseSubcat"></canvas></div>
+          </div>
+
+          <!-- Tabela de produtos -->
+          <div class="chart-box">
+            <div class="chart-title">Produtos da seleção</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div class="chart-subtitle" id="analiseTblTitle" style="margin-bottom:0">—</div>
+              <input type="text" id="analiseSearch" placeholder="Buscar produto..." oninput="renderAnaliseTabela()"
+                style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;width:200px"/>
+            </div>
+            <div id="analiseTbl"></div>
+            <div class="pag" id="analisePag"></div>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
@@ -672,6 +796,8 @@ function buildDashboard(){
   buildKPIs();buildInsights();buildPeriodBtns();
   buildVisao();buildCategorias();buildDesenvolvimento();
   buildAbcValor();buildAbcQtd();buildTodos();
+  // Pre-populate analise sidebar so it's ready when user navigates there
+  buildAnaliseCatList();
 }
 
 // ── FILTER ENGINE ─────────────────────────────────────────────────────────────
@@ -1400,11 +1526,303 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
+  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  if(id==='analise') initAnalise();
 }
+
+// ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
+
+const ANALISE = {
+  cat: null,
+  sub: null,        // null = todas subcats da categoria
+  period: 'all',    // 'all'|'6'|'3'|'1'
+  metric: 'valor',  // 'valor'|'qtd'|'ticket'
+  page: 0,
+};
+
+function initAnalise(){
+  buildAnaliseCatList();
+  if(ANALISE.cat) renderAnalise();
+}
+
+function buildAnaliseCatList(){
+  // Build from rawSalesBySku to get all cats even with filters
+  const allCats=[...new Set(Object.values(APP.rawSalesBySku||{}).map(d=>d.cat))].sort();
+  document.getElementById('analiseCatList').innerHTML = allCats.map(c=>`
+    <button class="analise-cat-btn ${ANALISE.cat===c?'active':''}" onclick="selectAnaliseCat('${c.replace(/'/g,"\\'")}')">
+      <span class="cat-dot" style="background:${getCatColor(c)}"></span>${c}
+    </button>`).join('');
+}
+
+function selectAnaliseCat(cat){
+  ANALISE.cat = cat;
+  ANALISE.sub = null;
+  ANALISE.page = 0;
+  buildAnaliseCatList();
+  buildAnaliseSubcatList();
+  renderAnalise();
+}
+
+function selectAnaliseSub(sub){
+  ANALISE.sub = ANALISE.sub === sub ? null : sub;
+  ANALISE.page = 0;
+  buildAnaliseSubcatList();
+  renderAnalise();
+}
+
+function buildAnaliseSubcatList(){
+  if(!ANALISE.cat){ document.getElementById('analiseSubcatSection').style.display='none'; return; }
+  const subs=Object.keys(APP.subcatMap[ANALISE.cat]||{}).sort();
+  if(!subs.length){ document.getElementById('analiseSubcatSection').style.display='none'; return; }
+  document.getElementById('analiseSubcatSection').style.display='block';
+  document.getElementById('analiseSubcatList').innerHTML =
+    `<button class="analise-sub-btn ${!ANALISE.sub?'active':''}" onclick="selectAnaliseSub(null)">— Todas as subcategorias</button>` +
+    subs.map(s=>`
+      <button class="analise-sub-btn ${ANALISE.sub===s?'active':''}" onclick="selectAnaliseSub('${s.replace(/'/g,"\\'")}')">
+        ${s}
+      </button>`).join('');
+}
+
+function setAnalisePeriod(p, btn){
+  ANALISE.period=p; ANALISE.page=0;
+  document.querySelectorAll('.analise-period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(ANALISE.cat) renderAnalise();
+}
+
+function setAnaliseMetric(m, btn){
+  ANALISE.metric=m;
+  document.querySelectorAll('#analiseMetricBtns .analise-period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(ANALISE.cat) buildAnaliseEvolChart();
+}
+
+function getAnaliseMonths(){
+  const all=MONTH_SHEETS.map(m=>m.label);
+  if(ANALISE.period==='all') return all;
+  return all.slice(-parseInt(ANALISE.period));
+}
+
+// Get filtered SKUs for the current analise selection
+function getAnaliseSkus(){
+  return APP.allSkus.filter(s=>{
+    if(s.cat !== ANALISE.cat) return false;
+    if(ANALISE.sub && s.sub !== ANALISE.sub) return false;
+    return true;
+  });
+}
+
+// Get monthly data for current analise selection
+function getAnaliseMonthlyData(){
+  const months=getAnaliseMonths();
+  const byMonth={};
+  months.forEach(l=>byMonth[l]={label:l,v:0,q:0});
+  const raw=APP.rawSalesBySku||{};
+  for(const [,data] of Object.entries(raw)){
+    if(data.cat!==ANALISE.cat) continue;
+    if(ANALISE.sub && data.sub!==ANALISE.sub) continue;
+    for(const [label,vals] of Object.entries(data.meses)){
+      if(byMonth[label]){ byMonth[label].v+=vals.v; byMonth[label].q+=vals.q; }
+    }
+  }
+  return months.map(l=>byMonth[l]);
+}
+
+function renderAnalise(){
+  if(!ANALISE.cat){
+    document.getElementById('analiseEmpty').style.display='block';
+    document.getElementById('analiseConteudo').style.display='none';
+    return;
+  }
+  document.getElementById('analiseEmpty').style.display='none';
+  document.getElementById('analiseConteudo').style.display='block';
+
+  const months=getAnaliseMonths();
+  const skus=getAnaliseSkus();
+  const monthly=getAnaliseMonthlyData();
+  const totalV=monthly.reduce((s,m)=>s+m.v,0);
+  const totalQ=monthly.reduce((s,m)=>s+m.q,0);
+  const ticket=totalQ>0?Math.round(totalV/totalQ):0;
+  const last=monthly[monthly.length-1]||{v:0,q:0};
+  const prev=monthly[monthly.length-2]||{v:0,q:0};
+  const mmV=prev.v>0?pct(last.v,prev.v):0;
+  const color=getCatColor(ANALISE.cat);
+
+  // Header
+  const selLabel=ANALISE.sub||ANALISE.cat;
+  document.getElementById('analiseHeaderTitle').textContent=selLabel;
+  document.getElementById('analiseHeaderSub').textContent=
+    ANALISE.sub ? `Subcategoria de ${ANALISE.cat} · ${months.length} meses` :
+    `${Object.keys(APP.subcatMap[ANALISE.cat]||{}).length} subcategorias · ${months.length} meses`;
+  document.getElementById('analiseHeaderBadge').innerHTML=
+    `<span style="background:${color};color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-family:'DM Mono',monospace">${skus.length} SKUs</span>`;
+
+  // KPIs
+  const skusA=skus.filter(s=>s.abcV==='A').length;
+  document.getElementById('analiseKpis').innerHTML=`
+    <div class="analise-kpi">
+      <div class="analise-kpi-label">Faturamento</div>
+      <div class="analise-kpi-value" style="color:${color}">${fmtK(totalV)}</div>
+      <div class="analise-kpi-sub">${months[0].label} → ${months[months.length-1].label}</div>
+    </div>
+    <div class="analise-kpi">
+      <div class="analise-kpi-label">Unidades</div>
+      <div class="analise-kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div>
+      <div class="analise-kpi-sub">${skus.length} SKUs ativos</div>
+    </div>
+    <div class="analise-kpi">
+      <div class="analise-kpi-label">Último mês</div>
+      <div class="analise-kpi-value">${fmtK(last.v)}</div>
+      <div class="analise-kpi-trend ${mmV>=0?'up':'dn'}">${mmV>=0?'▲':'▼'} ${Math.abs(mmV)}% M/M</div>
+    </div>
+    <div class="analise-kpi">
+      <div class="analise-kpi-label">Ticket médio</div>
+      <div class="analise-kpi-value">R$ ${ticket.toLocaleString('pt-BR')}</div>
+      <div class="analise-kpi-sub">${skusA} SKUs classe A</div>
+    </div>`;
+
+  buildAnaliseEvolChart();
+  buildAnaliseSubcatChart();
+  renderAnaliseTabela();
+}
+
+function buildAnaliseEvolChart(){
+  ch('cAnaliseEvol');
+  const monthly=getAnaliseMonthlyData();
+  const color=getCatColor(ANALISE.cat);
+  let data, yLabel, yFmt;
+  if(ANALISE.metric==='valor'){
+    data=monthly.map(m=>Math.round(m.v)); yLabel='Faturamento (R$)';
+    yFmt=v=>fmtK(v);
+  } else if(ANALISE.metric==='qtd'){
+    data=monthly.map(m=>Math.round(m.q)); yLabel='Unidades vendidas';
+    yFmt=v=>v.toLocaleString('pt-BR');
+  } else {
+    data=monthly.map(m=>m.q>0?Math.round(m.v/m.q):0); yLabel='Ticket médio (R$/un)';
+    yFmt=v=>'R$ '+v.toLocaleString('pt-BR');
+  }
+  document.getElementById('analiseChartTitle').textContent=
+    ANALISE.sub ? `${ANALISE.sub} — ${yLabel}` : `${ANALISE.cat} — ${yLabel}`;
+
+  APP.charts.cAnaliseEvol=new Chart(document.getElementById('cAnaliseEvol'),{
+    type:'bar',
+    data:{
+      labels:monthly.map(m=>m.label),
+      datasets:[{
+        data, backgroundColor:color, borderRadius:5,
+        hoverBackgroundColor:color+'CC'
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>yFmt(ctx.raw)}}},
+      scales:{
+        y:{ticks:{callback:yFmt,font:{size:10},color:TX},grid:{color:GC}},
+        x:{ticks:{font:{size:10},color:TX},grid:{display:false}}
+      }
+    }
+  });
+}
+
+function buildAnaliseSubcatChart(){
+  ch('cAnaliseSubcat');
+  const box=document.getElementById('analiseSubcatChartBox');
+  // Only show when a full category (no sub) is selected and has multiple subcats
+  if(ANALISE.sub){ box.style.display='none'; return; }
+  const subs=Object.keys(APP.subcatMap[ANALISE.cat]||{});
+  if(subs.length<=1){ box.style.display='none'; return; }
+  box.style.display='block';
+
+  const months=getAnaliseMonths();
+  const raw=APP.rawSalesBySku||{};
+  // Build per-sub monthly data
+  const subMonthly={};
+  subs.forEach(s=>{ subMonthly[s]={}; months.forEach(l=>subMonthly[s][l]=0); });
+  for(const [,data] of Object.entries(raw)){
+    if(data.cat!==ANALISE.cat) continue;
+    if(!subMonthly[data.sub]) return;
+    for(const [label,vals] of Object.entries(data.meses)){
+      if(subMonthly[data.sub][label]!==undefined) subMonthly[data.sub][label]+=vals.v;
+    }
+  }
+
+  const subColors=['#374151','#065F46','#1D4ED8','#92400E','#166534','#3F6212','#6B21A8','#991B1B','#0F766E','#B45309'];
+  APP.charts.cAnaliseSubcat=new Chart(document.getElementById('cAnaliseSubcat'),{
+    type:'bar',
+    data:{
+      labels:months,
+      datasets:subs.map((s,i)=>({
+        label:s,
+        data:months.map(l=>Math.round(subMonthly[s][l]||0)),
+        backgroundColor:subColors[i%subColors.length],
+        borderRadius:3
+      }))
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:12}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtK(ctx.raw)}`}}},
+      scales:{
+        x:{stacked:true,ticks:{font:{size:10},color:TX},grid:{display:false}},
+        y:{stacked:true,ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}}
+      }
+    }
+  });
+}
+
+let analisePage=0;
+function renderAnaliseTabela(){
+  const q=(document.getElementById('analiseSearch')?.value||'').toLowerCase();
+  let skus=getAnaliseSkus();
+  if(q) skus=skus.filter(s=>s.nome.toLowerCase().includes(q)||String(s.sku).includes(q));
+  skus=[...skus].sort((a,b)=>b.TotalValor-a.TotalValor);
+
+  const label=ANALISE.sub||ANALISE.cat;
+  document.getElementById('analiseTblTitle').textContent=`${skus.length} produto${skus.length!==1?'s':''} em ${label}`;
+
+  const PAGE_A=20;
+  const start=analisePage*PAGE_A;
+  const slice=skus.slice(start,start+PAGE_A);
+
+  // Build table rows with per-product sparkline data
+  const rows=slice.map((s,i)=>{
+    const months=getAnaliseMonths();
+    const raw=APP.rawSalesBySku?.[String(s.sku)]?.meses||{};
+    const vals=months.map(l=>Math.round((raw[l]||{}).v||0));
+    const maxVal=Math.max(...vals)||1;
+    const sparkBars=vals.map(v=>`<span style="display:inline-block;width:6px;height:${Math.max(2,Math.round(v/maxVal*22))}px;background:${v>0?getCatColor(s.cat):'var(--border)'};border-radius:1px;vertical-align:bottom;margin:0 1px"></span>`).join('');
+    return `<tr>
+      <td>${start+i+1}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
+      <td class="prod-name" title="${s.nome}">${s.nome}</td>
+      <td style="font-size:11px;color:var(--text3)">${s.sub||'—'}</td>
+      <td style="font-size:11px;color:var(--text3)">${s.marca||'—'}</td>
+      <td class="num">${Math.round(s.TotalValor).toLocaleString('pt-BR')}</td>
+      <td class="num">${Math.round(s.TotalQtd).toLocaleString('pt-BR')}</td>
+      <td><span class="badge ${s.abcV}">${s.abcV}</span></td>
+      <td style="white-space:nowrap"><span style="display:inline-flex;align-items:flex-end;gap:0;height:24px">${sparkBars}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('analiseTbl').innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>#</th><th>SKU</th><th>Produto</th><th>Subcategoria</th><th>Marca</th>
+      <th style="text-align:right">Valor R$</th><th style="text-align:right">Qtd</th>
+      <th>ABC</th><th>Evolução</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+
+  document.getElementById('analisePag').innerHTML=skus.length>PAGE_A?`
+    <button class="pag-btn" onclick="analisePage--;renderAnaliseTabela()" ${analisePage===0?'disabled':''}>← Anterior</button>
+    <span class="pag-info">${start+1}–${Math.min(start+PAGE_A,skus.length)} de ${skus.length}</span>
+    <button class="pag-btn" onclick="analisePage++;renderAnaliseTabela()" ${start+PAGE_A>=skus.length?'disabled':''}>Próximo →</button>
+  `:'';
+}
+
 
 loadData();
 </script>
