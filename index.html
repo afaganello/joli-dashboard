@@ -10,320 +10,184 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root {
-  --bg: #F7F5F0;
-  --surface: #FFFFFF;
-  --border: #E8E4DC;
-  --border2: #D4CECC;
-  --text: #1A1917;
-  --text2: #6B6760;
-  --text3: #A09C98;
-  --accent: #1A1917;
-  --green: #166534;
-  --green-bg: #DCFCE7;
-  --red: #991B1B;
-  --red-bg: #FEE2E2;
-  --amber: #92400E;
-  --amber-bg: #FEF3C7;
-  --blue: #1E40AF;
-  --blue-bg: #DBEAFE;
-  --cat1: #1A1917;
-  --cat2: #166534;
-  --cat3: #1D4ED8;
-  --cat4: #7C2D12;
-  --cat5: #6B21A8;
-  --cat6: #0F766E;
-  --cat7: #9A3412;
-  --radius: 10px;
-  --radius-sm: 6px;
-  font-size: 14px;
+  --bg:#F7F5F0; --surface:#FFFFFF; --border:#E8E4DC; --border2:#D4CECC;
+  --text:#1A1917; --text2:#6B6760; --text3:#A09C98; --accent:#1A1917;
+  --green:#166534; --green-bg:#DCFCE7; --red:#991B1B; --red-bg:#FEE2E2;
+  --amber:#92400E; --amber-bg:#FEF3C7; --blue:#1E40AF; --blue-bg:#DBEAFE;
+  --purple:#5B21B6; --purple-bg:#EDE9FE;
+  /* Category palette */
+  --c-ferr:#374151; --c-ilum:#1D4ED8; --c-tint:#92400E;
+  --c-coz:#065F46;  --c-util:#166534; --c-jard:#3F6212;
+  --radius:10px; --radius-sm:6px;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
-/* ─── HEADER ─── */
-.header {
-  background: var(--text);
-  color: #F7F5F0;
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 52px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: .02em; }
-.brand span { opacity: .45; font-weight: 400; margin: 0 6px; }
-.header-right { display: flex; align-items: center; gap: 16px; }
-.last-update { font-family: 'DM Mono', monospace; font-size: 11px; opacity: .45; }
-.sync-btn {
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.2);
-  color: #F7F5F0;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 6px;
-  transition: background .2s;
-  font-family: 'DM Sans', sans-serif;
-}
-.sync-btn:hover { background: rgba(255,255,255,.18); }
-.sync-btn:disabled { opacity: .4; cursor: not-allowed; }
-.spin { display: inline-block; animation: spin .8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-/* ─── LOADING ─── */
-#loadingScreen {
-  position: fixed; inset: 0; background: var(--bg);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 200; gap: 16px;
-}
-#loadingScreen.hidden { display: none; }
-.load-brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; }
-.load-bar-wrap { width: 240px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.load-bar { height: 100%; background: var(--text); border-radius: 2px; transition: width .3s; width: 0; }
-.load-msg { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
-/* ─── NAV TABS ─── */
-.nav-tabs {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 32px;
-  display: flex; gap: 0;
-}
-.tab {
-  padding: 14px 20px 13px;
-  font-size: 13px; font-weight: 500;
-  color: var(--text3);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color .15s, border-color .15s;
-  white-space: nowrap;
-}
-.tab:hover { color: var(--text2); }
-.tab.active { color: var(--text); border-bottom-color: var(--text); }
-/* ─── MAIN ─── */
-.main { max-width: 1280px; margin: 0 auto; padding: 28px 32px 60px; }
-/* ─── KPI BAR ─── */
-.kpi-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
-.kpi {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-}
-.kpi-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; font-family: 'DM Mono', monospace; }
-.kpi-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
-.kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
-.kpi-trend { font-size: 12px; margin-top: 6px; font-weight: 500; }
-.kpi-trend.up { color: var(--green); }
-.kpi-trend.dn { color: var(--red); }
-/* ─── INSIGHTS BAR ─── */
-.insights-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
-.insight-chip {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 12px;
-  color: var(--text2);
-  display: flex; align-items: center; gap: 7px;
-}
-.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
-.dot.blue { background: var(--blue); }
-.dot.amber { background: #D97706; }
-/* ─── PANELS ─── */
-.panel { display: none; }
-.panel.active { display: block; }
-/* ─── PERIOD BTNS ─── */
-.period-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-.period-label { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
-.period-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 4px 14px;
-  font-size: 12px; font-weight: 500; cursor: pointer;
-  color: var(--text2);
-  transition: all .15s;
-  font-family: 'DM Sans', sans-serif;
-}
-.period-btn.active, .period-btn:hover { background: var(--text); color: #fff; border-color: var(--text); }
-/* ─── CHART GRIDS ─── */
-.chart-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.chart-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.chart-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-}
-.chart-box.full { grid-column: 1 / -1; }
-.chart-box.span2 { grid-column: span 2; }
-.chart-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; font-family: 'DM Mono', monospace; margin-bottom: 4px; }
-.chart-subtitle { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 16px; }
-.chart-wrap { height: 200px; }
-.chart-wrap.tall { height: 280px; }
-.chart-wrap.xtall { height: 360px; }
-/* ─── LEGEND ─── */
-.legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-.leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
-.leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-/* ─── ABC CARDS ─── */
-.abc-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-.abc-card {
-  border-radius: var(--radius);
-  padding: 18px;
-  border: 1px solid var(--border);
-}
-.abc-card.a { background: #F0FDF4; border-color: #BBF7D0; }
-.abc-card.b { background: #FFFBEB; border-color: #FDE68A; }
-.abc-card.c { background: #FFF1F2; border-color: #FECDD3; }
-.abc-cls { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
-.abc-card.a .abc-cls { color: var(--green); }
-.abc-card.b .abc-cls { color: var(--amber); }
-.abc-card.c .abc-cls { color: var(--red); }
-.abc-desc { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 8px; }
-.abc-stat { font-size: 12px; color: var(--text3); }
-/* ─── TABLE ─── */
-.tbl-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: 16px; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-thead th { background: #F7F5F0; padding: 10px 12px; text-align: left; font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border); white-space: nowrap; }
-tbody td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: middle; }
-tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover td { background: #FAFAF8; }
-.num { text-align: right; font-family: 'DM Mono', monospace; }
-.prod-name { max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); font-weight: 400; }
-.badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; font-family: 'DM Mono', monospace; }
-.badge.A { background: var(--green-bg); color: var(--green); }
-.badge.B { background: var(--amber-bg); color: var(--amber); }
-.badge.C { background: var(--red-bg); color: var(--red); }
-/* ─── PAGINATION ─── */
-.pag { display: flex; align-items: center; gap: 12px; justify-content: flex-end; margin-top: 14px; }
-.pag-btn {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
-  padding: 6px 14px; font-size: 12px; cursor: pointer; color: var(--text2);
-  font-family: 'DM Sans', sans-serif;
-}
-.pag-btn:disabled { opacity: .35; cursor: not-allowed; }
-.pag-info { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
-/* ─── FILTER ROW ─── */
-.filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
-.filter-row input, .filter-row select {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  font-size: 12px;
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  outline: none;
-}
-.filter-row input:focus, .filter-row select:focus { border-color: var(--text); }
-.filter-row input { flex: 1; min-width: 200px; }
-/* ─── ERROR BOX ─── */
-.error-box {
-  background: var(--red-bg); border: 1px solid #FECACA; border-radius: var(--radius);
-  padding: 14px 18px; color: var(--red); font-size: 13px; margin-bottom: 20px;
-  display: none;
-}
-.error-box.visible { display: block; }
-/* ─── SECTION HEADER ─── */
-.section-hdr { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
-.section-hdr h2 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
-.section-hdr p { font-size: 12px; color: var(--text3); }
-/* ─── CAT MODULE (Módulo 3) ─── */
-.cat-kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.cat-kpi-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  cursor: pointer;
-  transition: border-color .2s, box-shadow .2s;
-  position: relative;
-  overflow: hidden;
-}
-.cat-kpi-card:hover { border-color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
-.cat-kpi-card.selected { border-color: var(--text); background: #FAFAF8; }
-.cat-kpi-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 3px;
-}
-.cat-kpi-card[data-ci="0"]::before { background: var(--cat1); }
-.cat-kpi-card[data-ci="1"]::before { background: var(--cat2); }
-.cat-kpi-card[data-ci="2"]::before { background: var(--cat3); }
-.cat-kpi-card[data-ci="3"]::before { background: var(--cat4); }
-.cat-kpi-card[data-ci="4"]::before { background: var(--cat5); }
-.cat-kpi-card[data-ci="5"]::before { background: var(--cat6); }
-.cat-kpi-card[data-ci="6"]::before { background: var(--cat7); }
-.cat-name { font-size: 11px; font-weight: 500; color: var(--text); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .04em; }
-.cat-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
-.cat-meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-.cat-badge { font-size: 10px; font-family: 'DM Mono', monospace; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; color: var(--text2); }
-.cat-badge.pos { background: var(--green-bg); border-color: #BBF7D0; color: var(--green); }
-.cat-badge.neg { background: var(--red-bg); border-color: #FECDD3; color: var(--red); }
-/* ─── SUBCAT SECTION ─── */
-.subcat-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 16px;
-}
-.subcat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.subcat-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
-.subcat-toggle { font-size: 11px; color: var(--text3); cursor: pointer; text-decoration: underline; }
-.subcat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-.subcat-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-}
-.subcat-card-name { font-size: 11px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-.subcat-val { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); }
-.subcat-meta { font-size: 10px; color: var(--text3); margin-top: 4px; font-family: 'DM Mono', monospace; }
-/* ─── HEATMAP ─── */
-.heatmap-wrap { overflow-x: auto; }
-.heatmap-table { border-collapse: collapse; font-size: 11px; font-family: 'DM Mono', monospace; min-width: 700px; width: 100%; }
-.heatmap-table th { padding: 8px 10px; text-align: center; color: var(--text3); font-weight: 400; border-bottom: 1px solid var(--border); }
-.heatmap-table th:first-child { text-align: left; min-width: 140px; }
-.heatmap-table td { padding: 6px 10px; text-align: center; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
-.heatmap-table td:first-child { text-align: left; font-weight: 500; color: var(--text); border-right: 1px solid var(--border2); }
-.hm-cell { border-radius: 3px; padding: 4px 8px; font-size: 10px; display: inline-block; min-width: 52px; text-align: center; }
-/* ─── OPPORTUNITY BOX ─── */
-.opp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 16px; }
-.opp-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  border-left: 3px solid var(--text);
-}
-.opp-card.growth { border-left-color: var(--green); }
-.opp-card.risk { border-left-color: var(--red); }
-.opp-card.explore { border-left-color: #7C3AED; }
-.opp-icon { font-size: 18px; margin-bottom: 6px; }
-.opp-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-.opp-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
-/* ─── RESPONSIVE ─── */
-@media (max-width: 768px) {
-  .main { padding: 16px; }
-  .kpi-bar { grid-template-columns: 1fr 1fr; }
-  .chart-2col, .chart-3col { grid-template-columns: 1fr; }
-  .abc-cards { grid-template-columns: 1fr; }
-  .nav-tabs { overflow-x: auto; padding: 0 16px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+/* HEADER */
+.header{background:var(--text);color:#F7F5F0;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
+.brand{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em}
+.brand span{opacity:.4;font-weight:400;margin:0 6px}
+.header-right{display:flex;align-items:center;gap:16px}
+.last-update{font-family:'DM Mono',monospace;font-size:11px;opacity:.4}
+.sync-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#F7F5F0;padding:5px 14px;border-radius:20px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s;font-family:'DM Sans',sans-serif}
+.sync-btn:hover{background:rgba(255,255,255,.18)}.sync-btn:disabled{opacity:.4;cursor:not-allowed}
+.spin{display:inline-block;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* LOADING */
+#loadingScreen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:16px}
+#loadingScreen.hidden{display:none}
+.load-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:22px}
+.load-bar-wrap{width:240px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.load-bar{height:100%;background:var(--text);border-radius:2px;transition:width .3s;width:0}
+.load-msg{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+/* NAV */
+.nav-tabs{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;display:flex;gap:0;overflow-x:auto}
+.tab{padding:14px 18px 13px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.tab:hover{color:var(--text2)}.tab.active{color:var(--text);border-bottom-color:var(--text)}
+/* MAIN */
+.main{max-width:1320px;margin:0 auto;padding:28px 32px 80px}
+/* KPI BAR */
+.kpi-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-family:'DM Mono',monospace}
+.kpi-value{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--text);line-height:1}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:6px}
+.kpi-trend{font-size:12px;margin-top:6px;font-weight:500}
+.kpi-trend.up{color:var(--green)}.kpi-trend.dn{color:var(--red)}
+/* INSIGHTS */
+.insights-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.insight-chip{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.dot.blue{background:var(--blue)}.dot.amber{background:#D97706}.dot.purple{background:var(--purple)}
+/* PANELS */
+.panel{display:none}.panel.active{display:block}
+/* PERIOD */
+.period-row{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.period-label{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+.period-btn{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .15s;font-family:'DM Sans',sans-serif}
+.period-btn.active,.period-btn:hover{background:var(--text);color:#fff;border-color:var(--text)}
+/* CHARTS */
+.chart-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.chart-box.full{grid-column:1/-1}.chart-box.span2{grid-column:span 2}
+.chart-title{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'DM Mono',monospace;margin-bottom:4px}
+.chart-subtitle{font-size:14px;font-weight:500;color:var(--text);margin-bottom:16px}
+.chart-wrap{height:200px}.chart-wrap.tall{height:280px}.chart-wrap.xtall{height:360px}
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+/* ABC */
+.abc-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.abc-card{border-radius:var(--radius);padding:18px;border:1px solid var(--border)}
+.abc-card.a{background:#F0FDF4;border-color:#BBF7D0}.abc-card.b{background:#FFFBEB;border-color:#FDE68A}.abc-card.c{background:#FFF1F2;border-color:#FECDD3}
+.abc-cls{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
+.abc-card.a .abc-cls{color:var(--green)}.abc-card.b .abc-cls{color:var(--amber)}.abc-card.c .abc-cls{color:var(--red)}
+.abc-desc{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:8px}
+.abc-stat{font-size:12px;color:var(--text3)}
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:#F7F5F0;padding:10px 12px;text-align:left;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#FAFAF8}
+.num{text-align:right;font-family:'DM Mono',monospace}
+.prod-name{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);font-weight:400}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace}
+.badge.A{background:var(--green-bg);color:var(--green)}.badge.B{background:var(--amber-bg);color:var(--amber)}.badge.C{background:var(--red-bg);color:var(--red)}
+/* PAGINATION */
+.pag{display:flex;align-items:center;gap:12px;justify-content:flex-end;margin-top:14px}
+.pag-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;color:var(--text2);font-family:'DM Sans',sans-serif}
+.pag-btn:disabled{opacity:.35;cursor:not-allowed}
+.pag-info{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+/* FILTER */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.filter-row input,.filter-row select{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.filter-row input:focus,.filter-row select:focus{border-color:var(--text)}
+.filter-row input{flex:1;min-width:200px}
+/* ERROR */
+.error-box{background:var(--red-bg);border:1px solid #FECACA;border-radius:var(--radius);padding:14px 18px;color:var(--red);font-size:13px;margin-bottom:20px;display:none}
+.error-box.visible{display:block}
+/* SECTION HDR */
+.section-hdr{display:flex;align-items:baseline;gap:10px;margin-bottom:20px}
+.section-hdr h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+.section-hdr p{font-size:12px;color:var(--text3)}
+/* ── CATEGORIAS MODULE ── */
+.cat-kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:20px}
+.cat-kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .2s,box-shadow .2s;position:relative;overflow:hidden}
+.cat-kpi-card:hover{border-color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.cat-kpi-card.selected{border-color:var(--text);background:#FAFAF8}
+.cat-kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.cat-kpi-card[data-ci="0"]::before{background:var(--c-ferr)}
+.cat-kpi-card[data-ci="1"]::before{background:var(--c-coz)}
+.cat-kpi-card[data-ci="2"]::before{background:var(--c-ilum)}
+.cat-kpi-card[data-ci="3"]::before{background:var(--c-tint)}
+.cat-kpi-card[data-ci="4"]::before{background:var(--c-util)}
+.cat-kpi-card[data-ci="5"]::before{background:var(--c-jard)}
+.cat-kpi-card[data-ci="6"]::before{background:#6B7280}
+.cat-name{font-size:11px;font-weight:500;color:var(--text);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+.cat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);line-height:1}
+.cat-meta{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.cat-badge{font-size:10px;font-family:'DM Mono',monospace;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:var(--text2)}
+.cat-badge.pos{background:var(--green-bg);border-color:#BBF7D0;color:var(--green)}
+.cat-badge.neg{background:var(--red-bg);border-color:#FECDD3;color:var(--red)}
+/* SUBCAT */
+.subcat-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.subcat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.subcat-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.subcat-toggle{font-size:11px;color:var(--text3);cursor:pointer;text-decoration:underline}
+.subcat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px}
+.subcat-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px}
+.subcat-card-name{font-size:11px;font-weight:500;color:var(--text);margin-bottom:6px}
+.subcat-val{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text)}
+.subcat-meta{font-size:10px;color:var(--text3);margin-top:4px;font-family:'DM Mono',monospace}
+/* HEATMAP */
+.heatmap-wrap{overflow-x:auto}
+.heatmap-table{border-collapse:collapse;font-size:11px;font-family:'DM Mono',monospace;min-width:700px;width:100%}
+.heatmap-table th{padding:8px 10px;text-align:center;color:var(--text3);font-weight:400;border-bottom:1px solid var(--border)}
+.heatmap-table th:first-child{text-align:left;min-width:160px}
+.heatmap-table td{padding:5px 8px;text-align:center;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.heatmap-table td:first-child{text-align:left;font-weight:500;color:var(--text);border-right:1px solid var(--border2)}
+.hm-cell{border-radius:3px;padding:3px 6px;font-size:10px;display:inline-block;min-width:48px;text-align:center}
+/* ── DESENVOLVIMENTO DE PRODUTOS ── */
+.dev-section{margin-bottom:24px}
+.dev-section-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px}
+.dev-section-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
+.opp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.opp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;border-left:3px solid}
+.opp-card.high{border-left-color:var(--green)}.opp-card.medium{border-left-color:var(--amber)}.opp-card.expand{border-left-color:var(--blue)}.opp-card.new{border-left-color:var(--purple)}.opp-card.risk{border-left-color:var(--red)}
+.opp-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace;padding:3px 8px;border-radius:20px;margin-bottom:10px}
+.opp-tag.high{background:var(--green-bg);color:var(--green)}.opp-tag.medium{background:var(--amber-bg);color:var(--amber)}.opp-tag.expand{background:var(--blue-bg);color:var(--blue)}.opp-tag.new{background:var(--purple-bg);color:var(--purple)}.opp-tag.risk{background:var(--red-bg);color:var(--red)}
+.opp-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
+.opp-desc{font-size:12px;color:var(--text2);line-height:1.55}
+.opp-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.opp-stat{font-size:10px;font-family:'DM Mono',monospace;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--text3)}
+/* GAP TABLE */
+.gap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:16px}
+.gap-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.gap-cat{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.gap-label{font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px}
+.gap-bar-wrap{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.gap-bar{height:100%;border-radius:3px}
+.gap-meta{font-size:11px;color:var(--text2)}
+/* BRAND CARDS */
+.brand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.brand-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.brand-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px}
+.brand-skus{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:10px}
+.brand-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.brand-bar-label{font-size:11px;color:var(--text2);width:90px;flex-shrink:0}
+.brand-bar-track{flex:1;height:5px;background:var(--border);border-radius:3px}
+.brand-bar-fill{height:100%;border-radius:3px}
+@media(max-width:768px){
+  .main{padding:16px}.kpi-bar{grid-template-columns:1fr 1fr}
+  .chart-2col,.chart-3col{grid-template-columns:1fr}.abc-cards{grid-template-columns:1fr}
+  .nav-tabs{overflow-x:auto;padding:0 16px}
 }
 </style>
 </head>
 <body>
-
 <div id="loadingScreen">
   <div class="load-brand">Cetus × Joli</div>
   <div style="font-size:13px;color:var(--text3);margin-bottom:8px">Dashboard de Vendas</div>
@@ -342,28 +206,27 @@ tbody tr:hover td { background: #FAFAF8; }
 </header>
 
 <nav class="nav-tabs">
-  <div class="tab active" onclick="showTab('visao')">Visão Geral</div>
+  <div class="tab active"  onclick="showTab('visao')">Visão Geral</div>
   <div class="tab" onclick="showTab('categorias')">Categorias & Mix</div>
+  <div class="tab" onclick="showTab('desenvolvimento')">Desenvolvimento de Produtos</div>
   <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
-  <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Quantidade</div>
+  <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
 </nav>
 
 <main class="main" id="mainContent" style="display:none">
   <div class="error-box" id="errorBox"></div>
-
-  <!-- KPIs -->
   <div class="kpi-bar" id="kpis"></div>
   <div class="insights-bar" id="insights"></div>
 
-  <!-- VISÃO GERAL -->
+  <!-- ── VISÃO GERAL ── -->
   <div class="panel active" id="visao">
     <div class="period-row">
       <span class="period-label">Período:</span>
       <div id="periodBtns"></div>
     </div>
     <div class="chart-2col">
-      <div class="chart-box span2">
+      <div class="chart-box full">
         <div class="chart-title">Evolução mensal</div>
         <div class="chart-subtitle">Faturamento (R$)</div>
         <div class="chart-wrap"><canvas id="cFat"></canvas></div>
@@ -371,7 +234,7 @@ tbody tr:hover td { background: #FAFAF8; }
     </div>
     <div class="chart-2col">
       <div class="chart-box">
-        <div class="chart-title">Mix de produtos</div>
+        <div class="chart-title">Mix por categoria</div>
         <div class="chart-subtitle">Faturamento por categoria</div>
         <div class="legend" id="legCat"></div>
         <div class="chart-wrap"><canvas id="cCat"></canvas></div>
@@ -389,7 +252,7 @@ tbody tr:hover td { background: #FAFAF8; }
         <div class="chart-wrap"><canvas id="cTicket"></canvas></div>
       </div>
       <div class="chart-box">
-        <div class="chart-title">Concentração</div>
+        <div class="chart-title">Concentração ABC</div>
         <div class="chart-subtitle">Participação no faturamento</div>
         <div class="legend" id="legAbcVSmall"></div>
         <div class="chart-wrap"><canvas id="cAbcVSmall"></canvas></div>
@@ -397,30 +260,24 @@ tbody tr:hover td { background: #FAFAF8; }
     </div>
   </div>
 
-  <!-- CATEGORIAS & MIX — MÓDULO 3 -->
+  <!-- ── CATEGORIAS & MIX ── -->
   <div class="panel" id="categorias">
     <div class="section-hdr">
       <h2>Categorias & Mix</h2>
-      <p>KPIs por categoria e subcategoria para decisão de portfólio</p>
+      <p>KPIs por categoria e subcategoria · fonte: aba PRODUTOS do Google Sheets</p>
     </div>
-
-    <!-- Cat KPI cards -->
     <div class="cat-kpi-grid" id="catKpiGrid"></div>
-
-    <!-- Subcat detail -->
-    <div class="subcat-section" id="subcatSection">
+    <div class="subcat-section">
       <div class="subcat-header">
-        <div class="subcat-title" id="subcatTitle">Selecione uma categoria acima</div>
+        <div class="subcat-title" id="subcatTitle">Visão geral — top subcategorias</div>
         <div class="subcat-toggle" onclick="resetCatSelection()">Ver todas</div>
       </div>
       <div class="subcat-grid" id="subcatGrid"></div>
     </div>
-
-    <!-- 2 charts row -->
     <div class="chart-2col">
       <div class="chart-box">
         <div class="chart-title">Receita por categoria</div>
-        <div class="chart-subtitle">Faturamento total R$ (12 meses)</div>
+        <div class="chart-subtitle">Faturamento total (12 meses)</div>
         <div class="chart-wrap tall"><canvas id="cCatBar"></canvas></div>
       </div>
       <div class="chart-box">
@@ -429,30 +286,62 @@ tbody tr:hover td { background: #FAFAF8; }
         <div class="chart-wrap tall"><canvas id="cCatQtdBar"></canvas></div>
       </div>
     </div>
-
-    <!-- Heatmap -->
     <div class="chart-box" style="margin-bottom:16px">
       <div class="chart-title">Mapa de calor</div>
       <div class="chart-subtitle" style="margin-bottom:16px">Faturamento por categoria × mês</div>
       <div class="heatmap-wrap" id="heatmapWrap"></div>
     </div>
-
-    <!-- Opportunities -->
-    <div class="chart-box" style="margin-bottom:16px">
-      <div class="chart-title">Análise de oportunidades</div>
-      <div class="chart-subtitle">Categorias e subcategorias para explorar ou aprofundar</div>
-      <div class="opp-grid" id="oppGrid"></div>
-    </div>
-
-    <!-- SKU depth table -->
     <div class="chart-box">
       <div class="chart-title">Profundidade de SKUs por categoria</div>
-      <div class="chart-subtitle" style="margin-bottom:16px">Quantidade de produtos ativos, ticket médio e ABC</div>
-      <div class="tbl-wrap" id="catDepthTable"></div>
+      <div class="chart-subtitle" style="margin-bottom:16px">SKUs ativos, ticket médio e mix ABC</div>
+      <div id="catDepthTable"></div>
     </div>
   </div>
 
-  <!-- ABC VALOR -->
+  <!-- ── DESENVOLVIMENTO DE PRODUTOS ── -->
+  <div class="panel" id="desenvolvimento">
+    <div class="section-hdr">
+      <h2>Desenvolvimento de Produtos</h2>
+      <p>Oportunidades de expansão, gaps de portfólio e análise estratégica de categorias</p>
+    </div>
+
+    <!-- Oportunidades prioritárias -->
+    <div class="dev-section">
+      <div class="dev-section-title">Oportunidades prioritárias</div>
+      <div class="dev-section-sub">Baseado em volume de vendas, crescimento e profundidade de mix atual</div>
+      <div class="opp-grid" id="oppGrid"></div>
+    </div>
+
+    <!-- Gap de portfólio -->
+    <div class="dev-section">
+      <div class="dev-section-title">Gap de portfólio por subcategoria</div>
+      <div class="dev-section-sub">Subcategorias com 1–2 SKUs ativos — alto risco de concentração e potencial inexplorado</div>
+      <div class="gap-grid" id="gapGrid"></div>
+    </div>
+
+    <!-- Análise por marca -->
+    <div class="dev-section">
+      <div class="dev-section-title">Desempenho por marca</div>
+      <div class="dev-section-sub">Faturamento e volume por marca do portfólio</div>
+      <div class="brand-grid" id="brandGrid"></div>
+    </div>
+
+    <!-- Ticket médio por categoria -->
+    <div class="chart-box" style="margin-bottom:16px">
+      <div class="chart-title">Ticket médio por categoria</div>
+      <div class="chart-subtitle" style="margin-bottom:16px">R$/unidade — indica posicionamento de preço e oportunidade de mix premium</div>
+      <div class="chart-wrap tall"><canvas id="cTicketCat"></canvas></div>
+    </div>
+
+    <!-- Tendência 3 meses por categoria -->
+    <div class="chart-box">
+      <div class="chart-title">Tendência recente por categoria</div>
+      <div class="chart-subtitle" style="margin-bottom:16px">Últimos 3 meses vs 3 meses anteriores (%)</div>
+      <div class="chart-wrap tall"><canvas id="cTrendCat"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── ABC VALOR ── -->
   <div class="panel" id="abc-valor">
     <div class="abc-cards" id="abcVCards"></div>
     <div class="chart-2col">
@@ -472,7 +361,7 @@ tbody tr:hover td { background: #FAFAF8; }
     <div id="tblAbcV"></div>
   </div>
 
-  <!-- ABC QTDE -->
+  <!-- ── ABC QTD ── -->
   <div class="panel" id="abc-qtd">
     <div class="abc-cards" id="abcQCards"></div>
     <div class="chart-2col">
@@ -492,22 +381,17 @@ tbody tr:hover td { background: #FAFAF8; }
     <div id="tblAbcQ"></div>
   </div>
 
-  <!-- TODOS OS SKUs -->
+  <!-- ── TODOS OS SKUs ── -->
   <div class="panel" id="todos">
     <div class="filter-row">
       <input type="text" id="skuSearch" placeholder="Buscar por nome ou SKU..." oninput="filterTable()"/>
       <select id="fAbcV" onchange="filterTable()">
         <option value="">ABC Valor — todos</option>
-        <option value="A">Classe A</option>
-        <option value="B">Classe B</option>
-        <option value="C">Classe C</option>
+        <option value="A">Classe A</option><option value="B">Classe B</option><option value="C">Classe C</option>
       </select>
-      <select id="fCat" onchange="filterTable()">
-        <option value="">Todas as categorias</option>
-      </select>
-      <select id="fSubcat" onchange="filterTable()">
-        <option value="">Todas as subcategorias</option>
-      </select>
+      <select id="fCat" onchange="filterTable()"><option value="">Todas as categorias</option></select>
+      <select id="fSubcat" onchange="filterTable()"><option value="">Todas as subcategorias</option></select>
+      <select id="fMarca" onchange="filterTable()"><option value="">Todas as marcas</option></select>
     </div>
     <div id="tblTodos"></div>
     <div class="pag" id="pag"></div>
@@ -515,470 +399,297 @@ tbody tr:hover td { background: #FAFAF8; }
 </main>
 
 <script>
-const SHEET_ID = '1RE-ciKV3jbKbMIrfzX7tcuo8NBvKES6LzBXGsRCIOy4';
-const API_KEY = 'AIzaSyClrj-onYuonXygkBRQAVcKlfQ4SxxSdgY';
-const BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values`;
-
+const SHEET_ID  = '1RE-ciKV3jbKbMIrfzX7tcuo8NBvKES6LzBXGsRCIOy4';
+const API_KEY   = 'AIzaSyClrj-onYuonXygkBRQAVcKlfQ4SxxSdgY';
+const BASE_URL  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values`;
 const MONTH_SHEETS = [
   {sheet:'mar25',label:'Mar/25'},{sheet:'Abr25',label:'Abr/25'},{sheet:'mai25',label:'Mai/25'},
   {sheet:'jun25',label:'Jun/25'},{sheet:'jul25',label:'Jul/25'},{sheet:'ago25',label:'Ago/25'},
   {sheet:'set25',label:'Set/25'},{sheet:'out25',label:'Out/25'},{sheet:'Nov25',label:'Nov/25'},
   {sheet:'dez25',label:'Dez/25'},{sheet:'jan26',label:'Jan/26'},{sheet:'Fev26',label:'Fev/26'},
 ];
-
-const CAT_COLORS = ['#1A1917','#166534','#1D4ED8','#7C2D12','#6B21A8','#0F766E','#9A3412'];
+// Category color map — matches CSS variables
+const CAT_COLOR = {
+  'Ferramentas':           '#374151',
+  'Cozinha':               '#065F46',
+  'Iluminação':            '#1D4ED8',
+  'Tintas e Adesivos':     '#92400E',
+  'Utilidades Domésticas': '#166534',
+  'Jardim':                '#3F6212',
+};
+const CAT_LIGHT = {
+  'Ferramentas':'#F8FAFC','Cozinha':'#ECFDF5','Iluminação':'#EFF6FF',
+  'Tintas e Adesivos':'#FFFBEB','Utilidades Domésticas':'#F0FDF4','Jardim':'#F7FEE7',
+};
+const CAT_ORDER = ['Ferramentas','Cozinha','Iluminação','Tintas e Adesivos','Utilidades Domésticas','Jardim'];
 const ABC_COLORS = {A:'#166534',B:'#92400E',C:'#991B1B'};
 
-let APP = {monthly:[],allSkus:[],categories:[],subcatMap:{},charts:{},catByMonth:{}};
-let skuPage = 0, filteredSkus = [];
-const PAGE = 25;
-let activePeriod = 'all';
-let selectedCat = null;
+let APP = {monthly:[],allSkus:[],skuMap:{},categories:[],subcatMap:{},catByMonth:{},charts:{}};
+let skuPage=0, filteredSkus=[], selectedCat=null;
+const PAGE=25, activePeriod={v:'all'};
 
-const fmtBRL = v => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
-const fmtK = v => v >= 1e6 ? 'R$ '+(v/1e6).toFixed(2)+'M' : v >= 1e3 ? 'R$ '+Math.round(v/1e3)+'k' : 'R$ '+Math.round(v);
-const num = v => typeof v === 'string' ? parseFloat(v.replace(',','.')) || 0 : (parseFloat(v)||0);
-const pct = (a,b) => b === 0 ? 0 : Math.round((a-b)/b*100);
+const fmtK   = v => v>=1e6?'R$ '+(v/1e6).toFixed(2)+'M':v>=1e3?'R$ '+Math.round(v/1e3)+'k':'R$ '+Math.round(v);
+const fmtBRL = v => 'R$ '+Math.round(v).toLocaleString('pt-BR');
+const num    = v => typeof v==='string'?parseFloat(v.replace(',','.'))||0:(parseFloat(v)||0);
+const pct    = (a,b) => b===0?0:Math.round((a-b)/b*100);
 
-/* ─── CATEGORIZAÇÃO EXPANDIDA COM SUBCATEGORIAS ─── */
-function categorizeExpanded(nome) {
-  const n = (nome||'').toUpperCase();
+function setProgress(p,msg){document.getElementById('loadBar').style.width=p+'%';document.getElementById('loadMsg').textContent=msg}
 
-  // ILUMINAÇÃO
-  if (/LAMP|LED|REFLET|SPOT|PLAFON|ARAND|FITA LED|LUMINARIA|LUSTRE|PENDENTE|PAINEL|TRILHO/.test(n)) {
-    let sub = 'Outros LED';
-    if (/PAINEL.*(EMBUTIR|EMBU)/.test(n)) sub = 'Painéis Embutir';
-    else if (/PAINEL.*(SOBREPOR|SOBRE)/.test(n)) sub = 'Painéis Sobrepor';
-    else if (/REFLET/.test(n)) sub = 'Refletores';
-    else if (/SPOT.*TRILHO|TRILHO/.test(n)) sub = 'Spots Trilho';
-    else if (/SPOT/.test(n)) sub = 'Spots Embutir';
-    else if (/FITA/.test(n)) sub = 'Fitas LED';
-    else if (/LUMINARIA|LUSTRE|PENDENTE|ARAND/.test(n)) sub = 'Luminárias';
-    return {cat:'Iluminação', sub};
-  }
-
-  // FERRAMENTAS ELÉTRICAS (com fio)
-  if (/FURADEIRA|ESMERILHADEIRA(?!.*BATERIA)|ESMERIL(?!.*BATERIA)|POLICORTE|AFIADOR|TUPIA/.test(n) ||
-      (/SERRA/.test(n) && !/(BATERIA|12V|20V)/.test(n)) ||
-      (/PARAFUSADEIRA|LIXADEIRA/.test(n) && !/(BATERIA|12V|20V|USB)/.test(n))) {
-    let sub = 'Outras Elétricas';
-    if (/FURADEIRA/.test(n)) sub = 'Furadeiras';
-    else if (/PARAFUSADEIRA/.test(n)) sub = 'Parafusadeiras';
-    else if (/ESMERIL|ESMERILHADEIRA/.test(n)) sub = 'Esmerilhadeiras';
-    else if (/SERRA MARMORE/.test(n)) sub = 'Serras Mármore';
-    else if (/SERRA CIRC/.test(n)) sub = 'Serras Circulares';
-    else if (/SERRA TICO/.test(n)) sub = 'Serras Tico-Tico';
-    else if (/LIXADEIRA|POLITRIZ/.test(n)) sub = 'Lixadeiras';
-    return {cat:'Ferramentas Elétricas', sub};
-  }
-
-  // FERRAMENTAS A BATERIA
-  if (/(BATERIA|12V|20V|SEM FIO|S\/FIO|BRUSHLESS)/.test(n) && !/(LIXEIRA|CESTO|LED|LAMP|REFLET)/.test(n)) {
-    let sub = 'Outras a Bateria';
-    if (/PARAFUSADEIRA|IMPACT/.test(n)) sub = 'Parafusadeiras';
-    else if (/ESMERIL|ESMERILHADEIRA/.test(n)) sub = 'Esmerilhadeiras';
-    else if (/MARTELETE/.test(n)) sub = 'Marteletes';
-    else if (/SERRA/.test(n)) sub = 'Serras';
-    else if (/PISTOLA|PULVERIZ/.test(n)) sub = 'Pistolas';
-    else if (/SOPRADOR|ASPIRADOR/.test(n)) sub = 'Sopradores';
-    else if (/APARADOR|ROCADEIRA|GRAMA/.test(n)) sub = 'Jardinagem';
-    else if (/CHAVE DE IMPACTO/.test(n)) sub = 'Chaves Impacto';
-    else if (/MINI MOTO|MOTO SERRA/.test(n)) sub = 'Moto-Serras';
-    return {cat:'Ferramentas a Bateria', sub};
-  }
-
-  // LIXEIRAS
-  if (/LIXEIRA|BALDE LIXO|KIT LIXEIRA/.test(n)) {
-    let sub = 'Outras Lixeiras';
-    if (/KIT LIXEIRA/.test(n)) sub = 'Kits Lixeiras';
-    else if (/ACO INOX/.test(n)) sub = 'Inox';
-    else if (/FERRO|FERRO PRETO/.test(n)) sub = 'Ferro Preto';
-    else if (/BAMBU/.test(n)) sub = 'Bambu';
-    else if (/BRANCA|PLASTICO|PLASTICA/.test(n)) sub = 'Plástico/Branca';
-    return {cat:'Lixeiras', sub};
-  }
-
-  // CESTOS
-  if (/CESTO|ORGANIZ/.test(n)) {
-    let sub = 'Outros Cestos';
-    if (/ROUPA/.test(n)) sub = 'Cestos de Roupa';
-    else if (/BAMBU/.test(n) && !/ROUPA/.test(n)) sub = 'Cestos Bambu';
-    else if (/ORGANIZ/.test(n)) sub = 'Organizadores';
-    return {cat:'Cestos & Organização', sub};
-  }
-
-  // TINTAS SPRAY
-  if (/SPRAY|TINTA/.test(n)) {
-    let sub = 'Outras Tintas';
-    if (/PRETO/.test(n)) sub = 'Preto';
-    else if (/BRANCO/.test(n)) sub = 'Branco';
-    else if (/VERNIZ/.test(n)) sub = 'Verniz';
-    else if (/ACRILICA/.test(n)) sub = 'Acrílica Colorida';
-    return {cat:'Tintas Spray', sub};
-  }
-
-  // BANHEIRO
-  if (/BANHEIRO|TOALHEIR|PAPEL HIGI|SABONEIR|DISPENS|ESCOVA SANIT|PORTA ESCOV|SABONET/.test(n)) {
-    let sub = 'Acessórios Banheiro';
-    if (/DISPENS|SAB/.test(n)) sub = 'Dispensadores';
-    else if (/ESCOVA SANIT|CONJ ESCOVA/.test(n)) sub = 'Conjuntos Escova';
-    else if (/PORTA ESCOV/.test(n)) sub = 'Porta Escovas';
-    else if (/TOALHEIR/.test(n)) sub = 'Toalheiros';
-    else if (/SABONET|SABONEIR/.test(n)) sub = 'Saboneteiras';
-    else if (/PRATELEIRA.*BANHEIR|PRATELEIRA.*CANTO/.test(n)) sub = 'Prateleiras Banheiro';
-    return {cat:'Banheiro', sub};
-  }
-
-  // ORGANIZAÇÃO / CASA
-  if (/CABIDE|PRATELEIRA|CARRINHO|CAIXA.*ARMAZEN|GANCHO|CABIDEIR|PAINEL.*GANCHO/.test(n)) {
-    let sub = 'Organização';
-    if (/CABIDE/.test(n)) sub = 'Cabides';
-    else if (/PRATELEIRA/.test(n)) sub = 'Prateleiras';
-    else if (/CARRINHO/.test(n)) sub = 'Carrinhos Org.';
-    else if (/GANCHO/.test(n)) sub = 'Ganchos';
-    else if (/CAIXA/.test(n)) sub = 'Caixas';
-    return {cat:'Casa & Organização', sub};
-  }
-
-  // NÍVEL LASER
-  if (/NIVEL.*LASER|LASER/.test(n)) return {cat:'Ferramentas de Medição', sub:'Níveis Laser'};
-
-  // GRAMA SINTÉTICA
-  if (/GRAMA SINTET|GRAMA ARTIF/.test(n)) return {cat:'Jardim & Lazer', sub:'Grama Sintética'};
-
-  // VENTILADORES / OUTROS
-  if (/VENTILADOR/.test(n)) return {cat:'Casa & Organização', sub:'Ventiladores'};
-
-  // UTENSÍLIOS / COPOS / TIGELAS
-  if (/COPO|TIGELA|BOWL|ACO INOX/.test(n)) return {cat:'Utensílios', sub:'Cozinha'};
-
-  // KIT BANHEIRO (set completo)
-  if (/KIT PARA BANHEIR|KIT BANHEIR/.test(n)) return {cat:'Banheiro', sub:'Kits Banheiro'};
-
-  // NÍVEL GERAL
-  if (/NIVEL/.test(n)) return {cat:'Ferramentas de Medição', sub:'Outros'};
-
-  return {cat:'Outros', sub:'Outros'};
-}
-
-function setProgress(pct, msg) {
-  document.getElementById('loadBar').style.width = pct + '%';
-  document.getElementById('loadMsg').textContent = msg;
-}
-
-async function fetchSheet(sheetName) {
-  const url = `${BASE_URL}/${encodeURIComponent(sheetName)}!A:E?key=${API_KEY}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Erro ao ler aba "${sheetName}": ${r.status}`);
-  const d = await r.json();
-  const rows = d.values || [];
-  if (rows.length > 0) {
-    const first = String(rows[0][0]||'').trim();
-    if (isNaN(parseInt(first))) return rows.slice(1);
-  }
+async function fetchSheet(name){
+  const url=`${BASE_URL}/${encodeURIComponent(name)}!A:E?key=${API_KEY}`;
+  const r=await fetch(url);if(!r.ok)throw new Error(`Erro "${name}": ${r.status}`);
+  const d=await r.json();const rows=d.values||[];
+  if(rows.length&&isNaN(parseInt(String(rows[0][0]||'').trim())))return rows.slice(1);
   return rows;
 }
 
-async function loadData() {
-  const syncBtn = document.getElementById('syncBtn');
-  syncBtn.disabled = true;
-  document.getElementById('syncIcon').innerHTML = '<span class="spin">↻</span>';
+async function loadData(){
+  const btn=document.getElementById('syncBtn');
+  btn.disabled=true;document.getElementById('syncIcon').innerHTML='<span class="spin">↻</span>';
   document.getElementById('loadingScreen').classList.remove('hidden');
-  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('mainContent').style.display='none';
   document.getElementById('errorBox').classList.remove('visible');
-  Object.values(APP.charts).forEach(c => { try { c.destroy(); } catch(e){} });
-  APP = {monthly:[],allSkus:[],categories:[],subcatMap:{},charts:{},catByMonth:{}};
-  selectedCat = null;
+  Object.values(APP.charts).forEach(c=>{try{c.destroy()}catch(e){}});
+  APP={monthly:[],allSkus:[],skuMap:{},categories:[],subcatMap:{},catByMonth:{},charts:{}};
+  selectedCat=null;
 
-  try {
-    const rawSales = {};
-    for (let i = 0; i < MONTH_SHEETS.length; i++) {
-      const {sheet, label} = MONTH_SHEETS[i];
-      setProgress(Math.round((i/MONTH_SHEETS.length)*80), `Lendo ${label}...`);
-      const rows = await fetchSheet(sheet);
-      for (const row of rows) {
-        if (!row[0]) continue;
-        const skuRaw = String(row[0]).trim().replace('.0','');
-        const sku = parseInt(skuRaw);
-        if (isNaN(sku) || sku < 1000000) continue;
-        const nome = String(row[1]||'').trim();
-        const qtd = num(row[2]);
-        const val = num(row[3]);
-        if (!rawSales[sku]) rawSales[sku] = {nome, meses:{}};
-        if (!rawSales[sku].meses[label]) rawSales[sku].meses[label] = {v:0,q:0};
-        rawSales[sku].meses[label].v += val;
-        rawSales[sku].meses[label].q += qtd;
+  try{
+    // ── 1. Load PRODUTOS tab → SKU→{cat,sub,marca} map ──────────────────
+    setProgress(5,'Carregando tabela de produtos...');
+    const prodRows=await fetchSheet('PRODUTOS');
+    const skuMap={};
+    prodRows.forEach(r=>{
+      const sku=String(r[0]||'').trim().replace('.0','');
+      if(sku&&!isNaN(parseInt(sku))){
+        skuMap[sku]={nome:String(r[1]||'').trim(),marca:String(r[2]||'').trim(),
+                     cat:String(r[3]||'').trim(),sub:String(r[4]||'').trim()};
+      }
+    });
+    APP.skuMap=skuMap;
+    setProgress(15,`${Object.keys(skuMap).length} produtos classificados`);
+
+    // ── 2. Load monthly sales tabs ──────────────────────────────────────
+    const rawSales={};
+    for(let i=0;i<MONTH_SHEETS.length;i++){
+      const {sheet,label}=MONTH_SHEETS[i];
+      setProgress(15+Math.round((i/MONTH_SHEETS.length)*65),`Lendo ${label}...`);
+      const rows=await fetchSheet(sheet);
+      for(const row of rows){
+        if(!row[0])continue;
+        const sku=String(row[0]).trim().replace('.0','');
+        const skuInt=parseInt(sku);
+        if(isNaN(skuInt)||skuInt<1000000)continue;
+        const qtd=num(row[2]),val=num(row[3]);
+        if(!rawSales[sku])rawSales[sku]={nome:String(row[1]||'').trim(),meses:{}};
+        if(!rawSales[sku].meses[label])rawSales[sku].meses[label]={v:0,q:0};
+        rawSales[sku].meses[label].v+=val;
+        rawSales[sku].meses[label].q+=qtd;
       }
     }
 
-    setProgress(85, 'Categorizando produtos...');
-    const monthlyMap = {};
-    MONTH_SHEETS.forEach(m => monthlyMap[m.label] = {label:m.label, Valor:0, Qtd:0});
+    // ── 3. Build monthly totals + SKU list ─────────────────────────────
+    setProgress(82,'Calculando métricas...');
+    const monthlyMap={};
+    MONTH_SHEETS.forEach(m=>monthlyMap[m.label]={label:m.label,Valor:0,Qtd:0});
+    const catByMonthMap={};
+    const skuTotals=[];
 
-    // catByMonth: cat -> label -> {v, q}
-    const catByMonthMap = {};
-
-    const skuTotals = [];
-    for (const [sku, data] of Object.entries(rawSales)) {
-      let tv = 0, tq = 0;
-      const {cat, sub} = categorizeExpanded(data.nome);
-      for (const [label, vals] of Object.entries(data.meses)) {
-        monthlyMap[label].Valor += vals.v;
-        monthlyMap[label].Qtd += vals.q;
-        tv += vals.v; tq += vals.q;
-        if (!catByMonthMap[cat]) catByMonthMap[cat] = {};
-        if (!catByMonthMap[cat][label]) catByMonthMap[cat][label] = {v:0,q:0};
-        catByMonthMap[cat][label].v += vals.v;
-        catByMonthMap[cat][label].q += vals.q;
+    for(const [sku,data] of Object.entries(rawSales)){
+      let tv=0,tq=0;
+      const info=skuMap[sku]||{cat:'Sem Categoria',sub:'—',marca:'—',nome:data.nome};
+      const {cat,sub,marca}=info;
+      for(const [label,vals] of Object.entries(data.meses)){
+        monthlyMap[label].Valor+=vals.v;monthlyMap[label].Qtd+=vals.q;
+        tv+=vals.v;tq+=vals.q;
+        if(!catByMonthMap[cat])catByMonthMap[cat]={};
+        if(!catByMonthMap[cat][label])catByMonthMap[cat][label]={v:0,q:0};
+        catByMonthMap[cat][label].v+=vals.v;catByMonthMap[cat][label].q+=vals.q;
       }
-      skuTotals.push({sku:parseInt(sku), nome:data.nome, cat, sub, TotalValor:tv, TotalQtd:tq});
+      skuTotals.push({sku:parseInt(sku),nome:info.nome||data.nome,cat,sub,marca,TotalValor:tv,TotalQtd:tq});
     }
 
-    APP.monthly = Object.values(monthlyMap);
-    APP.catByMonth = catByMonthMap;
-    skuTotals.sort((a,b) => b.TotalValor - a.TotalValor);
+    APP.monthly=Object.values(monthlyMap);
+    APP.catByMonth=catByMonthMap;
+    skuTotals.sort((a,b)=>b.TotalValor-a.TotalValor);
 
     // ABC Valor
-    const totalValor = skuTotals.reduce((s,x) => s+x.TotalValor, 0);
-    let cumV = 0;
-    skuTotals.forEach(s => {
-      cumV += s.TotalValor;
-      s.abcV = (cumV/totalValor) <= 0.80 ? 'A' : (cumV/totalValor) <= 0.95 ? 'B' : 'C';
-    });
-
+    const totalValor=skuTotals.reduce((s,x)=>s+x.TotalValor,0);
+    let cumV=0;
+    skuTotals.forEach(s=>{cumV+=s.TotalValor;s.abcV=cumV/totalValor<=.80?'A':cumV/totalValor<=.95?'B':'C'});
     // ABC Qtd
-    const byQtd = [...skuTotals].sort((a,b) => b.TotalQtd - a.TotalQtd);
-    const totalQtd = byQtd.reduce((s,x) => s+x.TotalQtd, 0);
-    let cumQ = 0; const abcQMap = {};
-    byQtd.forEach(s => {
-      cumQ += s.TotalQtd;
-      abcQMap[s.sku] = (cumQ/totalQtd) <= 0.80 ? 'A' : (cumQ/totalQtd) <= 0.95 ? 'B' : 'C';
-    });
-    skuTotals.forEach(s => s.abcQ = abcQMap[s.sku] || 'C');
-    APP.allSkus = skuTotals;
+    const byQtd=[...skuTotals].sort((a,b)=>b.TotalQtd-a.TotalQtd);
+    const totalQtd=byQtd.reduce((s,x)=>s+x.TotalQtd,0);
+    let cumQ=0;const abcQMap={};
+    byQtd.forEach(s=>{cumQ+=s.TotalQtd;abcQMap[s.sku]=cumQ/totalQtd<=.80?'A':cumQ/totalQtd<=.95?'B':'C'});
+    skuTotals.forEach(s=>s.abcQ=abcQMap[s.sku]||'C');
+    APP.allSkus=skuTotals;
 
     // Categories
-    const catMap = {};
-    skuTotals.forEach(s => {
-      if (!catMap[s.cat]) catMap[s.cat] = {Categoria:s.cat, Valor:0, Qtd:0, skus:0};
-      catMap[s.cat].Valor += s.TotalValor;
-      catMap[s.cat].Qtd += s.TotalQtd;
-      catMap[s.cat].skus++;
+    const catMap={};
+    skuTotals.forEach(s=>{
+      if(!catMap[s.cat])catMap[s.cat]={Categoria:s.cat,Valor:0,Qtd:0,skus:0};
+      catMap[s.cat].Valor+=s.TotalValor;catMap[s.cat].Qtd+=s.TotalQtd;catMap[s.cat].skus++;
     });
-    APP.categories = Object.values(catMap).sort((a,b) => b.Valor - a.Valor);
+    APP.categories=Object.values(catMap).sort((a,b)=>b.Valor-a.Valor);
 
-    // Subcat map: cat -> sub -> {v, q, skus}
-    const subcatMap = {};
-    skuTotals.forEach(s => {
-      if (!subcatMap[s.cat]) subcatMap[s.cat] = {};
-      if (!subcatMap[s.cat][s.sub]) subcatMap[s.cat][s.sub] = {v:0,q:0,skus:0};
-      subcatMap[s.cat][s.sub].v += s.TotalValor;
-      subcatMap[s.cat][s.sub].q += s.TotalQtd;
+    // Subcat map
+    const subcatMap={};
+    skuTotals.forEach(s=>{
+      if(!subcatMap[s.cat])subcatMap[s.cat]={};
+      if(!subcatMap[s.cat][s.sub])subcatMap[s.cat][s.sub]={v:0,q:0,skus:0};
+      subcatMap[s.cat][s.sub].v+=s.TotalValor;
+      subcatMap[s.cat][s.sub].q+=s.TotalQtd;
       subcatMap[s.cat][s.sub].skus++;
     });
-    APP.subcatMap = subcatMap;
+    APP.subcatMap=subcatMap;
 
-    setProgress(95, 'Renderizando...');
-    await new Promise(r => setTimeout(r, 150));
+    setProgress(95,'Renderizando...');
+    await new Promise(r=>setTimeout(r,150));
     buildDashboard();
-    setProgress(100, 'Pronto!');
-    await new Promise(r => setTimeout(r, 250));
+    setProgress(100,'Pronto!');
+    await new Promise(r=>setTimeout(r,280));
     document.getElementById('loadingScreen').classList.add('hidden');
-    document.getElementById('mainContent').style.display = 'block';
-    document.getElementById('lastUpdate').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  } catch(err) {
+    document.getElementById('mainContent').style.display='block';
+    document.getElementById('lastUpdate').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }catch(err){
     document.getElementById('loadingScreen').classList.add('hidden');
-    const eb = document.getElementById('errorBox');
-    eb.textContent = '⚠ Erro ao carregar dados: ' + err.message;
-    eb.classList.add('visible');
-    document.getElementById('mainContent').style.display = 'block';
-    console.error(err);
+    const eb=document.getElementById('errorBox');eb.textContent='⚠ Erro: '+err.message;eb.classList.add('visible');
+    document.getElementById('mainContent').style.display='block';console.error(err);
   }
-  document.getElementById('syncBtn').disabled = false;
-  document.getElementById('syncIcon').textContent = '↻';
+  btn.disabled=false;document.getElementById('syncIcon').textContent='↻';
 }
 
-function getFilteredMonthly() {
-  if (activePeriod === 'all') return APP.monthly;
-  return APP.monthly.slice(-parseInt(activePeriod));
+// ── DASHBOARD BUILD ──────────────────────────────────────────────────────────
+function buildDashboard(){
+  buildKPIs();buildInsights();buildPeriodBtns();
+  buildVisao();buildCategorias();buildDesenvolvimento();
+  buildAbcValor();buildAbcQtd();buildTodos();
 }
 
-function buildDashboard() {
-  buildKPIs();
-  buildInsights();
-  buildPeriodBtns();
-  buildVisao();
-  buildCategorias();
-  buildAbcValor();
-  buildAbcQtd();
-  buildTodos();
+function getMonthly(){
+  if(activePeriod.v==='all')return APP.monthly;
+  return APP.monthly.slice(-parseInt(activePeriod.v));
 }
 
-function buildKPIs() {
-  const m = APP.monthly;
-  const totalV = m.reduce((s,x) => s+x.Valor, 0);
-  const totalQ = m.reduce((s,x) => s+x.Qtd, 0);
-  const last = m[m.length-1], prev = m[m.length-2];
-  const mm = prev && prev.Valor ? ((last.Valor-prev.Valor)/prev.Valor*100) : 0;
-  const ticket = totalQ > 0 ? totalV/totalQ : 0;
-  const skuAtivos = APP.allSkus.filter(s => s.TotalValor > 0).length;
-  document.getElementById('kpis').innerHTML = `
+function buildKPIs(){
+  const m=APP.monthly;
+  const totalV=m.reduce((s,x)=>s+x.Valor,0),totalQ=m.reduce((s,x)=>s+x.Qtd,0);
+  const last=m[m.length-1],prev=m[m.length-2];
+  const mm=prev&&prev.Valor?pct(last.Valor,prev.Valor):0;
+  const ticket=totalQ>0?totalV/totalQ:0;
+  const skuAtivos=APP.allSkus.filter(s=>s.TotalValor>0).length;
+  document.getElementById('kpis').innerHTML=`
     <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">${fmtK(totalV)}</div><div class="kpi-sub">${m[0].label} — ${m[m.length-1].label}</div></div>
     <div class="kpi"><div class="kpi-label">Unidades vendidas</div><div class="kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div><div class="kpi-sub">${m.length} meses</div></div>
     <div class="kpi"><div class="kpi-label">${last.label} — último mês</div><div class="kpi-value">${fmtK(last.Valor)}</div><div class="kpi-trend ${mm>=0?'up':'dn'}">${mm>=0?'▲':'▼'} ${Math.abs(mm).toFixed(1)}% vs mês anterior</div></div>
     <div class="kpi"><div class="kpi-label">Ticket médio</div><div class="kpi-value">R$ ${Math.round(ticket).toLocaleString('pt-BR')}</div><div class="kpi-sub">${skuAtivos} SKUs ativos</div></div>`;
 }
 
-function buildInsights() {
-  const classA = APP.allSkus.filter(s => s.abcV==='A').length;
-  const total = APP.allSkus.length;
-  const topCat = APP.categories[0];
-  const totalV = APP.allSkus.reduce((s,x) => s+x.TotalValor, 0);
-  const m = APP.monthly;
-  const growth = m.length >= 2 ? ((m[m.length-1].Valor - m[0].Valor)/m[0].Valor*100) : 0;
-  document.getElementById('insights').innerHTML = `
+function buildInsights(){
+  const classA=APP.allSkus.filter(s=>s.abcV==='A').length;
+  const total=APP.allSkus.length;
+  const topCat=APP.categories[0];
+  const totalV=APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
+  const m=APP.monthly;
+  const growth=m.length>=2?pct(m[m.length-1].Valor,m[0].Valor):0;
+  const marcas=new Set(APP.allSkus.map(s=>s.marca).filter(Boolean));
+  document.getElementById('insights').innerHTML=`
     <div class="insight-chip"><span class="dot"></span>${classA} SKUs (${Math.round(classA/total*100)}% do portfólio) = 80% do faturamento</div>
-    <div class="insight-chip"><span class="dot blue"></span>${topCat.Categoria}: ${Math.round(topCat.Valor/totalV*100)}% do faturamento total</div>
-    <div class="insight-chip"><span class="dot ${growth>=0?'':'amber'}"></span>Crescimento ${m[0].label}→${m[m.length-1].label}: ${growth>=0?'+':''}${Math.round(growth)}%</div>`;
+    <div class="insight-chip"><span class="dot blue"></span>${topCat?.Categoria}: ${Math.round((topCat?.Valor||0)/totalV*100)}% do faturamento total</div>
+    <div class="insight-chip"><span class="dot ${growth>=0?'':'amber'}"></span>Crescimento ${m[0].label}→${m[m.length-1].label}: ${growth>=0?'+':''}${growth}%</div>
+    <div class="insight-chip"><span class="dot purple"></span>${marcas.size} marcas · ${APP.categories.length} categorias · ${Object.values(APP.subcatMap).reduce((s,o)=>s+Object.keys(o).length,0)} subcategorias</div>`;
 }
 
-function buildPeriodBtns() {
-  const periods = [{v:'3',l:'3M'},{v:'6',l:'6M'},{v:'all',l:'12M'}];
-  document.getElementById('periodBtns').innerHTML = periods.map(p =>
-    `<button class="period-btn ${activePeriod===p.v?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`
-  ).join('');
+function buildPeriodBtns(){
+  document.getElementById('periodBtns').innerHTML=[{v:'3',l:'3M'},{v:'6',l:'6M'},{v:'all',l:'12M'}]
+    .map(p=>`<button class="period-btn ${activePeriod.v===p.v?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`).join('');
 }
+function setPeriod(p){activePeriod.v=p;buildPeriodBtns();rebuildVisaoCharts()}
 
-function setPeriod(p) {
-  activePeriod = p; buildPeriodBtns(); rebuildVisaoCharts();
-}
+function ch(id){if(APP.charts[id]){try{APP.charts[id].destroy()}catch(e){}delete APP.charts[id]}}
+const TX='#A09C98',GC='rgba(0,0,0,.05)';
 
-function buildVisao() {
-  rebuildVisaoCharts(); buildCatChart();
-}
-
-function ch(id) {
-  if (APP.charts[id]) { try { APP.charts[id].destroy(); } catch(e){} delete APP.charts[id]; }
-}
-
-function rebuildVisaoCharts() {
-  const data = getFilteredMonthly();
-  ch('cFat'); ch('cQtd'); ch('cTicket'); ch('cAbcVSmall');
-  const gridColor = 'rgba(0,0,0,.05)';
-  const txColor = '#A09C98';
-
-  APP.charts.cFat = new Chart(document.getElementById('cFat'), {
-    type:'bar',
+function buildVisao(){rebuildVisaoCharts();buildCatDonut()}
+function rebuildVisaoCharts(){
+  const data=getMonthly();
+  ['cFat','cQtd','cTicket','cAbcVSmall'].forEach(ch);
+  APP.charts.cFat=new Chart(document.getElementById('cFat'),{type:'bar',
     data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Valor),backgroundColor:'#1A1917',borderRadius:4,hoverBackgroundColor:'#555'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:txColor},grid:{color:gridColor}},x:{ticks:{font:{size:10},color:txColor},grid:{display:false}}}}
-  });
-  APP.charts.cQtd = new Chart(document.getElementById('cQtd'), {
-    type:'bar',
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  APP.charts.cQtd=new Chart(document.getElementById('cQtd'),{type:'bar',
     data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Qtd),backgroundColor:'#166534',borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:txColor},grid:{color:gridColor}},x:{ticks:{font:{size:10},color:txColor},grid:{display:false}}}}
-  });
-  APP.charts.cTicket = new Chart(document.getElementById('cTicket'), {
-    type:'line',
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  APP.charts.cTicket=new Chart(document.getElementById('cTicket'),{type:'line',
     data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Qtd>0?Math.round(m.Valor/m.Qtd):0),borderColor:'#7C2D12',backgroundColor:'rgba(124,45,18,.06)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#7C2D12'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:txColor},grid:{color:gridColor}},x:{ticks:{font:{size:10},color:txColor},grid:{display:false}}}}
-  });
-
-  // small ABC donut for visão geral
-  const totalV2 = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const gA = APP.allSkus.filter(s=>s.abcV==='A').reduce((s,x)=>s+x.TotalValor,0);
-  const gB = APP.allSkus.filter(s=>s.abcV==='B').reduce((s,x)=>s+x.TotalValor,0);
-  const gC = totalV2 - gA - gB;
-  document.getElementById('legAbcVSmall').innerHTML = ['A','B','C'].map((c,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${c} — ${Math.round([gA,gB,gC][i]/totalV2*100)}%</span>`).join('');
-  APP.charts.cAbcVSmall = new Chart(document.getElementById('cAbcVSmall'), {
-    type:'doughnut',
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  const gA=APP.allSkus.filter(s=>s.abcV==='A').reduce((s,x)=>s+x.TotalValor,0);
+  const gB=APP.allSkus.filter(s=>s.abcV==='B').reduce((s,x)=>s+x.TotalValor,0);
+  const gC=APP.allSkus.filter(s=>s.abcV==='C').reduce((s,x)=>s+x.TotalValor,0);
+  const tv=gA+gB+gC;
+  document.getElementById('legAbcVSmall').innerHTML=['A','B','C'].map((c,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${c} — ${Math.round([gA,gB,gC][i]/tv*100)}%</span>`).join('');
+  APP.charts.cAbcVSmall=new Chart(document.getElementById('cAbcVSmall'),{type:'doughnut',
     data:{labels:['A','B','C'],datasets:[{data:[Math.round(gA),Math.round(gB),Math.round(gC)],backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}
-  });
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
 }
-
-function buildCatChart() {
-  const cats = APP.categories;
-  const totalV = cats.reduce((s,c)=>s+c.Valor,0);
-  document.getElementById('legCat').innerHTML = cats.map((c,i)=>
-    `<span class="leg-item"><span class="leg-dot" style="background:${CAT_COLORS[i%CAT_COLORS.length]}"></span>${c.Categoria} (${Math.round(c.Valor/totalV*100)}%)</span>`
-  ).join('');
+function buildCatDonut(){
+  const cats=APP.categories;const totalV=cats.reduce((s,c)=>s+c.Valor,0);
+  const colors=cats.map(c=>CAT_COLOR[c.Categoria]||'#6B7280');
+  document.getElementById('legCat').innerHTML=cats.map((c,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${colors[i]}"></span>${c.Categoria} (${Math.round(c.Valor/totalV*100)}%)</span>`).join('');
   ch('cCat');
-  APP.charts.cCat = new Chart(document.getElementById('cCat'), {
-    type:'doughnut',
-    data:{labels:cats.map(c=>c.Categoria),datasets:[{data:cats.map(c=>Math.round(c.Valor)),backgroundColor:CAT_COLORS,borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}
-  });
+  APP.charts.cCat=new Chart(document.getElementById('cCat'),{type:'doughnut',
+    data:{labels:cats.map(c=>c.Categoria),datasets:[{data:cats.map(c=>Math.round(c.Valor)),backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
 }
 
-/* ─── MÓDULO 3: CATEGORIAS ─── */
-function buildCategorias() {
-  buildCatKpiCards();
-  buildSubcatDetail(null);
-  buildCatBarCharts();
-  buildHeatmap();
-  buildOpportunities();
-  buildCatDepthTable();
-}
+// ── CATEGORIAS ───────────────────────────────────────────────────────────────
+function buildCategorias(){buildCatKpiCards();buildSubcatDetail(null);buildCatBars();buildHeatmap();buildCatDepthTable()}
 
-function buildCatKpiCards() {
-  const totalV = APP.categories.reduce((s,c)=>s+c.Valor,0);
-  const m = APP.monthly;
-  const labels = MONTH_SHEETS.map(s=>s.label);
-  const lastLabel = labels[labels.length-1];
-  const prevLabel = labels[labels.length-2];
+function getCatColor(cat){return CAT_COLOR[cat]||'#6B7280'}
+function getCatIndex(cat){const idx=CAT_ORDER.indexOf(cat);return idx>=0?idx:6}
 
-  document.getElementById('catKpiGrid').innerHTML = APP.categories.map((cat, i) => {
-    const catSkus = APP.allSkus.filter(s => s.cat === cat.Categoria);
-    const share = Math.round(cat.Valor/totalV*100);
-    const ticket = cat.Qtd > 0 ? Math.round(cat.Valor/cat.Qtd) : 0;
-    const cbm = APP.catByMonth[cat.Categoria] || {};
-    const lastV = (cbm[lastLabel]||{}).v || 0;
-    const prevV = (cbm[prevLabel]||{}).v || 0;
-    const mm = prevV > 0 ? pct(lastV, prevV) : 0;
-    const skusA = catSkus.filter(s => s.abcV === 'A').length;
-    return `
-      <div class="cat-kpi-card" data-ci="${i}" data-cat="${cat.Categoria}" onclick="selectCat('${cat.Categoria.replace(/'/g,"\\'")}')">
-        <div class="cat-name">${cat.Categoria}</div>
-        <div class="cat-val">${fmtK(cat.Valor)}</div>
-        <div class="cat-meta">
-          <span class="cat-badge">${share}% do total</span>
-          <span class="cat-badge ${mm>=0?'pos':'neg'}">${mm>=0?'+':''}${mm}% M/M</span>
-          <span class="cat-badge">${cat.skus} SKUs</span>
-          <span class="cat-badge">${skusA} classe A</span>
-        </div>
-      </div>`;
+function buildCatKpiCards(){
+  const totalV=APP.categories.reduce((s,c)=>s+c.Valor,0);
+  const labels=MONTH_SHEETS.map(s=>s.label);
+  const lastL=labels[labels.length-1],prevL=labels[labels.length-2];
+  document.getElementById('catKpiGrid').innerHTML=APP.categories.map((cat,i)=>{
+    const share=Math.round(cat.Valor/totalV*100);
+    const ticket=cat.Qtd>0?Math.round(cat.Valor/cat.Qtd):0;
+    const cbm=APP.catByMonth[cat.Categoria]||{};
+    const mm=pct((cbm[lastL]||{}).v||0,(cbm[prevL]||{}).v||0);
+    const skusA=APP.allSkus.filter(s=>s.cat===cat.Categoria&&s.abcV==='A').length;
+    const ci=getCatIndex(cat.Categoria);
+    return `<div class="cat-kpi-card" data-ci="${ci}" data-cat="${cat.Categoria}" onclick="selectCat('${cat.Categoria.replace(/'/g,"\\'")}')">
+      <div class="cat-name">${cat.Categoria}</div>
+      <div class="cat-val">${fmtK(cat.Valor)}</div>
+      <div class="cat-meta">
+        <span class="cat-badge">${share}% do total</span>
+        <span class="cat-badge ${mm>=0?'pos':'neg'}">${mm>=0?'+':''}${mm}% M/M</span>
+        <span class="cat-badge">${cat.skus} SKUs</span>
+        <span class="cat-badge">${skusA} classe A</span>
+      </div></div>`;
   }).join('');
 }
 
-function selectCat(catName) {
-  selectedCat = catName;
-  document.querySelectorAll('.cat-kpi-card').forEach(c => {
-    c.classList.toggle('selected', c.dataset.cat === catName);
-  });
-  buildSubcatDetail(catName);
+function selectCat(c){
+  selectedCat=c;
+  document.querySelectorAll('.cat-kpi-card').forEach(el=>el.classList.toggle('selected',el.dataset.cat===c));
+  buildSubcatDetail(c);
 }
-
-function resetCatSelection() {
-  selectedCat = null;
-  document.querySelectorAll('.cat-kpi-card').forEach(c => c.classList.remove('selected'));
+function resetCatSelection(){
+  selectedCat=null;
+  document.querySelectorAll('.cat-kpi-card').forEach(el=>el.classList.remove('selected'));
   buildSubcatDetail(null);
 }
-
-function buildSubcatDetail(catName) {
-  const title = document.getElementById('subcatTitle');
-  const grid = document.getElementById('subcatGrid');
-  if (!catName) {
-    title.textContent = 'Todas as categorias — visão geral por subcategoria';
-    // Show top subcats across all cats
-    const allSubs = [];
-    for (const [cat, subs] of Object.entries(APP.subcatMap)) {
-      for (const [sub, data] of Object.entries(subs)) {
-        allSubs.push({cat, sub, v:data.v, q:data.q, skus:data.skus});
-      }
-    }
-    allSubs.sort((a,b)=>b.v-a.v);
-    const top = allSubs.slice(0,12);
-    grid.innerHTML = top.map(s => `
+function buildSubcatDetail(catName){
+  const title=document.getElementById('subcatTitle');
+  const grid=document.getElementById('subcatGrid');
+  if(!catName){
+    title.textContent='Top subcategorias — visão geral';
+    const all=[];
+    for(const [cat,subs] of Object.entries(APP.subcatMap))
+      for(const [sub,d] of Object.entries(subs)) all.push({cat,sub,...d});
+    all.sort((a,b)=>b.v-a.v);
+    grid.innerHTML=all.slice(0,12).map(s=>`
       <div class="subcat-card">
         <div class="subcat-card-name">${s.sub} <span style="color:var(--text3);font-size:10px">(${s.cat})</span></div>
         <div class="subcat-val">${fmtK(s.v)}</div>
@@ -986,287 +697,340 @@ function buildSubcatDetail(catName) {
       </div>`).join('');
     return;
   }
-
-  title.textContent = catName + ' — Subcategorias';
-  const subs = APP.subcatMap[catName] || {};
-  const entries = Object.entries(subs).map(([sub,d])=>({sub,...d})).sort((a,b)=>b.v-a.v);
-  if (!entries.length) { grid.innerHTML = '<div style="color:var(--text3);font-size:13px">Sem subcategorias</div>'; return; }
-  const totalCatV = entries.reduce((s,e)=>s+e.v,0);
-  grid.innerHTML = entries.map(e => `
+  title.textContent=catName+' — Subcategorias';
+  const subs=Object.entries(APP.subcatMap[catName]||{}).map(([sub,d])=>({sub,...d})).sort((a,b)=>b.v-a.v);
+  if(!subs.length){grid.innerHTML='<div style="color:var(--text3);font-size:13px">Sem subcategorias</div>';return}
+  const catV=subs.reduce((s,e)=>s+e.v,0);
+  grid.innerHTML=subs.map(e=>`
     <div class="subcat-card">
       <div class="subcat-card-name">${e.sub}</div>
       <div class="subcat-val">${fmtK(e.v)}</div>
-      <div class="subcat-meta">${Math.round(e.v/totalCatV*100)}% da cat. · ${e.skus} SKUs · ${Math.round(e.q).toLocaleString('pt-BR')} un.</div>
+      <div class="subcat-meta">${Math.round(e.v/catV*100)}% da cat. · ${e.skus} SKUs · ${Math.round(e.q).toLocaleString('pt-BR')} un.</div>
     </div>`).join('');
 }
-
-function buildCatBarCharts() {
-  const cats = APP.categories;
-  ch('cCatBar'); ch('cCatQtdBar');
-  const txColor = '#A09C98';
-  const gridColor = 'rgba(0,0,0,.05)';
-  APP.charts.cCatBar = new Chart(document.getElementById('cCatBar'), {
-    type:'bar', indexAxis:'y',
-    data:{
-      labels: cats.map(c=>c.Categoria),
-      datasets:[{data:cats.map(c=>Math.round(c.Valor)),backgroundColor:CAT_COLORS,borderRadius:4}]
-    },
+function buildCatBars(){
+  const cats=APP.categories;
+  const colors=cats.map(c=>CAT_COLOR[c.Categoria]||'#6B7280');
+  ['cCatBar','cCatQtdBar'].forEach(id=>{ch(id)});
+  APP.charts.cCatBar=new Chart(document.getElementById('cCatBar'),{type:'bar',indexAxis:'y',
+    data:{labels:cats.map(c=>c.Categoria),datasets:[{data:cats.map(c=>Math.round(c.Valor)),backgroundColor:colors,borderRadius:4}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtK(ctx.raw)}}},
-      scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:txColor},grid:{color:gridColor}},y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}
-  });
-  APP.charts.cCatQtdBar = new Chart(document.getElementById('cCatQtdBar'), {
-    type:'bar', indexAxis:'y',
-    data:{
-      labels: cats.map(c=>c.Categoria),
-      datasets:[{data:cats.map(c=>Math.round(c.Qtd)),backgroundColor:CAT_COLORS.map(c=>c+'99'),borderRadius:4}]
-    },
+      scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
+  APP.charts.cCatQtdBar=new Chart(document.getElementById('cCatQtdBar'),{type:'bar',indexAxis:'y',
+    data:{labels:cats.map(c=>c.Categoria),datasets:[{data:cats.map(c=>Math.round(c.Qtd)),backgroundColor:colors.map(c=>c+'99'),borderRadius:4}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>Math.round(ctx.raw).toLocaleString('pt-BR')+' un.'}}},
-      scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:txColor},grid:{color:gridColor}},y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}
-  });
+      scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
 }
-
-function buildHeatmap() {
-  const labels = MONTH_SHEETS.map(s=>s.label);
-  const cats = APP.categories.map(c=>c.Categoria);
-  // Find max value per month for relative coloring
-  const allVals = [];
-  cats.forEach(cat => labels.forEach(lb => {
-    const v = (APP.catByMonth[cat]||{})[lb]?.v || 0;
-    allVals.push(v);
-  }));
-  const maxV = Math.max(...allVals);
-
-  function hmColor(v) {
-    if (v === 0) return '#F7F5F0';
-    const ratio = v/maxV;
-    if (ratio < 0.1) return '#EBF5EE';
-    if (ratio < 0.25) return '#BBF7D0';
-    if (ratio < 0.5) return '#4ADE80';
-    if (ratio < 0.75) return '#16A34A';
-    return '#166534';
+function buildHeatmap(){
+  const labels=MONTH_SHEETS.map(s=>s.label);
+  const cats=APP.categories.map(c=>c.Categoria);
+  const allV=[];
+  cats.forEach(cat=>labels.forEach(lb=>{const v=(APP.catByMonth[cat]||{})[lb]?.v||0;allV.push(v)}));
+  const maxV=Math.max(...allV)||1;
+  function hmColor(v){
+    if(!v)return '#F7F5F0';const r=v/maxV;
+    if(r<.1)return '#EBF5EE';if(r<.25)return '#BBF7D0';if(r<.5)return '#4ADE80';
+    if(r<.75)return '#16A34A';return '#166534';
   }
-  function hmTxt(v) {
-    if (v === 0) return '';
-    const ratio = v/maxV;
-    return ratio >= 0.5 ? '#fff' : '#1A1917';
-  }
-
-  let html = '<table class="heatmap-table"><thead><tr><th>Categoria</th>';
-  labels.forEach(lb => html += `<th>${lb}</th>`);
-  html += '</tr></thead><tbody>';
-  cats.forEach(cat => {
-    html += `<tr><td>${cat}</td>`;
-    labels.forEach(lb => {
-      const v = (APP.catByMonth[cat]||{})[lb]?.v || 0;
-      const bg = hmColor(v);
-      const tc = hmTxt(v);
-      html += `<td><span class="hm-cell" style="background:${bg};color:${tc}">${v>0?fmtK(v):''}</span></td>`;
+  let html='<table class="heatmap-table"><thead><tr><th>Categoria</th>';
+  labels.forEach(lb=>html+=`<th>${lb}</th>`);
+  html+='</tr></thead><tbody>';
+  cats.forEach(cat=>{
+    html+=`<tr><td>${cat}</td>`;
+    labels.forEach(lb=>{
+      const v=(APP.catByMonth[cat]||{})[lb]?.v||0;
+      const bg=hmColor(v),tc=v/maxV>=.5?'#fff':'#1A1917';
+      html+=`<td><span class="hm-cell" style="background:${bg};color:${tc}">${v>0?fmtK(v):''}</span></td>`;
     });
-    html += '</tr>';
+    html+='</tr>';
   });
-  html += '</tbody></table>';
-  document.getElementById('heatmapWrap').innerHTML = html;
+  html+='</tbody></table>';
+  document.getElementById('heatmapWrap').innerHTML=html;
 }
-
-function buildOpportunities() {
-  const totalV = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const labels = MONTH_SHEETS.map(s=>s.label);
-  const opps = [];
-
-  APP.categories.forEach(cat => {
-    const catSkus = APP.allSkus.filter(s=>s.cat===cat.Categoria);
-    const cbm = APP.catByMonth[cat.Categoria]||{};
-    const lastThree = labels.slice(-3).map(l=>(cbm[l]||{}).v||0);
-    const prevThree = labels.slice(-6,-3).map(l=>(cbm[l]||{}).v||0);
-    const avg3 = lastThree.reduce((a,b)=>a+b,0)/3;
-    const avgPrev3 = prevThree.reduce((a,b)=>a+b,0)/3;
-    const trend = avgPrev3 > 0 ? pct(avg3, avgPrev3) : 0;
-    const share = Math.round(cat.Valor/totalV*100);
-    const subs = APP.subcatMap[cat.Categoria]||{};
-    const nSubs = Object.keys(subs).length;
-
-    if (trend >= 30 && share < 20) {
-      opps.push({type:'growth', title:`${cat.Categoria} em alta`, desc:`Crescimento de +${trend}% nos últimos 3 meses. Apenas ${share}% do faturamento — há espaço para ampliar o portfólio.`});
-    }
-    if (nSubs <= 2 && share >= 5) {
-      opps.push({type:'explore', title:`Aprofundar mix em ${cat.Categoria}`, desc:`Categoria com ${cat.skus} SKUs concentrados em apenas ${nSubs} subcategoria(s). Oportunidade de ampliar variedade.`});
-    }
-    if (trend < -20) {
-      opps.push({type:'risk', title:`Queda em ${cat.Categoria}`, desc:`Categoria recuou ${trend}% nos últimos 3 meses. Avaliar causas: sazonalidade, concorrência ou ruptura de estoque.`});
-    }
-  });
-
-  // Subcats with single SKU
-  for (const [cat, subs] of Object.entries(APP.subcatMap)) {
-    for (const [sub, data] of Object.entries(subs)) {
-      if (data.skus === 1 && data.v > 5000) {
-        opps.push({type:'explore', title:`Ampliar ${sub} (${cat})`, desc:`Subcategoria com apenas 1 SKU e R$ ${Math.round(data.v/1000)}k em vendas. Testar mais produtos no mesmo nicho.`});
-      }
-    }
-  }
-
-  if (!opps.length) opps.push({type:'growth', title:'Portfólio equilibrado', desc:'Nenhum alerta crítico identificado. Continue monitorando os indicadores mês a mês.'});
-
-  document.getElementById('oppGrid').innerHTML = opps.slice(0,6).map(o => `
-    <div class="opp-card ${o.type}">
-      <div class="opp-icon">${{growth:'↑',risk:'⚠',explore:'◎'}[o.type]}</div>
-      <div class="opp-title">${o.title}</div>
-      <div class="opp-desc">${o.desc}</div>
-    </div>`).join('');
-}
-
-function buildCatDepthTable() {
-  const totalV = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const rows = APP.categories.map(cat => {
-    const catSkus = APP.allSkus.filter(s=>s.cat===cat.Categoria);
-    const skusA = catSkus.filter(s=>s.abcV==='A').length;
-    const skusB = catSkus.filter(s=>s.abcV==='B').length;
-    const skusC = catSkus.filter(s=>s.abcV==='C').length;
-    const ticket = cat.Qtd > 0 ? Math.round(cat.Valor/cat.Qtd) : 0;
-    const share = Math.round(cat.Valor/totalV*100);
-    const nSubs = Object.keys(APP.subcatMap[cat.Categoria]||{}).length;
+function buildCatDepthTable(){
+  const totalV=APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
+  const rows=APP.categories.map(cat=>{
+    const skusA=APP.allSkus.filter(s=>s.cat===cat.Categoria&&s.abcV==='A').length;
+    const skusB=APP.allSkus.filter(s=>s.cat===cat.Categoria&&s.abcV==='B').length;
+    const skusC=APP.allSkus.filter(s=>s.cat===cat.Categoria&&s.abcV==='C').length;
+    const ticket=cat.Qtd>0?Math.round(cat.Valor/cat.Qtd):0;
+    const nSubs=Object.keys(APP.subcatMap[cat.Categoria]||{}).length;
+    const color=getCatColor(cat.Categoria);
     return `<tr>
-      <td style="font-weight:500;color:var(--text)">${cat.Categoria}</td>
-      <td class="num">${fmtK(cat.Valor)}</td>
-      <td class="num">${share}%</td>
+      <td style="font-weight:500;color:${color}">${cat.Categoria}</td>
+      <td class="num">${fmtK(cat.Valor)}</td><td class="num">${Math.round(cat.Valor/totalV*100)}%</td>
       <td class="num">${Math.round(cat.Qtd).toLocaleString('pt-BR')}</td>
       <td class="num">R$ ${ticket.toLocaleString('pt-BR')}</td>
-      <td class="num">${cat.skus}</td>
-      <td class="num">${nSubs}</td>
+      <td class="num">${cat.skus}</td><td class="num">${nSubs}</td>
       <td><span class="badge A">${skusA}</span> <span class="badge B">${skusB}</span> <span class="badge C">${skusC}</span></td>
     </tr>`;
   }).join('');
-  document.getElementById('catDepthTable').innerHTML = `
-    <table>
-      <thead><tr>
-        <th>Categoria</th><th style="text-align:right">Faturamento</th><th style="text-align:right">Share</th>
-        <th style="text-align:right">Unidades</th><th style="text-align:right">Ticket médio</th>
-        <th style="text-align:right">SKUs</th><th style="text-align:right">Subcats</th><th>ABC Mix</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+  document.getElementById('catDepthTable').innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr><th>Categoria</th><th style="text-align:right">Faturamento</th><th style="text-align:right">Share</th>
+    <th style="text-align:right">Unidades</th><th style="text-align:right">Ticket Médio</th>
+    <th style="text-align:right">SKUs</th><th style="text-align:right">Subcats</th><th>ABC Mix</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
 }
 
-/* ─── ABC CHARTS ─── */
-function buildAbcValor() {
-  const totalV = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const groups = {A:{skus:0,v:0,q:0},B:{skus:0,v:0,q:0},C:{skus:0,v:0,q:0}};
-  APP.allSkus.forEach(s => { groups[s.abcV].skus++; groups[s.abcV].v+=s.TotalValor; groups[s.abcV].q+=s.TotalQtd; });
-  document.getElementById('abcVCards').innerHTML = ['A','B','C'].map(cls => `
+// ── DESENVOLVIMENTO DE PRODUTOS ──────────────────────────────────────────────
+function buildDesenvolvimento(){
+  buildOportunidades();buildGapPortfolio();buildBrandAnalysis();buildTicketCat();buildTrendCat();
+}
+
+function buildOportunidades(){
+  const labels=MONTH_SHEETS.map(s=>s.label);
+  const totalV=APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
+  const opps=[];
+
+  // ── Análise por categoria
+  APP.categories.forEach(cat=>{
+    const cbm=APP.catByMonth[cat.Categoria]||{};
+    const last3=labels.slice(-3).map(l=>(cbm[l]||{}).v||0).reduce((a,b)=>a+b,0)/3;
+    const prev3=labels.slice(-6,-3).map(l=>(cbm[l]||{}).v||0).reduce((a,b)=>a+b,0)/3;
+    const trend=prev3>0?pct(last3,prev3):0;
+    const share=Math.round(cat.Valor/totalV*100);
+    const nSubs=Object.keys(APP.subcatMap[cat.Categoria]||{}).length;
+    const ticket=cat.Qtd>0?Math.round(cat.Valor/cat.Qtd):0;
+    const catSkus=APP.allSkus.filter(s=>s.cat===cat.Categoria);
+    const skusA=catSkus.filter(s=>s.abcV==='A').length;
+
+    if(trend>=25&&share<15) opps.push({priority:'high',cat:cat.Categoria,
+      title:`${cat.Categoria} em aceleração`,
+      desc:`Crescimento de +${trend}% nos últimos 3 meses com apenas ${share}% do faturamento. Categoria com espaço para ampliar profundidade de mix.`,
+      stats:[`+${trend}% 3M`,`${share}% share`,`${cat.skus} SKUs`]});
+
+    if(nSubs<=2&&share>=5) opps.push({priority:'expand',cat:cat.Categoria,
+      title:`Aprofundar subcategorias em ${cat.Categoria}`,
+      desc:`Apenas ${nSubs} subcategoria(s) mapeada(s) para uma categoria com ${share}% do faturamento. Risco de concentração e oportunidade de ampliar variedade.`,
+      stats:[`${nSubs} subcats`,`${cat.skus} SKUs`,`R$ ${Math.round(ticket)} ticket`]});
+
+    if(skusA>0&&cat.skus<5) opps.push({priority:'expand',cat:cat.Categoria,
+      title:`Escalar portfólio em ${cat.Categoria}`,
+      desc:`Categoria com ${skusA} SKU(s) classe A mas apenas ${cat.skus} SKU(s) no total. Adicionando produtos adjacentes pode-se capturar mais da demanda.`,
+      stats:[`${skusA} SKUs A`,`${cat.skus} total`,fmtK(cat.Valor)]});
+
+    if(trend<=-20) opps.push({priority:'risk',cat:cat.Categoria,
+      title:`Queda em ${cat.Categoria}`,
+      desc:`Categoria recuou ${Math.abs(trend)}% nos últimos 3 meses. Avaliar: sazonalidade, ruptura de estoque, mudança de mix ou pressão competitiva.`,
+      stats:[`${trend}% 3M`,`${share}% share`]});
+  });
+
+  // ── Análise por subcategoria
+  for(const [cat,subs] of Object.entries(APP.subcatMap)){
+    for(const [sub,data] of Object.entries(subs)){
+      if(data.skus===1&&data.v>10000) opps.push({priority:'expand',cat,
+        title:`1 único SKU em "${sub}"`,
+        desc:`Subcategoria com apenas 1 produto e ${fmtK(data.v)} em vendas. Testar novos itens no mesmo nicho pode dobrar a receita com risco baixo.`,
+        stats:[`1 SKU`,fmtK(data.v),`${Math.round(data.q).toLocaleString('pt-BR')} un.`]});
+    }
+  }
+
+  // ── Oportunidades de categorias novas — baseado em gaps de varejo
+  const hasCat=c=>APP.categories.some(x=>x.Categoria===c);
+  if(!hasCat('Armazenamento Alimentar'))
+    opps.push({priority:'new',cat:'Nova Categoria',title:'Armazenamento Alimentar',
+      desc:'Potes herméticos, marmitas, organizadores de geladeira — alta demanda, complementa Cozinha e Utilidades. Ticket médio R$40–120 por kit.',
+      stats:['Nova cat','Ticket médio','Alta rotação']});
+  if(!hasCat('Escritório e Home Office'))
+    opps.push({priority:'new',cat:'Nova Categoria',title:'Escritório e Home Office',
+      desc:'Suportes de monitor, organizadores de mesa, luminárias de mesa — mercado em expansão pós-pandemia. Complementa Iluminação e Organização.',
+      stats:['Nova cat','Ticket médio','Crescimento anual']});
+  if(APP.categories.find(c=>c.Categoria==='Iluminação')?.skus<10)
+    opps.push({priority:'new',cat:'Iluminação',title:'Fitas LED e Smart Lighting',
+      desc:'Fitas LED com controle RGB, smart bulbs, luminárias inteligentes — segmento de alto crescimento e ticket premium. Complementa naturalmente a linha de painéis.',
+      stats:['Tendência 2026','Ticket alto','Ecossistema']});
+
+  opps.sort((a,b)=>{const o={high:0,risk:1,expand:2,new:3,medium:4};return o[a.priority]-o[b.priority]});
+  const tagLabel={high:'↑ Alta Prioridade',expand:'◎ Expandir Mix',new:'✦ Nova Categoria',risk:'⚠ Atenção',medium:'→ Oportunidade'};
+  document.getElementById('oppGrid').innerHTML=opps.slice(0,9).map(o=>`
+    <div class="opp-card ${o.priority}">
+      <div class="opp-tag ${o.priority}">${tagLabel[o.priority]||o.priority}</div>
+      <div class="opp-title">${o.title}</div>
+      <div class="opp-desc">${o.desc}</div>
+      <div class="opp-stats">${(o.stats||[]).map(s=>`<span class="opp-stat">${s}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+function buildGapPortfolio(){
+  const gaps=[];
+  for(const [cat,subs] of Object.entries(APP.subcatMap)){
+    for(const [sub,data] of Object.entries(subs)){
+      if(data.skus<=3){
+        const depth=data.skus;
+        gaps.push({cat,sub,skus:depth,v:data.v,q:data.q,risk:depth===1?100:depth===2?66:33});
+      }
+    }
+  }
+  gaps.sort((a,b)=>b.v-a.v);
+  const color=getCatColor;
+  document.getElementById('gapGrid').innerHTML=gaps.slice(0,12).map(g=>`
+    <div class="gap-card">
+      <div class="gap-cat" style="color:${color(g.cat)}">${g.cat}</div>
+      <div class="gap-label">${g.sub}</div>
+      <div class="gap-bar-wrap"><div class="gap-bar" style="width:${g.risk}%;background:${g.risk>=80?'#991B1B':g.risk>=50?'#D97706':'#166534'}"></div></div>
+      <div class="gap-meta">${g.skus} SKU${g.skus>1?'s':''} · ${fmtK(g.v)} · risco ${g.risk>=80?'alto':g.risk>=50?'médio':'baixo'}</div>
+    </div>`).join('');
+}
+
+function buildBrandAnalysis(){
+  const brandMap={};
+  APP.allSkus.forEach(s=>{
+    const m=s.marca||'—';
+    if(!brandMap[m])brandMap[m]={v:0,q:0,skus:0,cats:new Set()};
+    brandMap[m].v+=s.TotalValor;brandMap[m].q+=s.TotalQtd;brandMap[m].skus++;brandMap[m].cats.add(s.cat);
+  });
+  const brands=Object.entries(brandMap).sort((a,b)=>b[1].v-a[1].v).filter(([k])=>k!=='—');
+  const totalV=brands.reduce((s,[,d])=>s+d.v,0);
+  const maxV=Math.max(...brands.map(([,d])=>d.v));
+  document.getElementById('brandGrid').innerHTML=brands.map(([name,d])=>`
+    <div class="brand-card">
+      <div class="brand-name">${name}</div>
+      <div class="brand-skus">${d.skus} SKUs · ${d.cats.size} categorias</div>
+      <div class="brand-bar-row">
+        <div class="brand-bar-label">Faturamento</div>
+        <div class="brand-bar-track"><div class="brand-bar-fill" style="width:${Math.round(d.v/maxV*100)}%;background:var(--text)"></div></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px">${fmtK(d.v)} (${Math.round(d.v/totalV*100)}% do total)</div>
+    </div>`).join('');
+}
+
+function buildTicketCat(){
+  ch('cTicketCat');
+  const cats=APP.categories.filter(c=>c.Qtd>0);
+  const tickets=cats.map(c=>Math.round(c.Valor/c.Qtd));
+  const colors=cats.map(c=>CAT_COLOR[c.Categoria]||'#6B7280');
+  APP.charts.cTicketCat=new Chart(document.getElementById('cTicketCat'),{type:'bar',
+    data:{labels:cats.map(c=>c.Categoria),datasets:[{data:tickets,backgroundColor:colors,borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`R$ ${ctx.raw.toLocaleString('pt-BR')}/un`}}},
+      scales:{x:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},
+              y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
+}
+
+function buildTrendCat(){
+  ch('cTrendCat');
+  const labels=MONTH_SHEETS.map(s=>s.label);
+  const cats=APP.categories;
+  const trends=cats.map(cat=>{
+    const cbm=APP.catByMonth[cat.Categoria]||{};
+    const last3=labels.slice(-3).map(l=>(cbm[l]||{}).v||0).reduce((a,b)=>a+b,0)/3;
+    const prev3=labels.slice(-6,-3).map(l=>(cbm[l]||{}).v||0).reduce((a,b)=>a+b,0)/3;
+    return prev3>0?Math.round((last3-prev3)/prev3*100):0;
+  });
+  const colors=trends.map(t=>t>=0?'#166534':'#991B1B');
+  APP.charts.cTrendCat=new Chart(document.getElementById('cTrendCat'),{type:'bar',
+    data:{labels:cats.map(c=>c.Categoria),datasets:[{data:trends,backgroundColor:colors,borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw>=0?'+':''}${ctx.raw}% vs 3M anteriores`}}},
+      scales:{x:{ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX},grid:{color:GC}},
+              y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
+}
+
+// ── ABC ────────────────────────────────────────────────────────────────────────
+function buildAbcValor(){
+  const totalV=APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
+  const g={A:{skus:0,v:0,q:0},B:{skus:0,v:0,q:0},C:{skus:0,v:0,q:0}};
+  APP.allSkus.forEach(s=>{g[s.abcV].skus++;g[s.abcV].v+=s.TotalValor;g[s.abcV].q+=s.TotalQtd});
+  document.getElementById('abcVCards').innerHTML=['A','B','C'].map(cls=>`
     <div class="abc-card ${cls.toLowerCase()}">
       <div class="abc-cls">${cls}</div>
       <div class="abc-desc">${{A:'Alta prioridade',B:'Média prioridade',C:'Baixa prioridade'}[cls]}</div>
-      <div class="abc-stat">${groups[cls].skus} SKUs · ${Math.round(groups[cls].v/totalV*100)}% do faturamento</div>
-      <div class="abc-stat" style="font-weight:500;margin-top:4px">${fmtK(groups[cls].v)}</div>
+      <div class="abc-stat">${g[cls].skus} SKUs · ${Math.round(g[cls].v/totalV*100)}% do faturamento</div>
+      <div class="abc-stat" style="font-weight:500;margin-top:4px">${fmtK(g[cls].v)}</div>
     </div>`).join('');
-  document.getElementById('legAbcV').innerHTML = ['A','B','C'].map((cls,i)=>
-    `<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${cls} — ${Math.round(groups[cls].v/totalV*100)}%</span>`
-  ).join('');
-  ch('cAbcV'); ch('cTop15V');
-  APP.charts.cAbcV = new Chart(document.getElementById('cAbcV'), {
-    type:'doughnut',
-    data:{labels:['A','B','C'],datasets:[{data:['A','B','C'].map(c=>Math.round(groups[c].v)),backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}
-  });
-  const top15v = [...APP.allSkus].sort((a,b)=>b.TotalValor-a.TotalValor).slice(0,15).reverse();
-  APP.charts.cTop15V = new Chart(document.getElementById('cTop15V'), {
-    type:'bar', indexAxis:'y',
+  document.getElementById('legAbcV').innerHTML=['A','B','C'].map((cls,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${cls} — ${Math.round(g[cls].v/totalV*100)}%</span>`).join('');
+  ['cAbcV','cTop15V'].forEach(id=>{ch(id)});
+  APP.charts.cAbcV=new Chart(document.getElementById('cAbcV'),{type:'doughnut',
+    data:{labels:['A','B','C'],datasets:[{data:['A','B','C'].map(c=>Math.round(g[c].v)),backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
+  const top15v=[...APP.allSkus].sort((a,b)=>b.TotalValor-a.TotalValor).slice(0,15).reverse();
+  APP.charts.cTop15V=new Chart(document.getElementById('cTop15V'),{type:'bar',indexAxis:'y',
     data:{labels:top15v.map(s=>s.nome.length>36?s.nome.slice(0,36)+'…':s.nome),datasets:[{data:top15v.map(s=>Math.round(s.TotalValor)),backgroundColor:'#1E3A5F',borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtBRL(ctx.raw)}}},
-      scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:'#A09C98'},grid:{color:'rgba(0,0,0,.05)'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}}}
-  });
-  document.getElementById('tblAbcV').innerHTML = '<div class="tbl-wrap">' + buildTable(APP.allSkus.filter(s=>s.abcV==='A'), 'valor') + '</div>';
+      scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}}}});
+  document.getElementById('tblAbcV').innerHTML='<div class="tbl-wrap">'+buildTable(APP.allSkus.filter(s=>s.abcV==='A'))+'</div>';
 }
 
-function buildAbcQtd() {
-  const totalQ = APP.allSkus.reduce((s,x)=>s+x.TotalQtd,0);
-  const groups = {A:{skus:0,v:0,q:0},B:{skus:0,v:0,q:0},C:{skus:0,v:0,q:0}};
-  APP.allSkus.forEach(s => { groups[s.abcQ].skus++; groups[s.abcQ].v+=s.TotalValor; groups[s.abcQ].q+=s.TotalQtd; });
-  document.getElementById('abcQCards').innerHTML = ['A','B','C'].map(cls => `
+function buildAbcQtd(){
+  const totalQ=APP.allSkus.reduce((s,x)=>s+x.TotalQtd,0);
+  const g={A:{skus:0,v:0,q:0},B:{skus:0,v:0,q:0},C:{skus:0,v:0,q:0}};
+  APP.allSkus.forEach(s=>{g[s.abcQ].skus++;g[s.abcQ].v+=s.TotalValor;g[s.abcQ].q+=s.TotalQtd});
+  document.getElementById('abcQCards').innerHTML=['A','B','C'].map(cls=>`
     <div class="abc-card ${cls.toLowerCase()}">
       <div class="abc-cls">${cls}</div>
       <div class="abc-desc">${{A:'Alto volume',B:'Volume médio',C:'Baixo volume'}[cls]}</div>
-      <div class="abc-stat">${groups[cls].skus} SKUs · ${Math.round(groups[cls].q/totalQ*100)}% do volume</div>
-      <div class="abc-stat" style="font-weight:500;margin-top:4px">${Math.round(groups[cls].q).toLocaleString('pt-BR')} un.</div>
+      <div class="abc-stat">${g[cls].skus} SKUs · ${Math.round(g[cls].q/totalQ*100)}% do volume</div>
+      <div class="abc-stat" style="font-weight:500;margin-top:4px">${Math.round(g[cls].q).toLocaleString('pt-BR')} un.</div>
     </div>`).join('');
-  document.getElementById('legAbcQ').innerHTML = ['A','B','C'].map((cls,i)=>
-    `<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${cls} — ${Math.round(groups[cls].q/totalQ*100)}%</span>`
-  ).join('');
-  ch('cAbcQ'); ch('cTop15Q');
-  APP.charts.cAbcQ = new Chart(document.getElementById('cAbcQ'), {
-    type:'doughnut',
-    data:{labels:['A','B','C'],datasets:[{data:['A','B','C'].map(c=>Math.round(groups[c].q)),backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}}}
-  });
-  const top15q = [...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).slice(0,15).reverse();
-  APP.charts.cTop15Q = new Chart(document.getElementById('cTop15Q'), {
-    type:'bar', indexAxis:'y',
+  document.getElementById('legAbcQ').innerHTML=['A','B','C'].map((cls,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${cls} — ${Math.round(g[cls].q/totalQ*100)}%</span>`).join('');
+  ['cAbcQ','cTop15Q'].forEach(id=>{ch(id)});
+  APP.charts.cAbcQ=new Chart(document.getElementById('cAbcQ'),{type:'doughnut',
+    data:{labels:['A','B','C'],datasets:[{data:['A','B','C'].map(c=>Math.round(g[c].q)),backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}}}});
+  const top15q=[...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).slice(0,15).reverse();
+  APP.charts.cTop15Q=new Chart(document.getElementById('cTop15Q'),{type:'bar',indexAxis:'y',
     data:{labels:top15q.map(s=>s.nome.length>36?s.nome.slice(0,36)+'…':s.nome),datasets:[{data:top15q.map(s=>Math.round(s.TotalQtd)),backgroundColor:'#166534',borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}},
-      scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:'#A09C98'},grid:{color:'rgba(0,0,0,.05)'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}}}
-  });
-  document.getElementById('tblAbcQ').innerHTML = '<div class="tbl-wrap">' + buildTable([...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).filter(s=>s.abcQ==='A'), 'qtd') + '</div>';
+      scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}}}});
+  document.getElementById('tblAbcQ').innerHTML='<div class="tbl-wrap">'+buildTable([...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).filter(s=>s.abcQ==='A'))+'</div>';
 }
 
-function buildTable(data, sortBy) {
-  const rows = data.map((s,i) => `
-    <tr>
-      <td>${i+1}</td>
-      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
-      <td class="prod-name" title="${s.nome}">${s.nome}</td>
-      <td>${s.cat}</td>
-      <td style="color:var(--text3);font-size:11px">${s.sub||''}</td>
-      <td class="num">${Math.round(s.TotalValor).toLocaleString('pt-BR')}</td>
-      <td class="num">${Math.round(s.TotalQtd).toLocaleString('pt-BR')}</td>
-      <td><span class="badge ${s.abcV}">${s.abcV}</span></td>
-      <td><span class="badge ${s.abcQ}">${s.abcQ}</span></td>
-    </tr>`).join('');
-  return `<table><thead><tr><th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th style="text-align:right">Valor R$</th><th style="text-align:right">Qtd</th><th>ABC V</th><th>ABC Q</th></tr></thead><tbody>${rows}</tbody></table>`;
+function buildTable(data){
+  const rows=data.map((s,i)=>`<tr>
+    <td>${i+1}</td>
+    <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
+    <td class="prod-name" title="${s.nome}">${s.nome}</td>
+    <td style="color:${getCatColor(s.cat)};font-weight:500;font-size:11px">${s.cat}</td>
+    <td style="color:var(--text3);font-size:11px">${s.sub||'—'}</td>
+    <td style="font-size:11px;color:var(--text3)">${s.marca||'—'}</td>
+    <td class="num">${Math.round(s.TotalValor).toLocaleString('pt-BR')}</td>
+    <td class="num">${Math.round(s.TotalQtd).toLocaleString('pt-BR')}</td>
+    <td><span class="badge ${s.abcV}">${s.abcV}</span></td>
+    <td><span class="badge ${s.abcQ}">${s.abcQ}</span></td>
+  </tr>`).join('');
+  return `<table><thead><tr><th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>Marca</th><th style="text-align:right">Valor R$</th><th style="text-align:right">Qtd</th><th>ABC V</th><th>ABC Q</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-/* ─── TODOS OS SKUs ─── */
-function buildTodos() {
-  const cats = [...new Set(APP.allSkus.map(s=>s.cat))].sort();
-  document.getElementById('fCat').innerHTML = '<option value="">Todas as categorias</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
-  filteredSkus = [...APP.allSkus]; skuPage = 0; renderTodosPage();
+// ── TODOS OS SKUs ─────────────────────────────────────────────────────────────
+function buildTodos(){
+  const cats=[...new Set(APP.allSkus.map(s=>s.cat))].sort();
+  const marcas=[...new Set(APP.allSkus.map(s=>s.marca).filter(Boolean))].sort();
+  document.getElementById('fCat').innerHTML='<option value="">Todas as categorias</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  document.getElementById('fMarca').innerHTML='<option value="">Todas as marcas</option>'+marcas.map(m=>`<option value="${m}">${m}</option>`).join('');
+  filteredSkus=[...APP.allSkus];skuPage=0;renderTodosPage();
 }
-
-function filterTable() {
-  const q = document.getElementById('skuSearch').value.toLowerCase();
-  const abcV = document.getElementById('fAbcV').value;
-  const cat = document.getElementById('fCat').value;
-  const subcat = document.getElementById('fSubcat').value;
-
-  // Update subcat options based on cat
-  const catFilter = cat;
-  const subcats = catFilter ? [...new Set(APP.allSkus.filter(s=>s.cat===catFilter).map(s=>s.sub))].sort() : [];
-  document.getElementById('fSubcat').innerHTML = '<option value="">Todas as subcategorias</option>' + subcats.map(s=>`<option value="${s}">${s}</option>`).join('');
-
-  filteredSkus = APP.allSkus.filter(s => {
-    if (abcV && s.abcV !== abcV) return false;
-    if (cat && s.cat !== cat) return false;
-    if (subcat && s.sub !== subcat) return false;
-    if (q && !s.nome.toLowerCase().includes(q) && !String(s.sku).includes(q)) return false;
+function filterTable(){
+  const q=document.getElementById('skuSearch').value.toLowerCase();
+  const abcV=document.getElementById('fAbcV').value;
+  const cat=document.getElementById('fCat').value;
+  const marca=document.getElementById('fMarca').value;
+  // update subcat options
+  const subcats=cat?[...new Set(APP.allSkus.filter(s=>s.cat===cat).map(s=>s.sub))].sort():[];
+  document.getElementById('fSubcat').innerHTML='<option value="">Todas as subcategorias</option>'+subcats.map(s=>`<option value="${s}">${s}</option>`).join('');
+  const subcat=document.getElementById('fSubcat').value;
+  filteredSkus=APP.allSkus.filter(s=>{
+    if(abcV&&s.abcV!==abcV)return false;
+    if(cat&&s.cat!==cat)return false;
+    if(subcat&&s.sub!==subcat)return false;
+    if(marca&&s.marca!==marca)return false;
+    if(q&&!s.nome.toLowerCase().includes(q)&&!String(s.sku).includes(q))return false;
     return true;
   });
-  skuPage = 0; renderTodosPage();
+  skuPage=0;renderTodosPage();
 }
-
-function renderTodosPage() {
-  const start = skuPage * PAGE;
-  const slice = filteredSkus.slice(start, start+PAGE);
-  document.getElementById('tblTodos').innerHTML = '<div class="tbl-wrap">' + buildTable(slice, 'valor') + '</div>';
-  document.getElementById('pag').innerHTML = `
+function renderTodosPage(){
+  const start=skuPage*PAGE,slice=filteredSkus.slice(start,start+PAGE);
+  document.getElementById('tblTodos').innerHTML='<div class="tbl-wrap">'+buildTable(slice)+'</div>';
+  document.getElementById('pag').innerHTML=`
     <button class="pag-btn" onclick="skuPage--;renderTodosPage()" ${skuPage===0?'disabled':''}>← Anterior</button>
     <span class="pag-info">${start+1}–${Math.min(start+PAGE,filteredSkus.length)} de ${filteredSkus.length}</span>
     <button class="pag-btn" onclick="skuPage++;renderTodosPage()" ${start+PAGE>=filteredSkus.length?'disabled':''}>Próximo →</button>`;
 }
 
-function showTab(id) {
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    t.classList.toggle('active', ['visao','categorias','abc-valor','abc-qtd','todos'][i] === id);
-  });
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+function showTab(id){
+  const tabs=['visao','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
