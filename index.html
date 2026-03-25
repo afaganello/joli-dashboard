@@ -343,7 +343,12 @@ async function fetchSheet(sheetName) {
   const r = await fetch(url);
   if (!r.ok) throw new Error(`Erro ao ler aba "${sheetName}": ${r.status}`);
   const d = await r.json();
-  return d.values || [];
+  const rows = d.values || [];
+  if (rows.length > 0) {
+    const first = String(rows[0][0] || '').trim();
+    if (isNaN(parseInt(first))) return rows.slice(1);
+  }
+  return rows;
 }
 
 async function loadData() {
