@@ -1,302 +1,664 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Joli — Dashboard de Vendas</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bg: #F5F4F0;
-    --surface: #FFFFFF;
-    --surface2: #EEECE6;
-    --border: #E0DDD5;
-    --text: #1A1917;
-    --text2: #6B6860;
-    --text3: #A09D96;
-    --accent: #1A1917;
-    --green: #2D6A4F;
-    --green-bg: #D8F3DC;
-    --amber: #92400E;
-    --amber-bg: #FEF3C7;
-    --red: #9B1C1C;
-    --red-bg: #FEE2E2;
-    --blue: #1E3A5F;
-    --blue-bg: #DBEAFE;
-    --cat1: #2D6A4F;
-    --cat2: #1E3A5F;
-    --cat3: #7C3AED;
-    --cat4: #C2410C;
-    --cat5: #B45309;
-    --cat6: #BE185D;
-    --cat7: #374151;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
-  .header { background: var(--text); color: white; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
-  .header-left { display: flex; align-items: baseline; gap: 16px; }
-  .logo { font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #999; }
-  .title { font-size: 18px; font-weight: 500; color: white; }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .sync-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 7px 16px; border-radius: 6px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
-  .sync-btn:hover { background: rgba(255,255,255,0.18); }
-  .sync-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .last-update { font-size: 12px; color: #888; }
-  .spin { animation: spin 1s linear infinite; display: inline-block; }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  .loading-screen { position: fixed; inset: 0; background: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; gap: 20px; transition: opacity 0.4s; }
-  .loading-screen.hidden { opacity: 0; pointer-events: none; }
-  .loading-logo { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: #666; }
-  .loading-title { font-size: 28px; font-weight: 300; color: white; }
-  .loading-bar-wrap { width: 240px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px; overflow: hidden; }
-  .loading-bar { height: 100%; background: white; border-radius: 1px; width: 0%; transition: width 0.3s; }
-  .loading-msg { font-size: 12px; color: #666; }
-  .error-box { background: var(--red-bg); border: 1px solid #FCA5A5; border-radius: 8px; padding: 16px 20px; margin: 24px 32px; color: var(--red); font-size: 13px; display: none; }
-  .error-box.visible { display: block; }
-  .main { padding: 24px 32px; max-width: 1400px; }
-  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
-  .tab { padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none; font-family: 'DM Sans', sans-serif; transition: color 0.15s; letter-spacing: 0.01em; }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--text); border-bottom-color: var(--text); }
-  .panel { display: none; }
-  .panel.active { display: block; }
-  .kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
-  .kpi-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
-  .kpi-value { font-size: 26px; font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
-  .kpi-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
-  .kpi-trend { font-size: 12px; margin-top: 4px; font-weight: 500; }
-  .kpi-trend.up { color: var(--green); }
-  .kpi-trend.dn { color: var(--red); }
-  .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
-  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
-  .chart-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
-  .chart-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 16px; }
-  .legend-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
-  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
-  .leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-  .abc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .abc-card { border-radius: 10px; padding: 20px; }
-  .abc-card.a { background: var(--green-bg); }
-  .abc-card.b { background: var(--amber-bg); }
-  .abc-card.c { background: var(--red-bg); }
-  .abc-cls { font-size: 32px; font-weight: 600; font-family: 'DM Mono', monospace; }
-  .abc-card.a .abc-cls { color: var(--green); }
-  .abc-card.b .abc-cls { color: var(--amber); }
-  .abc-card.c .abc-cls { color: var(--red); }
-  .abc-desc { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 6px; }
-  .abc-card.a .abc-desc { color: var(--green); }
-  .abc-card.b .abc-desc { color: var(--amber); }
-  .abc-card.c .abc-desc { color: var(--red); }
-  .abc-stat { font-size: 13px; margin-top: 10px; }
-  .abc-card.a .abc-stat { color: #1A4731; }
-  .abc-card.b .abc-stat { color: #78350F; }
-  .abc-card.c .abc-stat { color: #7F1D1D; }
-  .tbl-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); border-bottom: 1px solid var(--border); white-space: nowrap; }
-  tbody td { padding: 9px 12px; color: var(--text); border-bottom: 1px solid var(--border); }
-  tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover td { background: var(--bg); }
-  td.num { text-align: right; font-family: 'DM Mono', monospace; font-size: 12px; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; }
-  .badge.A { background: var(--green-bg); color: var(--green); }
-  .badge.B { background: var(--amber-bg); color: var(--amber); }
-  .badge.C { background: var(--red-bg); color: var(--red); }
-  .prod-name { max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .filter-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-  .filter-row input, .filter-row select { padding: 8px 13px; font-size: 13px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.15s; }
-  .filter-row input { flex: 1; min-width: 200px; }
-  .filter-row input:focus, .filter-row select:focus { border-color: #999; }
-  .pag { display: flex; gap: 8px; margin-top: 14px; align-items: center; }
-  .pag-btn { padding: 5px 14px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
-  .pag-btn:hover:not(:disabled) { background: var(--surface2); }
-  .pag-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .pag-info { font-size: 12px; color: var(--text3); margin: 0 4px; }
-  .period-row { display: flex; gap: 6px; margin-bottom: 20px; }
-  .period-btn { padding: 5px 14px; font-size: 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); color: var(--text2); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
-  .period-btn.active { background: var(--text); color: white; border-color: var(--text); }
-  .insights { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
-  .insight-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
-  .insight-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
-  .insight-chip .dot.amber { background: #F59E0B; }
-  .insight-chip .dot.blue { background: #3B82F6; }
-  @media (max-width: 768px) {
-    .main { padding: 16px; }
-    .header { padding: 14px 16px; }
-    .kpi-row { grid-template-columns: repeat(2, 1fr); }
-    .chart-grid { grid-template-columns: 1fr; }
-    .abc-grid { grid-template-columns: 1fr; }
-  }
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --border: #E8E4DC;
+  --border2: #D4CECC;
+  --text: #1A1917;
+  --text2: #6B6760;
+  --text3: #A09C98;
+  --accent: #1A1917;
+  --green: #166534;
+  --green-bg: #DCFCE7;
+  --red: #991B1B;
+  --red-bg: #FEE2E2;
+  --amber: #92400E;
+  --amber-bg: #FEF3C7;
+  --blue: #1E40AF;
+  --blue-bg: #DBEAFE;
+  --cat1: #1A1917;
+  --cat2: #166534;
+  --cat3: #1D4ED8;
+  --cat4: #7C2D12;
+  --cat5: #6B21A8;
+  --cat6: #0F766E;
+  --cat7: #9A3412;
+  --radius: 10px;
+  --radius-sm: 6px;
+  font-size: 14px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+/* ─── HEADER ─── */
+.header {
+  background: var(--text);
+  color: #F7F5F0;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: .02em; }
+.brand span { opacity: .45; font-weight: 400; margin: 0 6px; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.last-update { font-family: 'DM Mono', monospace; font-size: 11px; opacity: .45; }
+.sync-btn {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #F7F5F0;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: background .2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.sync-btn:hover { background: rgba(255,255,255,.18); }
+.sync-btn:disabled { opacity: .4; cursor: not-allowed; }
+.spin { display: inline-block; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+/* ─── LOADING ─── */
+#loadingScreen {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 200; gap: 16px;
+}
+#loadingScreen.hidden { display: none; }
+.load-brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; }
+.load-bar-wrap { width: 240px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.load-bar { height: 100%; background: var(--text); border-radius: 2px; transition: width .3s; width: 0; }
+.load-msg { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
+/* ─── NAV TABS ─── */
+.nav-tabs {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex; gap: 0;
+}
+.tab {
+  padding: 14px 20px 13px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--text); border-bottom-color: var(--text); }
+/* ─── MAIN ─── */
+.main { max-width: 1280px; margin: 0 auto; padding: 28px 32px 60px; }
+/* ─── KPI BAR ─── */
+.kpi-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.kpi-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; font-family: 'DM Mono', monospace; }
+.kpi-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
+.kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+.kpi-trend { font-size: 12px; margin-top: 6px; font-weight: 500; }
+.kpi-trend.up { color: var(--green); }
+.kpi-trend.dn { color: var(--red); }
+/* ─── INSIGHTS BAR ─── */
+.insights-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+.insight-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  display: flex; align-items: center; gap: 7px;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.dot.blue { background: var(--blue); }
+.dot.amber { background: #D97706; }
+/* ─── PANELS ─── */
+.panel { display: none; }
+.panel.active { display: block; }
+/* ─── PERIOD BTNS ─── */
+.period-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+.period-label { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
+.period-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  color: var(--text2);
+  transition: all .15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.period-btn.active, .period-btn:hover { background: var(--text); color: #fff; border-color: var(--text); }
+/* ─── CHART GRIDS ─── */
+.chart-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.chart-box.full { grid-column: 1 / -1; }
+.chart-box.span2 { grid-column: span 2; }
+.chart-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+.chart-subtitle { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 16px; }
+.chart-wrap { height: 200px; }
+.chart-wrap.tall { height: 280px; }
+.chart-wrap.xtall { height: 360px; }
+/* ─── LEGEND ─── */
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
+.leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+/* ─── ABC CARDS ─── */
+.abc-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.abc-card {
+  border-radius: var(--radius);
+  padding: 18px;
+  border: 1px solid var(--border);
+}
+.abc-card.a { background: #F0FDF4; border-color: #BBF7D0; }
+.abc-card.b { background: #FFFBEB; border-color: #FDE68A; }
+.abc-card.c { background: #FFF1F2; border-color: #FECDD3; }
+.abc-cls { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.abc-card.a .abc-cls { color: var(--green); }
+.abc-card.b .abc-cls { color: var(--amber); }
+.abc-card.c .abc-cls { color: var(--red); }
+.abc-desc { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 8px; }
+.abc-stat { font-size: 12px; color: var(--text3); }
+/* ─── TABLE ─── */
+.tbl-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th { background: #F7F5F0; padding: 10px 12px; text-align: left; font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+tbody td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #FAFAF8; }
+.num { text-align: right; font-family: 'DM Mono', monospace; }
+.prod-name { max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); font-weight: 400; }
+.badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; font-family: 'DM Mono', monospace; }
+.badge.A { background: var(--green-bg); color: var(--green); }
+.badge.B { background: var(--amber-bg); color: var(--amber); }
+.badge.C { background: var(--red-bg); color: var(--red); }
+/* ─── PAGINATION ─── */
+.pag { display: flex; align-items: center; gap: 12px; justify-content: flex-end; margin-top: 14px; }
+.pag-btn {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 14px; font-size: 12px; cursor: pointer; color: var(--text2);
+  font-family: 'DM Sans', sans-serif;
+}
+.pag-btn:disabled { opacity: .35; cursor: not-allowed; }
+.pag-info { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
+/* ─── FILTER ROW ─── */
+.filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+.filter-row input, .filter-row select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+}
+.filter-row input:focus, .filter-row select:focus { border-color: var(--text); }
+.filter-row input { flex: 1; min-width: 200px; }
+/* ─── ERROR BOX ─── */
+.error-box {
+  background: var(--red-bg); border: 1px solid #FECACA; border-radius: var(--radius);
+  padding: 14px 18px; color: var(--red); font-size: 13px; margin-bottom: 20px;
+  display: none;
+}
+.error-box.visible { display: block; }
+/* ─── SECTION HEADER ─── */
+.section-hdr { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
+.section-hdr h2 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+.section-hdr p { font-size: 12px; color: var(--text3); }
+/* ─── CAT MODULE (Módulo 3) ─── */
+.cat-kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.cat-kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+.cat-kpi-card:hover { border-color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.cat-kpi-card.selected { border-color: var(--text); background: #FAFAF8; }
+.cat-kpi-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.cat-kpi-card[data-ci="0"]::before { background: var(--cat1); }
+.cat-kpi-card[data-ci="1"]::before { background: var(--cat2); }
+.cat-kpi-card[data-ci="2"]::before { background: var(--cat3); }
+.cat-kpi-card[data-ci="3"]::before { background: var(--cat4); }
+.cat-kpi-card[data-ci="4"]::before { background: var(--cat5); }
+.cat-kpi-card[data-ci="5"]::before { background: var(--cat6); }
+.cat-kpi-card[data-ci="6"]::before { background: var(--cat7); }
+.cat-name { font-size: 11px; font-weight: 500; color: var(--text); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .04em; }
+.cat-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
+.cat-meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.cat-badge { font-size: 10px; font-family: 'DM Mono', monospace; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; color: var(--text2); }
+.cat-badge.pos { background: var(--green-bg); border-color: #BBF7D0; color: var(--green); }
+.cat-badge.neg { background: var(--red-bg); border-color: #FECDD3; color: var(--red); }
+/* ─── SUBCAT SECTION ─── */
+.subcat-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.subcat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.subcat-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+.subcat-toggle { font-size: 11px; color: var(--text3); cursor: pointer; text-decoration: underline; }
+.subcat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.subcat-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.subcat-card-name { font-size: 11px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.subcat-val { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); }
+.subcat-meta { font-size: 10px; color: var(--text3); margin-top: 4px; font-family: 'DM Mono', monospace; }
+/* ─── HEATMAP ─── */
+.heatmap-wrap { overflow-x: auto; }
+.heatmap-table { border-collapse: collapse; font-size: 11px; font-family: 'DM Mono', monospace; min-width: 700px; width: 100%; }
+.heatmap-table th { padding: 8px 10px; text-align: center; color: var(--text3); font-weight: 400; border-bottom: 1px solid var(--border); }
+.heatmap-table th:first-child { text-align: left; min-width: 140px; }
+.heatmap-table td { padding: 6px 10px; text-align: center; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+.heatmap-table td:first-child { text-align: left; font-weight: 500; color: var(--text); border-right: 1px solid var(--border2); }
+.hm-cell { border-radius: 3px; padding: 4px 8px; font-size: 10px; display: inline-block; min-width: 52px; text-align: center; }
+/* ─── OPPORTUNITY BOX ─── */
+.opp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 16px; }
+.opp-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  border-left: 3px solid var(--text);
+}
+.opp-card.growth { border-left-color: var(--green); }
+.opp-card.risk { border-left-color: var(--red); }
+.opp-card.explore { border-left-color: #7C3AED; }
+.opp-icon { font-size: 18px; margin-bottom: 6px; }
+.opp-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.opp-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .main { padding: 16px; }
+  .kpi-bar { grid-template-columns: 1fr 1fr; }
+  .chart-2col, .chart-3col { grid-template-columns: 1fr; }
+  .abc-cards { grid-template-columns: 1fr; }
+  .nav-tabs { overflow-x: auto; padding: 0 16px; }
+}
 </style>
 </head>
 <body>
 
-<div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">Cetus × Joli</div>
-  <div class="loading-title">Dashboard de Vendas</div>
-  <div class="loading-bar-wrap"><div class="loading-bar" id="loadBar"></div></div>
-  <div class="loading-msg" id="loadMsg">Conectando ao Google Sheets...</div>
+<div id="loadingScreen">
+  <div class="load-brand">Cetus × Joli</div>
+  <div style="font-size:13px;color:var(--text3);margin-bottom:8px">Dashboard de Vendas</div>
+  <div class="load-bar-wrap"><div class="load-bar" id="loadBar"></div></div>
+  <div class="load-msg" id="loadMsg">Conectando ao Google Sheets...</div>
 </div>
 
-<div class="header">
-  <div class="header-left">
-    <span class="logo">Cetus × Joli</span>
-    <span class="title">Dashboard de Vendas</span>
-  </div>
+<header class="header">
+  <div class="brand">Cetus <span>×</span> Joli <span style="font-size:11px;opacity:.3;margin-left:4px">Dashboard de Vendas</span></div>
   <div class="header-right">
     <span class="last-update" id="lastUpdate"></span>
     <button class="sync-btn" id="syncBtn" onclick="loadData()">
       <span id="syncIcon">↻</span> Atualizar
     </button>
   </div>
-</div>
+</header>
 
-<div class="error-box" id="errorBox"></div>
+<nav class="nav-tabs">
+  <div class="tab active" onclick="showTab('visao')">Visão Geral</div>
+  <div class="tab" onclick="showTab('categorias')">Categorias & Mix</div>
+  <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
+  <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Quantidade</div>
+  <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
+</nav>
 
-<div class="main" id="mainContent" style="display:none">
-  <div class="kpi-row" id="kpis"></div>
-  <div class="insights" id="insights"></div>
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('visao')">Visão Geral</button>
-    <button class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</button>
-    <button class="tab" onclick="showTab('abc-qtd')">Curva ABC — Quantidade</button>
-    <button class="tab" onclick="showTab('todos')">Todos os SKUs</button>
-  </div>
+<main class="main" id="mainContent" style="display:none">
+  <div class="error-box" id="errorBox"></div>
 
-  <div id="visao" class="panel active">
-    <div class="period-row" id="periodBtns"></div>
-    <div class="chart-grid">
-      <div class="chart-card">
-        <div class="chart-label">Evolução mensal</div>
-        <div class="chart-title">Faturamento (R$)</div>
-        <div style="position:relative;height:230px"><canvas id="cFat"></canvas></div>
+  <!-- KPIs -->
+  <div class="kpi-bar" id="kpis"></div>
+  <div class="insights-bar" id="insights"></div>
+
+  <!-- VISÃO GERAL -->
+  <div class="panel active" id="visao">
+    <div class="period-row">
+      <span class="period-label">Período:</span>
+      <div id="periodBtns"></div>
+    </div>
+    <div class="chart-2col">
+      <div class="chart-box span2">
+        <div class="chart-title">Evolução mensal</div>
+        <div class="chart-subtitle">Faturamento (R$)</div>
+        <div class="chart-wrap"><canvas id="cFat"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-label">Mix de produtos</div>
-        <div class="chart-title">Faturamento por categoria</div>
-        <div id="legCat" class="legend-row"></div>
-        <div style="position:relative;height:190px"><canvas id="cCat"></canvas></div>
+    </div>
+    <div class="chart-2col">
+      <div class="chart-box">
+        <div class="chart-title">Mix de produtos</div>
+        <div class="chart-subtitle">Faturamento por categoria</div>
+        <div class="legend" id="legCat"></div>
+        <div class="chart-wrap"><canvas id="cCat"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-label">Volume</div>
-        <div class="chart-title">Unidades vendidas por mês</div>
-        <div style="position:relative;height:230px"><canvas id="cQtd"></canvas></div>
+      <div class="chart-box">
+        <div class="chart-title">Volume</div>
+        <div class="chart-subtitle">Unidades vendidas por mês</div>
+        <div class="chart-wrap"><canvas id="cQtd"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-label">Eficiência</div>
-        <div class="chart-title">Ticket médio por mês (R$/un)</div>
-        <div style="position:relative;height:230px"><canvas id="cTicket"></canvas></div>
+    </div>
+    <div class="chart-2col">
+      <div class="chart-box">
+        <div class="chart-title">Eficiência</div>
+        <div class="chart-subtitle">Ticket médio por mês (R$/un)</div>
+        <div class="chart-wrap"><canvas id="cTicket"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Concentração</div>
+        <div class="chart-subtitle">Participação no faturamento</div>
+        <div class="legend" id="legAbcVSmall"></div>
+        <div class="chart-wrap"><canvas id="cAbcVSmall"></canvas></div>
       </div>
     </div>
   </div>
 
-  <div id="abc-valor" class="panel">
-    <div class="abc-grid" id="abcVCards"></div>
-    <div class="chart-grid">
-      <div class="chart-card">
-        <div class="chart-label">Concentração</div>
-        <div class="chart-title">Participação no faturamento</div>
-        <div id="legAbcV" class="legend-row"></div>
-        <div style="position:relative;height:200px"><canvas id="cAbcV"></canvas></div>
+  <!-- CATEGORIAS & MIX — MÓDULO 3 -->
+  <div class="panel" id="categorias">
+    <div class="section-hdr">
+      <h2>Categorias & Mix</h2>
+      <p>KPIs por categoria e subcategoria para decisão de portfólio</p>
+    </div>
+
+    <!-- Cat KPI cards -->
+    <div class="cat-kpi-grid" id="catKpiGrid"></div>
+
+    <!-- Subcat detail -->
+    <div class="subcat-section" id="subcatSection">
+      <div class="subcat-header">
+        <div class="subcat-title" id="subcatTitle">Selecione uma categoria acima</div>
+        <div class="subcat-toggle" onclick="resetCatSelection()">Ver todas</div>
       </div>
-      <div class="chart-card">
-        <div class="chart-label">Ranking</div>
-        <div class="chart-title">Top 15 SKUs por faturamento</div>
-        <div style="position:relative;height:500px"><canvas id="cTop15V"></canvas></div>
+      <div class="subcat-grid" id="subcatGrid"></div>
+    </div>
+
+    <!-- 2 charts row -->
+    <div class="chart-2col">
+      <div class="chart-box">
+        <div class="chart-title">Receita por categoria</div>
+        <div class="chart-subtitle">Faturamento total R$ (12 meses)</div>
+        <div class="chart-wrap tall"><canvas id="cCatBar"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Volume por categoria</div>
+        <div class="chart-subtitle">Unidades vendidas (12 meses)</div>
+        <div class="chart-wrap tall"><canvas id="cCatQtdBar"></canvas></div>
       </div>
     </div>
-    <div class="chart-card" style="margin-top:16px">
-      <div class="chart-label">Itens classe A</div>
-      <div class="chart-title" style="margin-bottom:14px">Produtos que representam 80% do faturamento</div>
-      <div class="tbl-wrap" id="tblAbcV"></div>
+
+    <!-- Heatmap -->
+    <div class="chart-box" style="margin-bottom:16px">
+      <div class="chart-title">Mapa de calor</div>
+      <div class="chart-subtitle" style="margin-bottom:16px">Faturamento por categoria × mês</div>
+      <div class="heatmap-wrap" id="heatmapWrap"></div>
+    </div>
+
+    <!-- Opportunities -->
+    <div class="chart-box" style="margin-bottom:16px">
+      <div class="chart-title">Análise de oportunidades</div>
+      <div class="chart-subtitle">Categorias e subcategorias para explorar ou aprofundar</div>
+      <div class="opp-grid" id="oppGrid"></div>
+    </div>
+
+    <!-- SKU depth table -->
+    <div class="chart-box">
+      <div class="chart-title">Profundidade de SKUs por categoria</div>
+      <div class="chart-subtitle" style="margin-bottom:16px">Quantidade de produtos ativos, ticket médio e ABC</div>
+      <div class="tbl-wrap" id="catDepthTable"></div>
     </div>
   </div>
 
-  <div id="abc-qtd" class="panel">
-    <div class="abc-grid" id="abcQCards"></div>
-    <div class="chart-grid">
-      <div class="chart-card">
-        <div class="chart-label">Concentração</div>
-        <div class="chart-title">Participação no volume</div>
-        <div id="legAbcQ" class="legend-row"></div>
-        <div style="position:relative;height:200px"><canvas id="cAbcQ"></canvas></div>
+  <!-- ABC VALOR -->
+  <div class="panel" id="abc-valor">
+    <div class="abc-cards" id="abcVCards"></div>
+    <div class="chart-2col">
+      <div class="chart-box">
+        <div class="chart-title">Concentração</div>
+        <div class="chart-subtitle">Participação no faturamento</div>
+        <div class="legend" id="legAbcV"></div>
+        <div class="chart-wrap"><canvas id="cAbcV"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-label">Ranking</div>
-        <div class="chart-title">Top 15 SKUs por quantidade</div>
-        <div style="position:relative;height:500px"><canvas id="cTop15Q"></canvas></div>
+      <div class="chart-box">
+        <div class="chart-title">Ranking</div>
+        <div class="chart-subtitle">Top 15 SKUs por faturamento</div>
+        <div class="chart-wrap tall"><canvas id="cTop15V"></canvas></div>
       </div>
     </div>
-    <div class="chart-card" style="margin-top:16px">
-      <div class="chart-label">Itens classe A</div>
-      <div class="chart-title" style="margin-bottom:14px">Produtos que representam 80% do volume</div>
-      <div class="tbl-wrap" id="tblAbcQ"></div>
-    </div>
+    <div class="section-hdr" style="margin-top:8px"><h2>Itens classe A</h2><p>Produtos que representam 80% do faturamento</p></div>
+    <div id="tblAbcV"></div>
   </div>
 
-  <div id="todos" class="panel">
-    <div class="chart-card">
-      <div class="filter-row">
-        <input type="text" id="skuSearch" placeholder="Buscar por nome ou código..." oninput="filterTable()">
-        <select id="fAbcV" onchange="filterTable()">
-          <option value="">ABC Valor — todos</option>
-          <option value="A">Classe A</option>
-          <option value="B">Classe B</option>
-          <option value="C">Classe C</option>
-        </select>
-        <select id="fCat" onchange="filterTable()">
-          <option value="">Todas as categorias</option>
-        </select>
+  <!-- ABC QTDE -->
+  <div class="panel" id="abc-qtd">
+    <div class="abc-cards" id="abcQCards"></div>
+    <div class="chart-2col">
+      <div class="chart-box">
+        <div class="chart-title">Concentração</div>
+        <div class="chart-subtitle">Participação no volume</div>
+        <div class="legend" id="legAbcQ"></div>
+        <div class="chart-wrap"><canvas id="cAbcQ"></canvas></div>
       </div>
-      <div class="tbl-wrap" id="tblTodos"></div>
-      <div class="pag" id="pag"></div>
+      <div class="chart-box">
+        <div class="chart-title">Ranking</div>
+        <div class="chart-subtitle">Top 15 SKUs por quantidade</div>
+        <div class="chart-wrap tall"><canvas id="cTop15Q"></canvas></div>
+      </div>
     </div>
+    <div class="section-hdr" style="margin-top:8px"><h2>Itens classe A</h2><p>Produtos que representam 80% do volume</p></div>
+    <div id="tblAbcQ"></div>
   </div>
-</div>
+
+  <!-- TODOS OS SKUs -->
+  <div class="panel" id="todos">
+    <div class="filter-row">
+      <input type="text" id="skuSearch" placeholder="Buscar por nome ou SKU..." oninput="filterTable()"/>
+      <select id="fAbcV" onchange="filterTable()">
+        <option value="">ABC Valor — todos</option>
+        <option value="A">Classe A</option>
+        <option value="B">Classe B</option>
+        <option value="C">Classe C</option>
+      </select>
+      <select id="fCat" onchange="filterTable()">
+        <option value="">Todas as categorias</option>
+      </select>
+      <select id="fSubcat" onchange="filterTable()">
+        <option value="">Todas as subcategorias</option>
+      </select>
+    </div>
+    <div id="tblTodos"></div>
+    <div class="pag" id="pag"></div>
+  </div>
+</main>
 
 <script>
 const SHEET_ID = '1RE-ciKV3jbKbMIrfzX7tcuo8NBvKES6LzBXGsRCIOy4';
-const API_KEY  = 'AIzaSyClrj-onYuonXygkBRQAVcKlfQ4SxxSdgY';
+const API_KEY = 'AIzaSyClrj-onYuonXygkBRQAVcKlfQ4SxxSdgY';
 const BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values`;
 
 const MONTH_SHEETS = [
-  {sheet:'mar25', label:'Mar/25'},
-  {sheet:'Abr25', label:'Abr/25'},
-  {sheet:'mai25', label:'Mai/25'},
-  {sheet:'jun25', label:'Jun/25'},
-  {sheet:'jul25', label:'Jul/25'},
-  {sheet:'ago25', label:'Ago/25'},
-  {sheet:'set25', label:'Set/25'},
-  {sheet:'out25', label:'Out/25'},
-  {sheet:'Nov25', label:'Nov/25'},
-  {sheet:'dez25', label:'Dez/25'},
-  {sheet:'jan26', label:'Jan/26'},
-  {sheet:'Fev26', label:'Fev/26'},
+  {sheet:'mar25',label:'Mar/25'},{sheet:'Abr25',label:'Abr/25'},{sheet:'mai25',label:'Mai/25'},
+  {sheet:'jun25',label:'Jun/25'},{sheet:'jul25',label:'Jul/25'},{sheet:'ago25',label:'Ago/25'},
+  {sheet:'set25',label:'Set/25'},{sheet:'out25',label:'Out/25'},{sheet:'Nov25',label:'Nov/25'},
+  {sheet:'dez25',label:'Dez/25'},{sheet:'jan26',label:'Jan/26'},{sheet:'Fev26',label:'Fev/26'},
 ];
 
-const CAT_COLORS = ['#2D6A4F','#1E3A5F','#7C3AED','#C2410C','#B45309','#BE185D','#374151'];
-const ABC_COLORS = { A:'#2D6A4F', B:'#B45309', C:'#9B1C1C' };
-let APP = { monthly:[], allSkus:[], categories:[], charts:{} };
-let skuPage = 0;
-let filteredSkus = [];
+const CAT_COLORS = ['#1A1917','#166534','#1D4ED8','#7C2D12','#6B21A8','#0F766E','#9A3412'];
+const ABC_COLORS = {A:'#166534',B:'#92400E',C:'#991B1B'};
+
+let APP = {monthly:[],allSkus:[],categories:[],subcatMap:{},charts:{},catByMonth:{}};
+let skuPage = 0, filteredSkus = [];
 const PAGE = 25;
 let activePeriod = 'all';
+let selectedCat = null;
 
 const fmtBRL = v => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
-const fmtK   = v => v >= 1e6 ? 'R$ '+(v/1e6).toFixed(2)+'M' : v >= 1e3 ? 'R$ '+Math.round(v/1e3)+'k' : 'R$ '+Math.round(v);
-const num    = v => typeof v === 'string' ? parseFloat(v.replace(',','.')) || 0 : (parseFloat(v) || 0);
+const fmtK = v => v >= 1e6 ? 'R$ '+(v/1e6).toFixed(2)+'M' : v >= 1e3 ? 'R$ '+Math.round(v/1e3)+'k' : 'R$ '+Math.round(v);
+const num = v => typeof v === 'string' ? parseFloat(v.replace(',','.')) || 0 : (parseFloat(v)||0);
+const pct = (a,b) => b === 0 ? 0 : Math.round((a-b)/b*100);
 
-function categorize(nome) {
+/* ─── CATEGORIZAÇÃO EXPANDIDA COM SUBCATEGORIAS ─── */
+function categorizeExpanded(nome) {
   const n = (nome||'').toUpperCase();
-  if (/LIXEIRA|CESTO|BALDE/.test(n)) return 'Lixeiras e Cestos';
-  if (/FURADEIRA|PARAFUSADEIRA|ESMERILHADEIRA|ESMERIL|SERRA|MARTELETE|LIXADEIRA|POLICORTE/.test(n)) return 'Ferramentas Elétricas';
-  if (/BATERIA|12V|20V|SEM FIO|S\/FIO|ROCADEIRA|APARADOR|BRUSHLESS/.test(n)) return 'Ferramentas a Bateria';
-  if (/SPRAY|TINTA/.test(n)) return 'Tintas Spray';
-  if (/LAMP|LED|ILUM|REFLET|SPOT|PLAFON|ARAND|FITA LED|LUMINARIA|LUSTRE|PENDENTE|PAINEL/.test(n)) return 'Iluminação';
-  return 'Outros';
+
+  // ILUMINAÇÃO
+  if (/LAMP|LED|REFLET|SPOT|PLAFON|ARAND|FITA LED|LUMINARIA|LUSTRE|PENDENTE|PAINEL|TRILHO/.test(n)) {
+    let sub = 'Outros LED';
+    if (/PAINEL.*(EMBUTIR|EMBU)/.test(n)) sub = 'Painéis Embutir';
+    else if (/PAINEL.*(SOBREPOR|SOBRE)/.test(n)) sub = 'Painéis Sobrepor';
+    else if (/REFLET/.test(n)) sub = 'Refletores';
+    else if (/SPOT.*TRILHO|TRILHO/.test(n)) sub = 'Spots Trilho';
+    else if (/SPOT/.test(n)) sub = 'Spots Embutir';
+    else if (/FITA/.test(n)) sub = 'Fitas LED';
+    else if (/LUMINARIA|LUSTRE|PENDENTE|ARAND/.test(n)) sub = 'Luminárias';
+    return {cat:'Iluminação', sub};
+  }
+
+  // FERRAMENTAS ELÉTRICAS (com fio)
+  if (/FURADEIRA|ESMERILHADEIRA(?!.*BATERIA)|ESMERIL(?!.*BATERIA)|POLICORTE|AFIADOR|TUPIA/.test(n) ||
+      (/SERRA/.test(n) && !/(BATERIA|12V|20V)/.test(n)) ||
+      (/PARAFUSADEIRA|LIXADEIRA/.test(n) && !/(BATERIA|12V|20V|USB)/.test(n))) {
+    let sub = 'Outras Elétricas';
+    if (/FURADEIRA/.test(n)) sub = 'Furadeiras';
+    else if (/PARAFUSADEIRA/.test(n)) sub = 'Parafusadeiras';
+    else if (/ESMERIL|ESMERILHADEIRA/.test(n)) sub = 'Esmerilhadeiras';
+    else if (/SERRA MARMORE/.test(n)) sub = 'Serras Mármore';
+    else if (/SERRA CIRC/.test(n)) sub = 'Serras Circulares';
+    else if (/SERRA TICO/.test(n)) sub = 'Serras Tico-Tico';
+    else if (/LIXADEIRA|POLITRIZ/.test(n)) sub = 'Lixadeiras';
+    return {cat:'Ferramentas Elétricas', sub};
+  }
+
+  // FERRAMENTAS A BATERIA
+  if (/(BATERIA|12V|20V|SEM FIO|S\/FIO|BRUSHLESS)/.test(n) && !/(LIXEIRA|CESTO|LED|LAMP|REFLET)/.test(n)) {
+    let sub = 'Outras a Bateria';
+    if (/PARAFUSADEIRA|IMPACT/.test(n)) sub = 'Parafusadeiras';
+    else if (/ESMERIL|ESMERILHADEIRA/.test(n)) sub = 'Esmerilhadeiras';
+    else if (/MARTELETE/.test(n)) sub = 'Marteletes';
+    else if (/SERRA/.test(n)) sub = 'Serras';
+    else if (/PISTOLA|PULVERIZ/.test(n)) sub = 'Pistolas';
+    else if (/SOPRADOR|ASPIRADOR/.test(n)) sub = 'Sopradores';
+    else if (/APARADOR|ROCADEIRA|GRAMA/.test(n)) sub = 'Jardinagem';
+    else if (/CHAVE DE IMPACTO/.test(n)) sub = 'Chaves Impacto';
+    else if (/MINI MOTO|MOTO SERRA/.test(n)) sub = 'Moto-Serras';
+    return {cat:'Ferramentas a Bateria', sub};
+  }
+
+  // LIXEIRAS
+  if (/LIXEIRA|BALDE LIXO|KIT LIXEIRA/.test(n)) {
+    let sub = 'Outras Lixeiras';
+    if (/KIT LIXEIRA/.test(n)) sub = 'Kits Lixeiras';
+    else if (/ACO INOX/.test(n)) sub = 'Inox';
+    else if (/FERRO|FERRO PRETO/.test(n)) sub = 'Ferro Preto';
+    else if (/BAMBU/.test(n)) sub = 'Bambu';
+    else if (/BRANCA|PLASTICO|PLASTICA/.test(n)) sub = 'Plástico/Branca';
+    return {cat:'Lixeiras', sub};
+  }
+
+  // CESTOS
+  if (/CESTO|ORGANIZ/.test(n)) {
+    let sub = 'Outros Cestos';
+    if (/ROUPA/.test(n)) sub = 'Cestos de Roupa';
+    else if (/BAMBU/.test(n) && !/ROUPA/.test(n)) sub = 'Cestos Bambu';
+    else if (/ORGANIZ/.test(n)) sub = 'Organizadores';
+    return {cat:'Cestos & Organização', sub};
+  }
+
+  // TINTAS SPRAY
+  if (/SPRAY|TINTA/.test(n)) {
+    let sub = 'Outras Tintas';
+    if (/PRETO/.test(n)) sub = 'Preto';
+    else if (/BRANCO/.test(n)) sub = 'Branco';
+    else if (/VERNIZ/.test(n)) sub = 'Verniz';
+    else if (/ACRILICA/.test(n)) sub = 'Acrílica Colorida';
+    return {cat:'Tintas Spray', sub};
+  }
+
+  // BANHEIRO
+  if (/BANHEIRO|TOALHEIR|PAPEL HIGI|SABONEIR|DISPENS|ESCOVA SANIT|PORTA ESCOV|SABONET/.test(n)) {
+    let sub = 'Acessórios Banheiro';
+    if (/DISPENS|SAB/.test(n)) sub = 'Dispensadores';
+    else if (/ESCOVA SANIT|CONJ ESCOVA/.test(n)) sub = 'Conjuntos Escova';
+    else if (/PORTA ESCOV/.test(n)) sub = 'Porta Escovas';
+    else if (/TOALHEIR/.test(n)) sub = 'Toalheiros';
+    else if (/SABONET|SABONEIR/.test(n)) sub = 'Saboneteiras';
+    else if (/PRATELEIRA.*BANHEIR|PRATELEIRA.*CANTO/.test(n)) sub = 'Prateleiras Banheiro';
+    return {cat:'Banheiro', sub};
+  }
+
+  // ORGANIZAÇÃO / CASA
+  if (/CABIDE|PRATELEIRA|CARRINHO|CAIXA.*ARMAZEN|GANCHO|CABIDEIR|PAINEL.*GANCHO/.test(n)) {
+    let sub = 'Organização';
+    if (/CABIDE/.test(n)) sub = 'Cabides';
+    else if (/PRATELEIRA/.test(n)) sub = 'Prateleiras';
+    else if (/CARRINHO/.test(n)) sub = 'Carrinhos Org.';
+    else if (/GANCHO/.test(n)) sub = 'Ganchos';
+    else if (/CAIXA/.test(n)) sub = 'Caixas';
+    return {cat:'Casa & Organização', sub};
+  }
+
+  // NÍVEL LASER
+  if (/NIVEL.*LASER|LASER/.test(n)) return {cat:'Ferramentas de Medição', sub:'Níveis Laser'};
+
+  // GRAMA SINTÉTICA
+  if (/GRAMA SINTET|GRAMA ARTIF/.test(n)) return {cat:'Jardim & Lazer', sub:'Grama Sintética'};
+
+  // VENTILADORES / OUTROS
+  if (/VENTILADOR/.test(n)) return {cat:'Casa & Organização', sub:'Ventiladores'};
+
+  // UTENSÍLIOS / COPOS / TIGELAS
+  if (/COPO|TIGELA|BOWL|ACO INOX/.test(n)) return {cat:'Utensílios', sub:'Cozinha'};
+
+  // KIT BANHEIRO (set completo)
+  if (/KIT PARA BANHEIR|KIT BANHEIR/.test(n)) return {cat:'Banheiro', sub:'Kits Banheiro'};
+
+  // NÍVEL GERAL
+  if (/NIVEL/.test(n)) return {cat:'Ferramentas de Medição', sub:'Outros'};
+
+  return {cat:'Outros', sub:'Outros'};
 }
 
 function setProgress(pct, msg) {
@@ -304,7 +666,6 @@ function setProgress(pct, msg) {
   document.getElementById('loadMsg').textContent = msg;
 }
 
-// ✅ FUNÇÃO CORRIGIDA — detecta e pula cabeçalhos automaticamente
 async function fetchSheet(sheetName) {
   const url = `${BASE_URL}/${encodeURIComponent(sheetName)}!A:E?key=${API_KEY}`;
   const r = await fetch(url);
@@ -312,7 +673,7 @@ async function fetchSheet(sheetName) {
   const d = await r.json();
   const rows = d.values || [];
   if (rows.length > 0) {
-    const first = String(rows[0][0] || '').trim();
+    const first = String(rows[0][0]||'').trim();
     if (isNaN(parseInt(first))) return rows.slice(1);
   }
   return rows;
@@ -320,80 +681,111 @@ async function fetchSheet(sheetName) {
 
 async function loadData() {
   const syncBtn = document.getElementById('syncBtn');
-  const syncIcon = document.getElementById('syncIcon');
   syncBtn.disabled = true;
-  syncIcon.innerHTML = '<span class="spin">↻</span>';
+  document.getElementById('syncIcon').innerHTML = '<span class="spin">↻</span>';
   document.getElementById('loadingScreen').classList.remove('hidden');
   document.getElementById('mainContent').style.display = 'none';
   document.getElementById('errorBox').classList.remove('visible');
   Object.values(APP.charts).forEach(c => { try { c.destroy(); } catch(e){} });
-  APP.charts = {}; APP.monthly = []; APP.allSkus = [];
+  APP = {monthly:[],allSkus:[],categories:[],subcatMap:{},charts:{},catByMonth:{}};
+  selectedCat = null;
 
   try {
     const rawSales = {};
     for (let i = 0; i < MONTH_SHEETS.length; i++) {
-      const { sheet, label } = MONTH_SHEETS[i];
-      setProgress(Math.round((i / MONTH_SHEETS.length) * 80), `Lendo ${label}...`);
+      const {sheet, label} = MONTH_SHEETS[i];
+      setProgress(Math.round((i/MONTH_SHEETS.length)*80), `Lendo ${label}...`);
       const rows = await fetchSheet(sheet);
       for (const row of rows) {
         if (!row[0]) continue;
         const skuRaw = String(row[0]).trim().replace('.0','');
         const sku = parseInt(skuRaw);
         if (isNaN(sku) || sku < 1000000) continue;
-        const nome = String(row[1] || '').trim();
-        const qtd  = num(row[2]);
-        const val  = num(row[3]);
-        if (!rawSales[sku]) rawSales[sku] = { nome, meses: {} };
-        if (!rawSales[sku].meses[label]) rawSales[sku].meses[label] = { v: 0, q: 0 };
+        const nome = String(row[1]||'').trim();
+        const qtd = num(row[2]);
+        const val = num(row[3]);
+        if (!rawSales[sku]) rawSales[sku] = {nome, meses:{}};
+        if (!rawSales[sku].meses[label]) rawSales[sku].meses[label] = {v:0,q:0};
         rawSales[sku].meses[label].v += val;
         rawSales[sku].meses[label].q += qtd;
       }
     }
 
-    setProgress(85, 'Calculando curva ABC...');
+    setProgress(85, 'Categorizando produtos...');
     const monthlyMap = {};
-    MONTH_SHEETS.forEach(m => monthlyMap[m.label] = { label: m.label, Valor: 0, Qtd: 0 });
-    const skuTotals = [];
+    MONTH_SHEETS.forEach(m => monthlyMap[m.label] = {label:m.label, Valor:0, Qtd:0});
 
+    // catByMonth: cat -> label -> {v, q}
+    const catByMonthMap = {};
+
+    const skuTotals = [];
     for (const [sku, data] of Object.entries(rawSales)) {
       let tv = 0, tq = 0;
+      const {cat, sub} = categorizeExpanded(data.nome);
       for (const [label, vals] of Object.entries(data.meses)) {
         monthlyMap[label].Valor += vals.v;
-        monthlyMap[label].Qtd  += vals.q;
+        monthlyMap[label].Qtd += vals.q;
         tv += vals.v; tq += vals.q;
+        if (!catByMonthMap[cat]) catByMonthMap[cat] = {};
+        if (!catByMonthMap[cat][label]) catByMonthMap[cat][label] = {v:0,q:0};
+        catByMonthMap[cat][label].v += vals.v;
+        catByMonthMap[cat][label].q += vals.q;
       }
-      skuTotals.push({ sku: parseInt(sku), nome: data.nome, cat: categorize(data.nome), TotalValor: tv, TotalQtd: tq });
+      skuTotals.push({sku:parseInt(sku), nome:data.nome, cat, sub, TotalValor:tv, TotalQtd:tq});
     }
 
     APP.monthly = Object.values(monthlyMap);
+    APP.catByMonth = catByMonthMap;
     skuTotals.sort((a,b) => b.TotalValor - a.TotalValor);
-    const totalValor = skuTotals.reduce((s,x) => s + x.TotalValor, 0);
-    let cumV = 0;
-    skuTotals.forEach(s => { cumV += s.TotalValor; s.abcV = (cumV/totalValor) <= 0.80 ? 'A' : (cumV/totalValor) <= 0.95 ? 'B' : 'C'; });
 
+    // ABC Valor
+    const totalValor = skuTotals.reduce((s,x) => s+x.TotalValor, 0);
+    let cumV = 0;
+    skuTotals.forEach(s => {
+      cumV += s.TotalValor;
+      s.abcV = (cumV/totalValor) <= 0.80 ? 'A' : (cumV/totalValor) <= 0.95 ? 'B' : 'C';
+    });
+
+    // ABC Qtd
     const byQtd = [...skuTotals].sort((a,b) => b.TotalQtd - a.TotalQtd);
-    const totalQtd = byQtd.reduce((s,x) => s + x.TotalQtd, 0);
+    const totalQtd = byQtd.reduce((s,x) => s+x.TotalQtd, 0);
     let cumQ = 0; const abcQMap = {};
-    byQtd.forEach(s => { cumQ += s.TotalQtd; abcQMap[s.sku] = (cumQ/totalQtd) <= 0.80 ? 'A' : (cumQ/totalQtd) <= 0.95 ? 'B' : 'C'; });
+    byQtd.forEach(s => {
+      cumQ += s.TotalQtd;
+      abcQMap[s.sku] = (cumQ/totalQtd) <= 0.80 ? 'A' : (cumQ/totalQtd) <= 0.95 ? 'B' : 'C';
+    });
     skuTotals.forEach(s => s.abcQ = abcQMap[s.sku] || 'C');
     APP.allSkus = skuTotals;
 
+    // Categories
     const catMap = {};
     skuTotals.forEach(s => {
-      if (!catMap[s.cat]) catMap[s.cat] = { Categoria: s.cat, Valor: 0, Qtd: 0 };
-      catMap[s.cat].Valor += s.TotalValor; catMap[s.cat].Qtd += s.TotalQtd;
+      if (!catMap[s.cat]) catMap[s.cat] = {Categoria:s.cat, Valor:0, Qtd:0, skus:0};
+      catMap[s.cat].Valor += s.TotalValor;
+      catMap[s.cat].Qtd += s.TotalQtd;
+      catMap[s.cat].skus++;
     });
     APP.categories = Object.values(catMap).sort((a,b) => b.Valor - a.Valor);
 
-    setProgress(95, 'Renderizando dashboard...');
-    await new Promise(r => setTimeout(r, 200));
+    // Subcat map: cat -> sub -> {v, q, skus}
+    const subcatMap = {};
+    skuTotals.forEach(s => {
+      if (!subcatMap[s.cat]) subcatMap[s.cat] = {};
+      if (!subcatMap[s.cat][s.sub]) subcatMap[s.cat][s.sub] = {v:0,q:0,skus:0};
+      subcatMap[s.cat][s.sub].v += s.TotalValor;
+      subcatMap[s.cat][s.sub].q += s.TotalQtd;
+      subcatMap[s.cat][s.sub].skus++;
+    });
+    APP.subcatMap = subcatMap;
+
+    setProgress(95, 'Renderizando...');
+    await new Promise(r => setTimeout(r, 150));
     buildDashboard();
     setProgress(100, 'Pronto!');
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 250));
     document.getElementById('loadingScreen').classList.add('hidden');
     document.getElementById('mainContent').style.display = 'block';
-    document.getElementById('lastUpdate').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
-
+    document.getElementById('lastUpdate').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   } catch(err) {
     document.getElementById('loadingScreen').classList.add('hidden');
     const eb = document.getElementById('errorBox');
@@ -402,8 +794,8 @@ async function loadData() {
     document.getElementById('mainContent').style.display = 'block';
     console.error(err);
   }
-  syncBtn.disabled = false;
-  syncIcon.textContent = '↻';
+  document.getElementById('syncBtn').disabled = false;
+  document.getElementById('syncIcon').textContent = '↻';
 }
 
 function getFilteredMonthly() {
@@ -412,7 +804,14 @@ function getFilteredMonthly() {
 }
 
 function buildDashboard() {
-  buildKPIs(); buildInsights(); buildPeriodBtns(); buildVisao(); buildAbcValor(); buildAbcQtd(); buildTodos();
+  buildKPIs();
+  buildInsights();
+  buildPeriodBtns();
+  buildVisao();
+  buildCategorias();
+  buildAbcValor();
+  buildAbcQtd();
+  buildTodos();
 }
 
 function buildKPIs() {
@@ -420,74 +819,338 @@ function buildKPIs() {
   const totalV = m.reduce((s,x) => s+x.Valor, 0);
   const totalQ = m.reduce((s,x) => s+x.Qtd, 0);
   const last = m[m.length-1], prev = m[m.length-2];
-  const mm = prev && prev.Valor ? ((last.Valor - prev.Valor) / prev.Valor * 100) : 0;
-  const ticket = totalQ > 0 ? totalV / totalQ : 0;
+  const mm = prev && prev.Valor ? ((last.Valor-prev.Valor)/prev.Valor*100) : 0;
+  const ticket = totalQ > 0 ? totalV/totalQ : 0;
   const skuAtivos = APP.allSkus.filter(s => s.TotalValor > 0).length;
   document.getElementById('kpis').innerHTML = `
     <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">${fmtK(totalV)}</div><div class="kpi-sub">${m[0].label} — ${m[m.length-1].label}</div></div>
     <div class="kpi"><div class="kpi-label">Unidades vendidas</div><div class="kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div><div class="kpi-sub">${m.length} meses</div></div>
-    <div class="kpi"><div class="kpi-label">${last.label} — último mês</div><div class="kpi-value">${fmtK(last.Valor)}</div><div class="kpi-trend ${mm >= 0 ? 'up' : 'dn'}">${mm >= 0 ? '▲' : '▼'} ${Math.abs(mm).toFixed(1)}% vs mês anterior</div></div>
+    <div class="kpi"><div class="kpi-label">${last.label} — último mês</div><div class="kpi-value">${fmtK(last.Valor)}</div><div class="kpi-trend ${mm>=0?'up':'dn'}">${mm>=0?'▲':'▼'} ${Math.abs(mm).toFixed(1)}% vs mês anterior</div></div>
     <div class="kpi"><div class="kpi-label">Ticket médio</div><div class="kpi-value">R$ ${Math.round(ticket).toLocaleString('pt-BR')}</div><div class="kpi-sub">${skuAtivos} SKUs ativos</div></div>`;
 }
 
 function buildInsights() {
-  const classA = APP.allSkus.filter(s => s.abcV === 'A').length;
+  const classA = APP.allSkus.filter(s => s.abcV==='A').length;
   const total = APP.allSkus.length;
   const topCat = APP.categories[0];
   const totalV = APP.allSkus.reduce((s,x) => s+x.TotalValor, 0);
   const m = APP.monthly;
-  const growth = m.length >= 2 ? ((m[m.length-1].Valor - m[0].Valor) / m[0].Valor * 100) : 0;
+  const growth = m.length >= 2 ? ((m[m.length-1].Valor - m[0].Valor)/m[0].Valor*100) : 0;
   document.getElementById('insights').innerHTML = `
     <div class="insight-chip"><span class="dot"></span>${classA} SKUs (${Math.round(classA/total*100)}% do portfólio) = 80% do faturamento</div>
     <div class="insight-chip"><span class="dot blue"></span>${topCat.Categoria}: ${Math.round(topCat.Valor/totalV*100)}% do faturamento total</div>
-    <div class="insight-chip"><span class="dot ${growth >= 0 ? '' : 'amber'}"></span>Crescimento ${m[0].label}→${m[m.length-1].label}: ${growth >= 0 ? '+' : ''}${Math.round(growth)}%</div>`;
+    <div class="insight-chip"><span class="dot ${growth>=0?'':'amber'}"></span>Crescimento ${m[0].label}→${m[m.length-1].label}: ${growth>=0?'+':''}${Math.round(growth)}%</div>`;
 }
 
 function buildPeriodBtns() {
   const periods = [{v:'3',l:'3M'},{v:'6',l:'6M'},{v:'all',l:'12M'}];
   document.getElementById('periodBtns').innerHTML = periods.map(p =>
-    `<button class="period-btn ${activePeriod===p.v?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`).join('');
+    `<button class="period-btn ${activePeriod===p.v?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`
+  ).join('');
 }
 
-function setPeriod(p) { activePeriod = p; buildPeriodBtns(); rebuildVisaoCharts(); }
+function setPeriod(p) {
+  activePeriod = p; buildPeriodBtns(); rebuildVisaoCharts();
+}
 
-function buildVisao() { rebuildVisaoCharts(); buildCatChart(); }
+function buildVisao() {
+  rebuildVisaoCharts(); buildCatChart();
+}
+
+function ch(id) {
+  if (APP.charts[id]) { try { APP.charts[id].destroy(); } catch(e){} delete APP.charts[id]; }
+}
 
 function rebuildVisaoCharts() {
   const data = getFilteredMonthly();
-  ['cFat','cQtd','cTicket'].forEach(id => { if (APP.charts[id]) { APP.charts[id].destroy(); delete APP.charts[id]; } });
+  ch('cFat'); ch('cQtd'); ch('cTicket'); ch('cAbcVSmall');
+  const gridColor = 'rgba(0,0,0,.05)';
+  const txColor = '#A09C98';
+
   APP.charts.cFat = new Chart(document.getElementById('cFat'), {
-    type: 'bar',
-    data: { labels: data.map(m=>m.label), datasets: [{ data: data.map(m=>m.Valor), backgroundColor: '#1A1917', borderRadius: 3, hoverBackgroundColor: '#555' }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
+    type:'bar',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Valor),backgroundColor:'#1A1917',borderRadius:4,hoverBackgroundColor:'#555'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:txColor},grid:{color:gridColor}},x:{ticks:{font:{size:10},color:txColor},grid:{display:false}}}}
   });
   APP.charts.cQtd = new Chart(document.getElementById('cQtd'), {
-    type: 'bar',
-    data: { labels: data.map(m=>m.label), datasets: [{ data: data.map(m=>m.Qtd), backgroundColor: '#2D6A4F', borderRadius: 3 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
+    type:'bar',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Qtd),backgroundColor:'#166534',borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:txColor},grid:{color:gridColor}},x:{ticks:{font:{size:10},color:txColor},grid:{display:false}}}}
   });
   APP.charts.cTicket = new Chart(document.getElementById('cTicket'), {
-    type: 'line',
-    data: { labels: data.map(m=>m.label), datasets: [{ data: data.map(m => m.Qtd > 0 ? Math.round(m.Valor/m.Qtd) : 0), borderColor:'#C2410C', backgroundColor:'rgba(194,65,12,0.06)', fill:true, tension:0.35, pointRadius:4, pointBackgroundColor:'#C2410C' }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},x:{ticks:{font:{size:10},color:'#888'},grid:{display:false}}} }
+    type:'line',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Qtd>0?Math.round(m.Valor/m.Qtd):0),borderColor:'#7C2D12',backgroundColor:'rgba(124,45,18,.06)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#7C2D12'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:txColor},grid:{color:gridColor}},x:{ticks:{font:{size:10},color:txColor},grid:{display:false}}}}
+  });
+
+  // small ABC donut for visão geral
+  const totalV2 = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
+  const gA = APP.allSkus.filter(s=>s.abcV==='A').reduce((s,x)=>s+x.TotalValor,0);
+  const gB = APP.allSkus.filter(s=>s.abcV==='B').reduce((s,x)=>s+x.TotalValor,0);
+  const gC = totalV2 - gA - gB;
+  document.getElementById('legAbcVSmall').innerHTML = ['A','B','C'].map((c,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${c} — ${Math.round([gA,gB,gC][i]/totalV2*100)}%</span>`).join('');
+  APP.charts.cAbcVSmall = new Chart(document.getElementById('cAbcVSmall'), {
+    type:'doughnut',
+    data:{labels:['A','B','C'],datasets:[{data:[Math.round(gA),Math.round(gB),Math.round(gC)],backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}
   });
 }
 
 function buildCatChart() {
   const cats = APP.categories;
-  const totalV = cats.reduce((s,c) => s+c.Valor, 0);
-  document.getElementById('legCat').innerHTML = cats.map((c,i) =>
-    `<span class="leg-item"><span class="leg-dot" style="background:${CAT_COLORS[i%CAT_COLORS.length]}"></span>${c.Categoria} (${Math.round(c.Valor/totalV*100)}%)</span>`).join('');
+  const totalV = cats.reduce((s,c)=>s+c.Valor,0);
+  document.getElementById('legCat').innerHTML = cats.map((c,i)=>
+    `<span class="leg-item"><span class="leg-dot" style="background:${CAT_COLORS[i%CAT_COLORS.length]}"></span>${c.Categoria} (${Math.round(c.Valor/totalV*100)}%)</span>`
+  ).join('');
+  ch('cCat');
   APP.charts.cCat = new Chart(document.getElementById('cCat'), {
-    type: 'doughnut',
-    data: { labels: cats.map(c=>c.Categoria), datasets: [{ data: cats.map(c=>Math.round(c.Valor)), backgroundColor: CAT_COLORS, borderWidth: 2, borderColor: '#fff' }] },
-    options: { responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}} }
+    type:'doughnut',
+    data:{labels:cats.map(c=>c.Categoria),datasets:[{data:cats.map(c=>Math.round(c.Valor)),backgroundColor:CAT_COLORS,borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}
   });
 }
 
+/* ─── MÓDULO 3: CATEGORIAS ─── */
+function buildCategorias() {
+  buildCatKpiCards();
+  buildSubcatDetail(null);
+  buildCatBarCharts();
+  buildHeatmap();
+  buildOpportunities();
+  buildCatDepthTable();
+}
+
+function buildCatKpiCards() {
+  const totalV = APP.categories.reduce((s,c)=>s+c.Valor,0);
+  const m = APP.monthly;
+  const labels = MONTH_SHEETS.map(s=>s.label);
+  const lastLabel = labels[labels.length-1];
+  const prevLabel = labels[labels.length-2];
+
+  document.getElementById('catKpiGrid').innerHTML = APP.categories.map((cat, i) => {
+    const catSkus = APP.allSkus.filter(s => s.cat === cat.Categoria);
+    const share = Math.round(cat.Valor/totalV*100);
+    const ticket = cat.Qtd > 0 ? Math.round(cat.Valor/cat.Qtd) : 0;
+    const cbm = APP.catByMonth[cat.Categoria] || {};
+    const lastV = (cbm[lastLabel]||{}).v || 0;
+    const prevV = (cbm[prevLabel]||{}).v || 0;
+    const mm = prevV > 0 ? pct(lastV, prevV) : 0;
+    const skusA = catSkus.filter(s => s.abcV === 'A').length;
+    return `
+      <div class="cat-kpi-card" data-ci="${i}" data-cat="${cat.Categoria}" onclick="selectCat('${cat.Categoria.replace(/'/g,"\\'")}')">
+        <div class="cat-name">${cat.Categoria}</div>
+        <div class="cat-val">${fmtK(cat.Valor)}</div>
+        <div class="cat-meta">
+          <span class="cat-badge">${share}% do total</span>
+          <span class="cat-badge ${mm>=0?'pos':'neg'}">${mm>=0?'+':''}${mm}% M/M</span>
+          <span class="cat-badge">${cat.skus} SKUs</span>
+          <span class="cat-badge">${skusA} classe A</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function selectCat(catName) {
+  selectedCat = catName;
+  document.querySelectorAll('.cat-kpi-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.cat === catName);
+  });
+  buildSubcatDetail(catName);
+}
+
+function resetCatSelection() {
+  selectedCat = null;
+  document.querySelectorAll('.cat-kpi-card').forEach(c => c.classList.remove('selected'));
+  buildSubcatDetail(null);
+}
+
+function buildSubcatDetail(catName) {
+  const title = document.getElementById('subcatTitle');
+  const grid = document.getElementById('subcatGrid');
+  if (!catName) {
+    title.textContent = 'Todas as categorias — visão geral por subcategoria';
+    // Show top subcats across all cats
+    const allSubs = [];
+    for (const [cat, subs] of Object.entries(APP.subcatMap)) {
+      for (const [sub, data] of Object.entries(subs)) {
+        allSubs.push({cat, sub, v:data.v, q:data.q, skus:data.skus});
+      }
+    }
+    allSubs.sort((a,b)=>b.v-a.v);
+    const top = allSubs.slice(0,12);
+    grid.innerHTML = top.map(s => `
+      <div class="subcat-card">
+        <div class="subcat-card-name">${s.sub} <span style="color:var(--text3);font-size:10px">(${s.cat})</span></div>
+        <div class="subcat-val">${fmtK(s.v)}</div>
+        <div class="subcat-meta">${s.skus} SKUs · ${Math.round(s.q).toLocaleString('pt-BR')} un.</div>
+      </div>`).join('');
+    return;
+  }
+
+  title.textContent = catName + ' — Subcategorias';
+  const subs = APP.subcatMap[catName] || {};
+  const entries = Object.entries(subs).map(([sub,d])=>({sub,...d})).sort((a,b)=>b.v-a.v);
+  if (!entries.length) { grid.innerHTML = '<div style="color:var(--text3);font-size:13px">Sem subcategorias</div>'; return; }
+  const totalCatV = entries.reduce((s,e)=>s+e.v,0);
+  grid.innerHTML = entries.map(e => `
+    <div class="subcat-card">
+      <div class="subcat-card-name">${e.sub}</div>
+      <div class="subcat-val">${fmtK(e.v)}</div>
+      <div class="subcat-meta">${Math.round(e.v/totalCatV*100)}% da cat. · ${e.skus} SKUs · ${Math.round(e.q).toLocaleString('pt-BR')} un.</div>
+    </div>`).join('');
+}
+
+function buildCatBarCharts() {
+  const cats = APP.categories;
+  ch('cCatBar'); ch('cCatQtdBar');
+  const txColor = '#A09C98';
+  const gridColor = 'rgba(0,0,0,.05)';
+  APP.charts.cCatBar = new Chart(document.getElementById('cCatBar'), {
+    type:'bar', indexAxis:'y',
+    data:{
+      labels: cats.map(c=>c.Categoria),
+      datasets:[{data:cats.map(c=>Math.round(c.Valor)),backgroundColor:CAT_COLORS,borderRadius:4}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtK(ctx.raw)}}},
+      scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:txColor},grid:{color:gridColor}},y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}
+  });
+  APP.charts.cCatQtdBar = new Chart(document.getElementById('cCatQtdBar'), {
+    type:'bar', indexAxis:'y',
+    data:{
+      labels: cats.map(c=>c.Categoria),
+      datasets:[{data:cats.map(c=>Math.round(c.Qtd)),backgroundColor:CAT_COLORS.map(c=>c+'99'),borderRadius:4}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>Math.round(ctx.raw).toLocaleString('pt-BR')+' un.'}}},
+      scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:txColor},grid:{color:gridColor}},y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}
+  });
+}
+
+function buildHeatmap() {
+  const labels = MONTH_SHEETS.map(s=>s.label);
+  const cats = APP.categories.map(c=>c.Categoria);
+  // Find max value per month for relative coloring
+  const allVals = [];
+  cats.forEach(cat => labels.forEach(lb => {
+    const v = (APP.catByMonth[cat]||{})[lb]?.v || 0;
+    allVals.push(v);
+  }));
+  const maxV = Math.max(...allVals);
+
+  function hmColor(v) {
+    if (v === 0) return '#F7F5F0';
+    const ratio = v/maxV;
+    if (ratio < 0.1) return '#EBF5EE';
+    if (ratio < 0.25) return '#BBF7D0';
+    if (ratio < 0.5) return '#4ADE80';
+    if (ratio < 0.75) return '#16A34A';
+    return '#166534';
+  }
+  function hmTxt(v) {
+    if (v === 0) return '';
+    const ratio = v/maxV;
+    return ratio >= 0.5 ? '#fff' : '#1A1917';
+  }
+
+  let html = '<table class="heatmap-table"><thead><tr><th>Categoria</th>';
+  labels.forEach(lb => html += `<th>${lb}</th>`);
+  html += '</tr></thead><tbody>';
+  cats.forEach(cat => {
+    html += `<tr><td>${cat}</td>`;
+    labels.forEach(lb => {
+      const v = (APP.catByMonth[cat]||{})[lb]?.v || 0;
+      const bg = hmColor(v);
+      const tc = hmTxt(v);
+      html += `<td><span class="hm-cell" style="background:${bg};color:${tc}">${v>0?fmtK(v):''}</span></td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('heatmapWrap').innerHTML = html;
+}
+
+function buildOpportunities() {
+  const totalV = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
+  const labels = MONTH_SHEETS.map(s=>s.label);
+  const opps = [];
+
+  APP.categories.forEach(cat => {
+    const catSkus = APP.allSkus.filter(s=>s.cat===cat.Categoria);
+    const cbm = APP.catByMonth[cat.Categoria]||{};
+    const lastThree = labels.slice(-3).map(l=>(cbm[l]||{}).v||0);
+    const prevThree = labels.slice(-6,-3).map(l=>(cbm[l]||{}).v||0);
+    const avg3 = lastThree.reduce((a,b)=>a+b,0)/3;
+    const avgPrev3 = prevThree.reduce((a,b)=>a+b,0)/3;
+    const trend = avgPrev3 > 0 ? pct(avg3, avgPrev3) : 0;
+    const share = Math.round(cat.Valor/totalV*100);
+    const subs = APP.subcatMap[cat.Categoria]||{};
+    const nSubs = Object.keys(subs).length;
+
+    if (trend >= 30 && share < 20) {
+      opps.push({type:'growth', title:`${cat.Categoria} em alta`, desc:`Crescimento de +${trend}% nos últimos 3 meses. Apenas ${share}% do faturamento — há espaço para ampliar o portfólio.`});
+    }
+    if (nSubs <= 2 && share >= 5) {
+      opps.push({type:'explore', title:`Aprofundar mix em ${cat.Categoria}`, desc:`Categoria com ${cat.skus} SKUs concentrados em apenas ${nSubs} subcategoria(s). Oportunidade de ampliar variedade.`});
+    }
+    if (trend < -20) {
+      opps.push({type:'risk', title:`Queda em ${cat.Categoria}`, desc:`Categoria recuou ${trend}% nos últimos 3 meses. Avaliar causas: sazonalidade, concorrência ou ruptura de estoque.`});
+    }
+  });
+
+  // Subcats with single SKU
+  for (const [cat, subs] of Object.entries(APP.subcatMap)) {
+    for (const [sub, data] of Object.entries(subs)) {
+      if (data.skus === 1 && data.v > 5000) {
+        opps.push({type:'explore', title:`Ampliar ${sub} (${cat})`, desc:`Subcategoria com apenas 1 SKU e R$ ${Math.round(data.v/1000)}k em vendas. Testar mais produtos no mesmo nicho.`});
+      }
+    }
+  }
+
+  if (!opps.length) opps.push({type:'growth', title:'Portfólio equilibrado', desc:'Nenhum alerta crítico identificado. Continue monitorando os indicadores mês a mês.'});
+
+  document.getElementById('oppGrid').innerHTML = opps.slice(0,6).map(o => `
+    <div class="opp-card ${o.type}">
+      <div class="opp-icon">${{growth:'↑',risk:'⚠',explore:'◎'}[o.type]}</div>
+      <div class="opp-title">${o.title}</div>
+      <div class="opp-desc">${o.desc}</div>
+    </div>`).join('');
+}
+
+function buildCatDepthTable() {
+  const totalV = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
+  const rows = APP.categories.map(cat => {
+    const catSkus = APP.allSkus.filter(s=>s.cat===cat.Categoria);
+    const skusA = catSkus.filter(s=>s.abcV==='A').length;
+    const skusB = catSkus.filter(s=>s.abcV==='B').length;
+    const skusC = catSkus.filter(s=>s.abcV==='C').length;
+    const ticket = cat.Qtd > 0 ? Math.round(cat.Valor/cat.Qtd) : 0;
+    const share = Math.round(cat.Valor/totalV*100);
+    const nSubs = Object.keys(APP.subcatMap[cat.Categoria]||{}).length;
+    return `<tr>
+      <td style="font-weight:500;color:var(--text)">${cat.Categoria}</td>
+      <td class="num">${fmtK(cat.Valor)}</td>
+      <td class="num">${share}%</td>
+      <td class="num">${Math.round(cat.Qtd).toLocaleString('pt-BR')}</td>
+      <td class="num">R$ ${ticket.toLocaleString('pt-BR')}</td>
+      <td class="num">${cat.skus}</td>
+      <td class="num">${nSubs}</td>
+      <td><span class="badge A">${skusA}</span> <span class="badge B">${skusB}</span> <span class="badge C">${skusC}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('catDepthTable').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Categoria</th><th style="text-align:right">Faturamento</th><th style="text-align:right">Share</th>
+        <th style="text-align:right">Unidades</th><th style="text-align:right">Ticket médio</th>
+        <th style="text-align:right">SKUs</th><th style="text-align:right">Subcats</th><th>ABC Mix</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+/* ─── ABC CHARTS ─── */
 function buildAbcValor() {
   const totalV = APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const groups = { A:{skus:0,v:0,q:0}, B:{skus:0,v:0,q:0}, C:{skus:0,v:0,q:0} };
+  const groups = {A:{skus:0,v:0,q:0},B:{skus:0,v:0,q:0},C:{skus:0,v:0,q:0}};
   APP.allSkus.forEach(s => { groups[s.abcV].skus++; groups[s.abcV].v+=s.TotalValor; groups[s.abcV].q+=s.TotalQtd; });
   document.getElementById('abcVCards').innerHTML = ['A','B','C'].map(cls => `
     <div class="abc-card ${cls.toLowerCase()}">
@@ -496,25 +1159,28 @@ function buildAbcValor() {
       <div class="abc-stat">${groups[cls].skus} SKUs · ${Math.round(groups[cls].v/totalV*100)}% do faturamento</div>
       <div class="abc-stat" style="font-weight:500;margin-top:4px">${fmtK(groups[cls].v)}</div>
     </div>`).join('');
-  document.getElementById('legAbcV').innerHTML = ['A','B','C'].map(cls =>
-    `<span class="leg-item"><span class="leg-dot" style="background:${ABC_COLORS[cls]}"></span>Classe ${cls} — ${Math.round(groups[cls].v/totalV*100)}%</span>`).join('');
+  document.getElementById('legAbcV').innerHTML = ['A','B','C'].map((cls,i)=>
+    `<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${cls} — ${Math.round(groups[cls].v/totalV*100)}%</span>`
+  ).join('');
+  ch('cAbcV'); ch('cTop15V');
   APP.charts.cAbcV = new Chart(document.getElementById('cAbcV'), {
-    type: 'doughnut',
-    data: { labels:['A','B','C'], datasets:[{ data:['A','B','C'].map(c=>Math.round(groups[c].v)), backgroundColor:['#2D6A4F','#B45309','#9B1C1C'], borderWidth:2, borderColor:'#fff' }] },
-    options: { responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}} }
+    type:'doughnut',
+    data:{labels:['A','B','C'],datasets:[{data:['A','B','C'].map(c=>Math.round(groups[c].v)),backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}
   });
   const top15v = [...APP.allSkus].sort((a,b)=>b.TotalValor-a.TotalValor).slice(0,15).reverse();
   APP.charts.cTop15V = new Chart(document.getElementById('cTop15V'), {
-    type: 'bar', indexAxis: 'y',
-    data: { labels: top15v.map(s=>s.nome.length>38?s.nome.slice(0,38)+'…':s.nome), datasets:[{ data:top15v.map(s=>Math.round(s.TotalValor)), backgroundColor:'#1E3A5F', borderRadius:3 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>fmtBRL(ctx.raw)}}}, scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}} }
+    type:'bar', indexAxis:'y',
+    data:{labels:top15v.map(s=>s.nome.length>36?s.nome.slice(0,36)+'…':s.nome),datasets:[{data:top15v.map(s=>Math.round(s.TotalValor)),backgroundColor:'#1E3A5F',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtBRL(ctx.raw)}}},
+      scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:'#A09C98'},grid:{color:'rgba(0,0,0,.05)'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}}}
   });
-  document.getElementById('tblAbcV').innerHTML = buildTable(APP.allSkus.filter(s=>s.abcV==='A'), 'valor');
+  document.getElementById('tblAbcV').innerHTML = '<div class="tbl-wrap">' + buildTable(APP.allSkus.filter(s=>s.abcV==='A'), 'valor') + '</div>';
 }
 
 function buildAbcQtd() {
   const totalQ = APP.allSkus.reduce((s,x)=>s+x.TotalQtd,0);
-  const groups = { A:{skus:0,v:0,q:0}, B:{skus:0,v:0,q:0}, C:{skus:0,v:0,q:0} };
+  const groups = {A:{skus:0,v:0,q:0},B:{skus:0,v:0,q:0},C:{skus:0,v:0,q:0}};
   APP.allSkus.forEach(s => { groups[s.abcQ].skus++; groups[s.abcQ].v+=s.TotalValor; groups[s.abcQ].q+=s.TotalQtd; });
   document.getElementById('abcQCards').innerHTML = ['A','B','C'].map(cls => `
     <div class="abc-card ${cls.toLowerCase()}">
@@ -523,41 +1189,45 @@ function buildAbcQtd() {
       <div class="abc-stat">${groups[cls].skus} SKUs · ${Math.round(groups[cls].q/totalQ*100)}% do volume</div>
       <div class="abc-stat" style="font-weight:500;margin-top:4px">${Math.round(groups[cls].q).toLocaleString('pt-BR')} un.</div>
     </div>`).join('');
-  document.getElementById('legAbcQ').innerHTML = ['A','B','C'].map(cls =>
-    `<span class="leg-item"><span class="leg-dot" style="background:${ABC_COLORS[cls]}"></span>Classe ${cls} — ${Math.round(groups[cls].q/totalQ*100)}%</span>`).join('');
+  document.getElementById('legAbcQ').innerHTML = ['A','B','C'].map((cls,i)=>
+    `<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${cls} — ${Math.round(groups[cls].q/totalQ*100)}%</span>`
+  ).join('');
+  ch('cAbcQ'); ch('cTop15Q');
   APP.charts.cAbcQ = new Chart(document.getElementById('cAbcQ'), {
-    type: 'doughnut',
-    data: { labels:['A','B','C'], datasets:[{ data:['A','B','C'].map(c=>Math.round(groups[c].q)), backgroundColor:['#2D6A4F','#B45309','#9B1C1C'], borderWidth:2, borderColor:'#fff' }] },
-    options: { responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}} }
+    type:'doughnut',
+    data:{labels:['A','B','C'],datasets:[{data:['A','B','C'].map(c=>Math.round(groups[c].q)),backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}}}
   });
   const top15q = [...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).slice(0,15).reverse();
   APP.charts.cTop15Q = new Chart(document.getElementById('cTop15Q'), {
-    type: 'bar', indexAxis: 'y',
-    data: { labels: top15q.map(s=>s.nome.length>38?s.nome.slice(0,38)+'…':s.nome), datasets:[{ data:top15q.map(s=>Math.round(s.TotalQtd)), backgroundColor:'#2D6A4F', borderRadius:3 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}}, scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:'#888'},grid:{color:'#F0EDE8'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}} }
+    type:'bar', indexAxis:'y',
+    data:{labels:top15q.map(s=>s.nome.length>36?s.nome.slice(0,36)+'…':s.nome),datasets:[{data:top15q.map(s=>Math.round(s.TotalQtd)),backgroundColor:'#166534',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${Math.round(ctx.raw).toLocaleString('pt-BR')} un.`}}},
+      scales:{x:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:'#A09C98'},grid:{color:'rgba(0,0,0,.05)'}},y:{ticks:{font:{size:9},color:'#555'},grid:{display:false}}}}
   });
-  document.getElementById('tblAbcQ').innerHTML = buildTable([...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).filter(s=>s.abcQ==='A'), 'qtd');
+  document.getElementById('tblAbcQ').innerHTML = '<div class="tbl-wrap">' + buildTable([...APP.allSkus].sort((a,b)=>b.TotalQtd-a.TotalQtd).filter(s=>s.abcQ==='A'), 'qtd') + '</div>';
 }
 
 function buildTable(data, sortBy) {
   const rows = data.map((s,i) => `
     <tr>
       <td>${i+1}</td>
-      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:#888">${s.sku}</span></td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
       <td class="prod-name" title="${s.nome}">${s.nome}</td>
       <td>${s.cat}</td>
+      <td style="color:var(--text3);font-size:11px">${s.sub||''}</td>
       <td class="num">${Math.round(s.TotalValor).toLocaleString('pt-BR')}</td>
       <td class="num">${Math.round(s.TotalQtd).toLocaleString('pt-BR')}</td>
       <td><span class="badge ${s.abcV}">${s.abcV}</span></td>
       <td><span class="badge ${s.abcQ}">${s.abcQ}</span></td>
     </tr>`).join('');
-  return `<table><thead><tr><th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th style="text-align:right">Valor R$</th><th style="text-align:right">Qtd</th><th>ABC V</th><th>ABC Q</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr><th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th style="text-align:right">Valor R$</th><th style="text-align:right">Qtd</th><th>ABC V</th><th>ABC Q</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
+/* ─── TODOS OS SKUs ─── */
 function buildTodos() {
   const cats = [...new Set(APP.allSkus.map(s=>s.cat))].sort();
-  const sel = document.getElementById('fCat');
-  sel.innerHTML = '<option value="">Todas as categorias</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  document.getElementById('fCat').innerHTML = '<option value="">Todas as categorias</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
   filteredSkus = [...APP.allSkus]; skuPage = 0; renderTodosPage();
 }
 
@@ -565,9 +1235,17 @@ function filterTable() {
   const q = document.getElementById('skuSearch').value.toLowerCase();
   const abcV = document.getElementById('fAbcV').value;
   const cat = document.getElementById('fCat').value;
+  const subcat = document.getElementById('fSubcat').value;
+
+  // Update subcat options based on cat
+  const catFilter = cat;
+  const subcats = catFilter ? [...new Set(APP.allSkus.filter(s=>s.cat===catFilter).map(s=>s.sub))].sort() : [];
+  document.getElementById('fSubcat').innerHTML = '<option value="">Todas as subcategorias</option>' + subcats.map(s=>`<option value="${s}">${s}</option>`).join('');
+
   filteredSkus = APP.allSkus.filter(s => {
     if (abcV && s.abcV !== abcV) return false;
     if (cat && s.cat !== cat) return false;
+    if (subcat && s.sub !== subcat) return false;
     if (q && !s.nome.toLowerCase().includes(q) && !String(s.sku).includes(q)) return false;
     return true;
   });
@@ -576,8 +1254,8 @@ function filterTable() {
 
 function renderTodosPage() {
   const start = skuPage * PAGE;
-  const slice = filteredSkus.slice(start, start + PAGE);
-  document.getElementById('tblTodos').innerHTML = buildTable(slice, 'valor');
+  const slice = filteredSkus.slice(start, start+PAGE);
+  document.getElementById('tblTodos').innerHTML = '<div class="tbl-wrap">' + buildTable(slice, 'valor') + '</div>';
   document.getElementById('pag').innerHTML = `
     <button class="pag-btn" onclick="skuPage--;renderTodosPage()" ${skuPage===0?'disabled':''}>← Anterior</button>
     <span class="pag-info">${start+1}–${Math.min(start+PAGE,filteredSkus.length)} de ${filteredSkus.length}</span>
@@ -586,7 +1264,7 @@ function renderTodosPage() {
 
 function showTab(id) {
   document.querySelectorAll('.tab').forEach((t,i) => {
-    t.classList.toggle('active', ['visao','abc-valor','abc-qtd','todos'][i] === id);
+    t.classList.toggle('active', ['visao','categorias','abc-valor','abc-qtd','todos'][i] === id);
   });
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
