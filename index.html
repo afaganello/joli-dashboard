@@ -58,6 +58,43 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .insight-chip{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:7px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
 .dot.blue{background:var(--blue)}.dot.amber{background:#D97706}.dot.purple{background:var(--purple)}
+/* ── GLOBAL FILTER BAR ── */
+.filter-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;position:sticky;top:52px;z-index:90;display:flex;align-items:center;gap:0}
+.filter-bar-inner{max-width:1320px;margin:0 auto;width:100%;display:flex;align-items:center;gap:10px;padding:10px 0;flex-wrap:wrap}
+.fb-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap;flex-shrink:0}
+.fb-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 4px}
+/* Dropdown wrapper */
+.fb-drop{position:relative;flex-shrink:0}
+.fb-btn{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .15s,background .15s;white-space:nowrap;user-select:none}
+.fb-btn:hover{border-color:var(--text2);background:#FAFAF8}
+.fb-btn.has-value{border-color:var(--text);background:var(--text);color:#fff}
+.fb-btn .fb-caret{font-size:9px;opacity:.6;transition:transform .15s}
+.fb-drop.open .fb-caret{transform:rotate(180deg)}
+/* Dropdown panel */
+.fb-panel{position:absolute;top:calc(100% + 6px);left:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:200;min-width:200px;max-width:280px;overflow:hidden;display:none}
+.fb-drop.open .fb-panel{display:block}
+.fb-panel-head{padding:10px 12px 8px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.fb-panel-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.fb-clear-link{font-size:11px;color:var(--text3);cursor:pointer;text-decoration:underline}
+.fb-clear-link:hover{color:var(--text)}
+.fb-options{max-height:240px;overflow-y:auto;padding:6px 0}
+.fb-option{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;font-size:12px;color:var(--text2);transition:background .1s}
+.fb-option:hover{background:#FAFAF8}
+.fb-option.selected{color:var(--text);font-weight:500}
+.fb-option input[type=checkbox]{width:13px;height:13px;accent-color:var(--text);flex-shrink:0;cursor:pointer}
+/* Month range panel */
+.fb-month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px}
+.fb-month-chip{padding:5px 4px;text-align:center;font-size:11px;font-family:'DM Mono',monospace;border-radius:5px;cursor:pointer;border:1px solid transparent;color:var(--text2);transition:all .1s;user-select:none}
+.fb-month-chip:hover{background:var(--bg);border-color:var(--border)}
+.fb-month-chip.in-range{background:#EFF6FF;border-color:#BFDBFE;color:var(--blue)}
+.fb-month-chip.edge{background:var(--text);border-color:var(--text);color:#fff}
+/* Active chips summary */
+.fb-active-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fb-chip{display:inline-flex;align-items:center;gap:5px;background:var(--text);color:#fff;border-radius:20px;padding:3px 10px 3px 10px;font-size:11px;font-family:'DM Mono',monospace}
+.fb-chip-x{cursor:pointer;opacity:.7;font-size:13px;line-height:1;margin-left:2px}
+.fb-chip-x:hover{opacity:1}
+.fb-reset{background:none;border:none;font-size:11px;color:var(--text3);cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;padding:0}
+.fb-reset:hover{color:var(--red)}
 /* PANELS */
 .panel{display:none}.panel.active{display:block}
 /* PERIOD */
@@ -213,6 +250,57 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
 </nav>
+
+<!-- ── GLOBAL FILTER BAR ── -->
+<div class="filter-bar" id="filterBar" style="display:none">
+  <div class="filter-bar-inner">
+    <span class="fb-label">Filtros</span>
+    <div class="fb-sep"></div>
+    <!-- Período -->
+    <div class="fb-drop" id="dropPeriodo">
+      <div class="fb-btn" id="btnPeriodo" onclick="toggleDrop('dropPeriodo')">
+        <span id="lblPeriodo">Período</span><span class="fb-caret">▼</span>
+      </div>
+      <div class="fb-panel" id="panelPeriodo">
+        <div class="fb-panel-head"><span class="fb-panel-title">Selecione meses</span><span class="fb-clear-link" onclick="clearFilter('periodo')">Limpar</span></div>
+        <div class="fb-month-grid" id="monthGrid"></div>
+      </div>
+    </div>
+    <!-- Categoria -->
+    <div class="fb-drop" id="dropCat">
+      <div class="fb-btn" id="btnCat" onclick="toggleDrop('dropCat')">
+        <span id="lblCat">Categoria</span><span class="fb-caret">▼</span>
+      </div>
+      <div class="fb-panel" id="panelCat">
+        <div class="fb-panel-head"><span class="fb-panel-title">Categorias</span><span class="fb-clear-link" onclick="clearFilter('cat')">Limpar</span></div>
+        <div class="fb-options" id="optsCat"></div>
+      </div>
+    </div>
+    <!-- Subcategoria -->
+    <div class="fb-drop" id="dropSubcat">
+      <div class="fb-btn" id="btnSubcat" onclick="toggleDrop('dropSubcat')">
+        <span id="lblSubcat">Subcategoria</span><span class="fb-caret">▼</span>
+      </div>
+      <div class="fb-panel" id="panelSubcat">
+        <div class="fb-panel-head"><span class="fb-panel-title">Subcategorias</span><span class="fb-clear-link" onclick="clearFilter('subcat')">Limpar</span></div>
+        <div class="fb-options" id="optsSubcat"></div>
+      </div>
+    </div>
+    <!-- Marca -->
+    <div class="fb-drop" id="dropMarca">
+      <div class="fb-btn" id="btnMarca" onclick="toggleDrop('dropMarca')">
+        <span id="lblMarca">Marca</span><span class="fb-caret">▼</span>
+      </div>
+      <div class="fb-panel" id="panelMarca">
+        <div class="fb-panel-head"><span class="fb-panel-title">Marcas</span><span class="fb-clear-link" onclick="clearFilter('marca')">Limpar</span></div>
+        <div class="fb-options" id="optsMarca"></div>
+      </div>
+    </div>
+    <div class="fb-sep"></div>
+    <div class="fb-active-chips" id="activeChips"></div>
+    <button class="fb-reset" id="btnResetAll" onclick="resetAllFilters()" style="display:none">✕ Limpar tudo</button>
+  </div>
+</div>
 
 <main class="main" id="mainContent" style="display:none">
   <div class="error-box" id="errorBox"></div>
@@ -428,6 +516,18 @@ let APP = {monthly:[],allSkus:[],skuMap:{},categories:[],subcatMap:{},catByMonth
 let skuPage=0, filteredSkus=[], selectedCat=null;
 const PAGE=25, activePeriod={v:'all'};
 
+// ── GLOBAL FILTER STATE ────────────────────────────────────────────────────────
+const FILTER = {
+  meses:   [],   // [] = all; else array of label strings e.g. ['Jan/26','Fev/26']
+  cats:    [],   // [] = all
+  subcats: [],   // [] = all
+  marcas:  [],   // [] = all
+  // Range selection state for month picker
+  _rangeStart: null,
+};
+// Store raw data per SKU/month so we can re-slice when filters change
+// APP.rawSalesBySku = { sku: { nome, cat, sub, marca, meses: { label: {v,q} } } }
+
 const fmtK   = v => v>=1e6?'R$ '+(v/1e6).toFixed(2)+'M':v>=1e3?'R$ '+Math.round(v/1e3)+'k':'R$ '+Math.round(v);
 const fmtBRL = v => 'R$ '+Math.round(v).toLocaleString('pt-BR');
 const num    = v => typeof v==='string'?parseFloat(v.replace(',','.'))||0:(parseFloat(v)||0);
@@ -510,6 +610,12 @@ async function loadData(){
 
     APP.monthly=Object.values(monthlyMap);
     APP.catByMonth=catByMonthMap;
+    // Store raw per-SKU sales for filter recompute
+    APP.rawSalesBySku={};
+    for(const [sku,data] of Object.entries(rawSales)){
+      const info=skuMap[sku]||{cat:'Sem Categoria',sub:'—',marca:'—',nome:data.nome};
+      APP.rawSalesBySku[sku]={nome:info.nome||data.nome,cat:info.cat,sub:info.sub,marca:info.marca,meses:data.meses};
+    }
     skuTotals.sort((a,b)=>b.TotalValor-a.TotalValor);
 
     // ABC Valor
@@ -550,7 +656,9 @@ async function loadData(){
     await new Promise(r=>setTimeout(r,280));
     document.getElementById('loadingScreen').classList.add('hidden');
     document.getElementById('mainContent').style.display='block';
+    document.getElementById('filterBar').style.display='block';
     document.getElementById('lastUpdate').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    initFilterBar();
   }catch(err){
     document.getElementById('loadingScreen').classList.add('hidden');
     const eb=document.getElementById('errorBox');eb.textContent='⚠ Erro: '+err.message;eb.classList.add('visible');
@@ -566,21 +674,275 @@ function buildDashboard(){
   buildAbcValor();buildAbcQtd();buildTodos();
 }
 
-function getMonthly(){
-  if(activePeriod.v==='all')return APP.monthly;
-  return APP.monthly.slice(-parseInt(activePeriod.v));
+// ── FILTER ENGINE ─────────────────────────────────────────────────────────────
+
+function getActiveMonths(){
+  const all=MONTH_SHEETS.map(m=>m.label);
+  if(FILTER.meses.length===0) return activePeriod.v==='all'?all:all.slice(-parseInt(activePeriod.v));
+  return all.filter(l=>FILTER.meses.includes(l));
 }
 
+function getMonthly(){
+  // Returns monthly totals respecting FILTER.cats + FILTER.meses
+  const months=getActiveMonths();
+  const byMonth={};
+  months.forEach(l=>byMonth[l]={label:l,Valor:0,Qtd:0});
+  for(const [,data] of Object.entries(APP.rawSalesBySku)){
+    if(FILTER.cats.length&&!FILTER.cats.includes(data.cat)) continue;
+    if(FILTER.subcats.length&&!FILTER.subcats.includes(data.sub)) continue;
+    if(FILTER.marcas.length&&!FILTER.marcas.includes(data.marca)) continue;
+    for(const [label,vals] of Object.entries(data.meses)){
+      if(byMonth[label]){byMonth[label].Valor+=vals.v;byMonth[label].Qtd+=vals.q;}
+    }
+  }
+  return months.map(l=>byMonth[l]);
+}
+
+function applyFilters(){
+  // Recompute APP.allSkus, APP.categories, APP.subcatMap, APP.catByMonth using FILTER
+  const months=getActiveMonths();
+  const catByMonthMap={};
+  const skuTotals=[];
+
+  for(const [sku,data] of Object.entries(APP.rawSalesBySku)){
+    if(FILTER.cats.length&&!FILTER.cats.includes(data.cat)) continue;
+    if(FILTER.subcats.length&&!FILTER.subcats.includes(data.sub)) continue;
+    if(FILTER.marcas.length&&!FILTER.marcas.includes(data.marca)) continue;
+    let tv=0,tq=0;
+    for(const label of months){
+      const vals=data.meses[label];
+      if(!vals) continue;
+      tv+=vals.v;tq+=vals.q;
+      if(!catByMonthMap[data.cat])catByMonthMap[data.cat]={};
+      if(!catByMonthMap[data.cat][label])catByMonthMap[data.cat][label]={v:0,q:0};
+      catByMonthMap[data.cat][label].v+=vals.v;catByMonthMap[data.cat][label].q+=vals.q;
+    }
+    if(tv>0||tq>0) skuTotals.push({sku:parseInt(sku),nome:data.nome,cat:data.cat,sub:data.sub,marca:data.marca,TotalValor:tv,TotalQtd:tq});
+  }
+
+  APP.catByMonth=catByMonthMap;
+  skuTotals.sort((a,b)=>b.TotalValor-a.TotalValor);
+
+  // Recalc ABC
+  const totalValor=skuTotals.reduce((s,x)=>s+x.TotalValor,0);
+  let cumV=0;
+  skuTotals.forEach(s=>{cumV+=s.TotalValor;s.abcV=cumV/totalValor<=.80?'A':cumV/totalValor<=.95?'B':'C'});
+  const byQtd=[...skuTotals].sort((a,b)=>b.TotalQtd-a.TotalQtd);
+  const totalQtd=byQtd.reduce((s,x)=>s+x.TotalQtd,0);
+  let cumQ=0;const abcQMap={};
+  byQtd.forEach(s=>{cumQ+=s.TotalQtd;abcQMap[s.sku]=cumQ/totalQtd<=.80?'A':cumQ/totalQtd<=.95?'B':'C'});
+  skuTotals.forEach(s=>s.abcQ=abcQMap[s.sku]||'C');
+  APP.allSkus=skuTotals;
+
+  const catMap={};
+  skuTotals.forEach(s=>{
+    if(!catMap[s.cat])catMap[s.cat]={Categoria:s.cat,Valor:0,Qtd:0,skus:0};
+    catMap[s.cat].Valor+=s.TotalValor;catMap[s.cat].Qtd+=s.TotalQtd;catMap[s.cat].skus++;
+  });
+  APP.categories=Object.values(catMap).sort((a,b)=>b.Valor-a.Valor);
+
+  const subcatMap={};
+  skuTotals.forEach(s=>{
+    if(!subcatMap[s.cat])subcatMap[s.cat]={};
+    if(!subcatMap[s.cat][s.sub])subcatMap[s.cat][s.sub]={v:0,q:0,skus:0};
+    subcatMap[s.cat][s.sub].v+=s.TotalValor;subcatMap[s.cat][s.sub].q+=s.TotalQtd;subcatMap[s.cat][s.sub].skus++;
+  });
+  APP.subcatMap=subcatMap;
+}
+
+// ── FILTER BAR UI ─────────────────────────────────────────────────────────────
+
+function initFilterBar(){
+  // Build month grid
+  const labels=MONTH_SHEETS.map(m=>m.label);
+  document.getElementById('monthGrid').innerHTML=labels.map(l=>`
+    <div class="fb-month-chip" data-month="${l}" onclick="toggleMonth('${l}')">${l}</div>`).join('');
+  renderCatOptions();renderMarcaOptions();renderSubcatOptions();
+  renderActiveChips();
+}
+
+function renderCatOptions(){
+  // Get all cats from raw data (not filtered)
+  const allCats=[...new Set(Object.values(APP.rawSalesBySku).map(d=>d.cat))].sort();
+  document.getElementById('optsCat').innerHTML=allCats.map(c=>`
+    <label class="fb-option ${FILTER.cats.includes(c)?'selected':''}">
+      <input type="checkbox" ${FILTER.cats.includes(c)?'checked':''} onchange="toggleCat('${c.replace(/'/g,"\\'")}')"/>
+      <span style="color:${getCatColor(c)};font-weight:500">${c}</span>
+    </label>`).join('');
+}
+
+function renderSubcatOptions(){
+  // Show subcats filtered by active cat selection
+  const allData=Object.values(APP.rawSalesBySku);
+  const relevantData=FILTER.cats.length?allData.filter(d=>FILTER.cats.includes(d.cat)):allData;
+  const allSubs=[...new Set(relevantData.map(d=>d.sub).filter(s=>s&&s!=='—'))].sort();
+  document.getElementById('optsSubcat').innerHTML=allSubs.map(s=>`
+    <label class="fb-option ${FILTER.subcats.includes(s)?'selected':''}">
+      <input type="checkbox" ${FILTER.subcats.includes(s)?'checked':''} onchange="toggleSubcat('${s.replace(/'/g,"\\'")}')"/>
+      ${s}
+    </label>`).join('');
+}
+
+function renderMarcaOptions(){
+  const allMarcas=[...new Set(Object.values(APP.rawSalesBySku).map(d=>d.marca).filter(m=>m&&m!=='—'))].sort();
+  document.getElementById('optsMarca').innerHTML=allMarcas.map(m=>`
+    <label class="fb-option ${FILTER.marcas.includes(m)?'selected':''}">
+      <input type="checkbox" ${FILTER.marcas.includes(m)?'checked':''} onchange="toggleMarca('${m}')"/>
+      ${m}
+    </label>`).join('');
+}
+
+function toggleMonth(label){
+  const chips=document.querySelectorAll('.fb-month-chip');
+  const allLabels=MONTH_SHEETS.map(m=>m.label);
+  if(!FILTER._rangeStart){
+    // Start range
+    FILTER._rangeStart=label;
+    chips.forEach(c=>{
+      c.classList.toggle('edge', c.dataset.month===label);
+      c.classList.remove('in-range');
+    });
+  } else {
+    // End range — select from start to end
+    const si=allLabels.indexOf(FILTER._rangeStart),ei=allLabels.indexOf(label);
+    const from=Math.min(si,ei),to=Math.max(si,ei);
+    FILTER.meses=allLabels.slice(from,to+1);
+    FILTER._rangeStart=null;
+    renderMonthGrid();
+    triggerFilterUpdate();
+  }
+}
+
+function renderMonthGrid(){
+  const allLabels=MONTH_SHEETS.map(m=>m.label);
+  document.querySelectorAll('.fb-month-chip').forEach(c=>{
+    const l=c.dataset.month;
+    const inRange=FILTER.meses.includes(l);
+    const isEdge=FILTER.meses.length>0&&(l===FILTER.meses[0]||l===FILTER.meses[FILTER.meses.length-1]);
+    c.classList.toggle('in-range',inRange&&!isEdge);
+    c.classList.toggle('edge',isEdge);
+  });
+}
+
+function toggleCat(cat){
+  const idx=FILTER.cats.indexOf(cat);
+  if(idx>=0) FILTER.cats.splice(idx,1); else FILTER.cats.push(cat);
+  // Remove subcats that no longer belong
+  if(FILTER.cats.length){
+    const validSubs=new Set(Object.values(APP.rawSalesBySku).filter(d=>FILTER.cats.includes(d.cat)).map(d=>d.sub));
+    FILTER.subcats=FILTER.subcats.filter(s=>validSubs.has(s));
+  }
+  renderCatOptions();renderSubcatOptions();triggerFilterUpdate();
+}
+
+function toggleSubcat(sub){
+  const idx=FILTER.subcats.indexOf(sub);
+  if(idx>=0) FILTER.subcats.splice(idx,1); else FILTER.subcats.push(sub);
+  renderSubcatOptions();triggerFilterUpdate();
+}
+
+function toggleMarca(marca){
+  const idx=FILTER.marcas.indexOf(marca);
+  if(idx>=0) FILTER.marcas.splice(idx,1); else FILTER.marcas.push(marca);
+  renderMarcaOptions();triggerFilterUpdate();
+}
+
+function clearFilter(type){
+  if(type==='periodo'){FILTER.meses=[];FILTER._rangeStart=null;renderMonthGrid();}
+  else if(type==='cat'){FILTER.cats=[];FILTER.subcats=[];renderCatOptions();renderSubcatOptions();}
+  else if(type==='subcat'){FILTER.subcats=[];renderSubcatOptions();}
+  else if(type==='marca'){FILTER.marcas=[];renderMarcaOptions();}
+  triggerFilterUpdate();
+}
+
+function resetAllFilters(){
+  FILTER.meses=[];FILTER.cats=[];FILTER.subcats=[];FILTER.marcas=[];FILTER._rangeStart=null;
+  activePeriod.v='all';
+  renderMonthGrid();renderCatOptions();renderSubcatOptions();renderMarcaOptions();
+  triggerFilterUpdate();
+}
+
+function triggerFilterUpdate(){
+  updateFilterBtnLabels();renderActiveChips();
+  applyFilters();
+  buildDashboard();
+}
+
+function updateFilterBtnLabels(){
+  // Período
+  const btnP=document.getElementById('btnPeriodo');
+  const lblP=document.getElementById('lblPeriodo');
+  if(FILTER.meses.length){
+    lblP.textContent=FILTER.meses.length===1?FILTER.meses[0]:`${FILTER.meses[0]} → ${FILTER.meses[FILTER.meses.length-1]}`;
+    btnP.classList.add('has-value');
+  } else {btnP.classList.remove('has-value');lblP.textContent='Período';}
+  // Cat
+  const btnC=document.getElementById('btnCat');
+  const lblC=document.getElementById('lblCat');
+  if(FILTER.cats.length){lblC.textContent=FILTER.cats.length===1?FILTER.cats[0]:`${FILTER.cats.length} categorias`;btnC.classList.add('has-value');}
+  else{btnC.classList.remove('has-value');lblC.textContent='Categoria';}
+  // Subcat
+  const btnS=document.getElementById('btnSubcat');
+  const lblS=document.getElementById('lblSubcat');
+  if(FILTER.subcats.length){lblS.textContent=FILTER.subcats.length===1?FILTER.subcats[0]:`${FILTER.subcats.length} subcats`;btnS.classList.add('has-value');}
+  else{btnS.classList.remove('has-value');lblS.textContent='Subcategoria';}
+  // Marca
+  const btnM=document.getElementById('btnMarca');
+  const lblM=document.getElementById('lblMarca');
+  if(FILTER.marcas.length){lblM.textContent=FILTER.marcas.length===1?FILTER.marcas[0]:`${FILTER.marcas.length} marcas`;btnM.classList.add('has-value');}
+  else{btnM.classList.remove('has-value');lblM.textContent='Marca';}
+}
+
+function renderActiveChips(){
+  const chips=[];
+  if(FILTER.meses.length)
+    chips.push({label:FILTER.meses.length===1?FILTER.meses[0]:`${FILTER.meses[0]} → ${FILTER.meses[FILTER.meses.length-1]}`,clear:'periodo'});
+  FILTER.cats.forEach(c=>chips.push({label:c,clear:'_cat_'+c}));
+  FILTER.subcats.forEach(s=>chips.push({label:s,clear:'_sub_'+s}));
+  FILTER.marcas.forEach(m=>chips.push({label:m,clear:'_marca_'+m}));
+  const container=document.getElementById('activeChips');
+  const resetBtn=document.getElementById('btnResetAll');
+  if(!chips.length){container.innerHTML='';resetBtn.style.display='none';return;}
+  resetBtn.style.display='block';
+  container.innerHTML=chips.map(c=>`
+    <span class="fb-chip">${c.label}<span class="fb-chip-x" onclick="removeChip('${c.clear}')">×</span></span>`).join('');
+}
+
+function removeChip(key){
+  if(key==='periodo'){FILTER.meses=[];FILTER._rangeStart=null;renderMonthGrid();}
+  else if(key.startsWith('_cat_')){const c=key.slice(5);FILTER.cats=FILTER.cats.filter(x=>x!==c);FILTER.subcats=[];renderCatOptions();renderSubcatOptions();}
+  else if(key.startsWith('_sub_')){const s=key.slice(5);FILTER.subcats=FILTER.subcats.filter(x=>x!==s);renderSubcatOptions();}
+  else if(key.startsWith('_marca_')){const m=key.slice(7);FILTER.marcas=FILTER.marcas.filter(x=>x!==m);renderMarcaOptions();}
+  triggerFilterUpdate();
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.fb-drop')) document.querySelectorAll('.fb-drop.open').forEach(d=>d.classList.remove('open'));
+});
+function toggleDrop(id){
+  const drop=document.getElementById(id);
+  const wasOpen=drop.classList.contains('open');
+  document.querySelectorAll('.fb-drop.open').forEach(d=>d.classList.remove('open'));
+  if(!wasOpen) drop.classList.add('open');
+}
+
+
+
 function buildKPIs(){
-  const m=APP.monthly;
+  const m=getMonthly();
+  if(!m||!m.length) return;
   const totalV=m.reduce((s,x)=>s+x.Valor,0),totalQ=m.reduce((s,x)=>s+x.Qtd,0);
   const last=m[m.length-1],prev=m[m.length-2];
   const mm=prev&&prev.Valor?pct(last.Valor,prev.Valor):0;
   const ticket=totalQ>0?totalV/totalQ:0;
   const skuAtivos=APP.allSkus.filter(s=>s.TotalValor>0).length;
+  // Show filter context in subtitle
+  const filterCtx=FILTER.cats.length?FILTER.cats.join(', '):FILTER.subcats.length?FILTER.subcats.join(', '):'';
+  const periodCtx=FILTER.meses.length?`${FILTER.meses[0]}–${FILTER.meses[FILTER.meses.length-1]}`:`${m[0].label} — ${m[m.length-1].label}`;
   document.getElementById('kpis').innerHTML=`
-    <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">${fmtK(totalV)}</div><div class="kpi-sub">${m[0].label} — ${m[m.length-1].label}</div></div>
-    <div class="kpi"><div class="kpi-label">Unidades vendidas</div><div class="kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div><div class="kpi-sub">${m.length} meses</div></div>
+    <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">${fmtK(totalV)}</div><div class="kpi-sub">${periodCtx}${filterCtx?' · '+filterCtx:''}</div></div>
+    <div class="kpi"><div class="kpi-label">Unidades vendidas</div><div class="kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div><div class="kpi-sub">${m.length} meses · ${skuAtivos} SKUs</div></div>
     <div class="kpi"><div class="kpi-label">${last.label} — último mês</div><div class="kpi-value">${fmtK(last.Valor)}</div><div class="kpi-trend ${mm>=0?'up':'dn'}">${mm>=0?'▲':'▼'} ${Math.abs(mm).toFixed(1)}% vs mês anterior</div></div>
     <div class="kpi"><div class="kpi-label">Ticket médio</div><div class="kpi-value">R$ ${Math.round(ticket).toLocaleString('pt-BR')}</div><div class="kpi-sub">${skuAtivos} SKUs ativos</div></div>`;
 }
@@ -590,21 +952,31 @@ function buildInsights(){
   const total=APP.allSkus.length;
   const topCat=APP.categories[0];
   const totalV=APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const m=APP.monthly;
-  const growth=m.length>=2?pct(m[m.length-1].Valor,m[0].Valor):0;
+  const m=getMonthly();
+  if(!m||m.length<2){document.getElementById('insights').innerHTML='';return;}
+  const growth=pct(m[m.length-1].Valor,m[0].Valor);
   const marcas=new Set(APP.allSkus.map(s=>s.marca).filter(Boolean));
+  const filterActive=FILTER.cats.length||FILTER.subcats.length||FILTER.marcas.length||FILTER.meses.length;
   document.getElementById('insights').innerHTML=`
-    <div class="insight-chip"><span class="dot"></span>${classA} SKUs (${Math.round(classA/total*100)}% do portfólio) = 80% do faturamento</div>
-    <div class="insight-chip"><span class="dot blue"></span>${topCat?.Categoria}: ${Math.round((topCat?.Valor||0)/totalV*100)}% do faturamento total</div>
-    <div class="insight-chip"><span class="dot ${growth>=0?'':'amber'}"></span>Crescimento ${m[0].label}→${m[m.length-1].label}: ${growth>=0?'+':''}${growth}%</div>
+    ${filterActive?`<div class="insight-chip" style="background:#FEF3C7;border-color:#FDE68A"><span class="dot amber"></span>Filtros ativos — dados parciais do portfólio</div>`:''}
+    <div class="insight-chip"><span class="dot"></span>${classA} SKUs (${Math.round(classA/Math.max(total,1)*100)}% do portfólio) = 80% do faturamento</div>
+    ${topCat?`<div class="insight-chip"><span class="dot blue"></span>${topCat.Categoria}: ${Math.round((topCat.Valor||0)/Math.max(totalV,1)*100)}% do faturamento</div>`:''}
+    <div class="insight-chip"><span class="dot ${growth>=0?'':'amber'}"></span>Variação ${m[0].label}→${m[m.length-1].label}: ${growth>=0?'+':''}${growth}%</div>
     <div class="insight-chip"><span class="dot purple"></span>${marcas.size} marcas · ${APP.categories.length} categorias · ${Object.values(APP.subcatMap).reduce((s,o)=>s+Object.keys(o).length,0)} subcategorias</div>`;
 }
 
 function buildPeriodBtns(){
   document.getElementById('periodBtns').innerHTML=[{v:'3',l:'3M'},{v:'6',l:'6M'},{v:'all',l:'12M'}]
-    .map(p=>`<button class="period-btn ${activePeriod.v===p.v?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`).join('');
+    .map(p=>`<button class="period-btn ${activePeriod.v===p.v&&FILTER.meses.length===0?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`).join('');
 }
-function setPeriod(p){activePeriod.v=p;buildPeriodBtns();rebuildVisaoCharts()}
+function setPeriod(p){
+  activePeriod.v=p;
+  FILTER.meses=[];  // period buttons clear month range filter
+  FILTER._rangeStart=null;
+  renderMonthGrid();
+  updateFilterBtnLabels();renderActiveChips();
+  buildPeriodBtns();rebuildVisaoCharts();
+}
 
 function ch(id){if(APP.charts[id]){try{APP.charts[id].destroy()}catch(e){}delete APP.charts[id]}}
 const TX='#A09C98',GC='rgba(0,0,0,.05)';
