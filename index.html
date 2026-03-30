@@ -680,20 +680,34 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="panel" id="sugestao">
     <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Sugestão de Novas Compras</h2>
     
-    <!-- FILTROS -->
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
-      <select id="filterPrioridade" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
-        <option value="">Prioridade: Todas</option>
-        <option value="critico">🔴 Crítico</option>
-        <option value="aviso">🟡 Aviso</option>
-        <option value="ok">🟢 OK</option>
-      </select>
+    <!-- FILTROS E BOTÕES -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;flex:1">
+        <select id="filterPrioridade" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
+          <option value="">Prioridade: Todas</option>
+          <option value="critico">🔴 Crítico</option>
+          <option value="aviso">🟡 Aviso</option>
+          <option value="ok">🟢 OK</option>
+        </select>
+        
+        <input type="text" id="filterSKU" placeholder="Buscar SKU ou produto..." 
+          style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:200px;font-family:'DM Sans',sans-serif">
+        
+        <button onclick="resetFilteresSugestao()" 
+          style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3);font-family:'DM Sans',sans-serif;transition:all .15s;user-select:none">↻ Limpar</button>
+      </div>
       
-      <input type="text" id="filterSKU" placeholder="Buscar SKU ou produto..." 
-        style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:200px;font-family:'DM Sans',sans-serif">
-      
-      <button onclick="resetFilteresSugestao()" 
-        style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3);font-family:'DM Sans',sans-serif;transition:all .15s;user-select:none">↻ Limpar</button>
+      <button onclick="exportarSugestaoExcel()" 
+        style="padding:8px 16px;background:#10b981;border:none;border-radius:6px;cursor:pointer;font-size:12px;color:white;font-family:'DM Sans',sans-serif;transition:all .15s;user-select:none;font-weight:500;white-space:nowrap">📊 Exportar Excel</button>
+    </div>
+
+    <!-- NOTAS EXPLICATIVAS -->
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:20px;font-size:11px;color:var(--text3);line-height:1.6">
+      <strong style="color:var(--text)">📌 Como Entender os Cálculos:</strong><br>
+      <strong>Média/mês:</strong> Máximo entre média de últimos 3 meses e 6 meses (evita distorção por falta de estoque)<br>
+      <strong>ROP:</strong> Ponto de recompra = (Média × 5 meses de lead time) + (Média × 0.5 de segurança)<br>
+      <strong>QTD Sugerida:</strong> Quantidade a pedir = (Média × 3 meses cobertura) + (Média × 0.5 de segurança)<br>
+      <strong>Prioridade:</strong> 🔴 Crítico (estoque < 50% ROP) | 🟡 Aviso (estoque < ROP) | 🟢 OK (estoque ≥ ROP)
     </div>
 
     <!-- TABELA -->
@@ -2335,29 +2349,52 @@ function calculateAverageMonthlySales(sku) {
   const rawData = APP.rawSalesBySku?.[String(sku)] || {};
   if (!rawData.meses || Object.keys(rawData.meses).length === 0) return 0;
   
-  // Pegar os últimos 3 meses com dados (em ordem cronológica)
   const monthLabels = MONTH_SHEETS.map(m => m.label);
   const monthsWithData = monthLabels.filter(label => rawData.meses[label] && (rawData.meses[label].q || 0) > 0);
   
   if (monthsWithData.length === 0) return 0;
   
-  // Usar últimos 3 meses disponíveis
+  // ── Calcular média dos últimos 3 meses
   const last3Months = monthsWithData.slice(-3);
+  let totalQty3 = 0;
+  last3Months.forEach(label => {
+    totalQty3 += rawData.meses[label]?.q || 0;
+  });
+  const avg3months = Math.round(totalQty3 / last3Months.length);
+  
+  // ── Calcular média dos últimos 6 meses
+  let avg6months = avg3months; // Default: mesmo valor de 3 meses
+  if (monthsWithData.length >= 6) {
+    const last6Months = monthsWithData.slice(-6);
+    let totalQty6 = 0;
+    last6Months.forEach(label => {
+      totalQty6 += rawData.meses[label]?.q || 0;
+    });
+    avg6months = Math.round(totalQty6 / last6Months.length);
+  }
+  
+  // ── Usar o MAIOR entre 3 e 6 meses (mais seguro!)
+  const avgFinal = Math.max(avg3months, avg6months);
   
   // DEBUG: mostrar o que está usando
-  console.log(`[DEBUG] SKU ${sku}: Usando meses ${last3Months.join(', ')}`);
-  
-  let totalQty = 0;
+  console.log(`[DEBUG] SKU ${sku}: Cálculo de Média`);
+  console.log(`  Últimos 3 meses: ${last3Months.join(', ')}`);
   last3Months.forEach(label => {
-    const qty = rawData.meses[label]?.q || 0;
-    console.log(`  ${label}: ${qty} unidades`);
-    totalQty += qty;
+    console.log(`    ${label}: ${rawData.meses[label]?.q || 0} unidades`);
   });
+  console.log(`  Média 3 meses: ${totalQty3} ÷ 3 = ${avg3months} un/mês`);
   
-  const avgMonthly = Math.round(totalQty / last3Months.length);
-  console.log(`  SOMA: ${totalQty} | DIVISÃO: ${totalQty} ÷ ${last3Months.length} = ${avgMonthly}\n`);
+  if (monthsWithData.length >= 6) {
+    console.log(`  Últimos 6 meses: ${monthsWithData.slice(-6).join(', ')}`);
+    monthsWithData.slice(-6).forEach(label => {
+      console.log(`    ${label}: ${rawData.meses[label]?.q || 0} unidades`);
+    });
+    console.log(`  Média 6 meses: ${totalQty6} ÷ 6 = ${avg6months} un/mês`);
+  }
   
-  return avgMonthly;
+  console.log(`  ✅ Usando MÁXIMO: ${avgFinal} un/mês (max entre ${avg3months} e ${avg6months})\n`);
+  
+  return avgFinal;
 }
 
 // Função de debug - mostra os cálculos para um SKU específico
@@ -2784,6 +2821,94 @@ function getPriority(currentStock, rop) {
   return { label: '🟢 OK', value: 3 };
 }
 
+// Função para validar e debugar cálculos
+function validarCalculosSKU(sku) {
+  console.log('\n' + '='.repeat(70));
+  console.log(`📊 VALIDAÇÃO DE CÁLCULOS - SKU ${sku}`);
+  console.log('='.repeat(70) + '\n');
+  
+  const skuInfo = APP.allSkus.find(s => s.sku === sku);
+  if (!skuInfo) {
+    console.log(`❌ SKU ${sku} não encontrado em APP.allSkus`);
+    return;
+  }
+  
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const monthsWithData = monthLabels.filter(label => rawData.meses[label] && (rawData.meses[label].q || 0) > 0);
+  
+  // Calcular média 3 meses
+  const last3Months = monthsWithData.slice(-3);
+  let totalQty3 = 0;
+  last3Months.forEach(label => {
+    totalQty3 += rawData.meses[label]?.q || 0;
+  });
+  const avg3months = Math.round(totalQty3 / last3Months.length);
+  
+  // Calcular média 6 meses
+  let avg6months = avg3months;
+  let totalQty6 = 0;
+  if (monthsWithData.length >= 6) {
+    const last6Months = monthsWithData.slice(-6);
+    last6Months.forEach(label => {
+      totalQty6 += rawData.meses[label]?.q || 0;
+    });
+    avg6months = Math.round(totalQty6 / last6Months.length);
+  }
+  
+  const avgFinal = Math.max(avg3months, avg6months);
+  
+  console.log(`1️⃣ MÉDIA MENSAL (OPÇÃO 3: MAX entre 3 e 6 meses):\n`);
+  console.log(`   Últimos 3 meses: ${last3Months.join(', ')}`);
+  last3Months.forEach(label => {
+    console.log(`     ${label}: ${rawData.meses[label]?.q || 0} un`);
+  });
+  console.log(`   Soma 3m: ${totalQty3} | Média 3m: ${avg3months} un/mês\n`);
+  
+  if (monthsWithData.length >= 6) {
+    const last6Months = monthsWithData.slice(-6);
+    console.log(`   Últimos 6 meses: ${last6Months.join(', ')}`);
+    last6Months.forEach(label => {
+      console.log(`     ${label}: ${rawData.meses[label]?.q || 0} un`);
+    });
+    console.log(`   Soma 6m: ${totalQty6} | Média 6m: ${avg6months} un/mês\n`);
+  }
+  
+  console.log(`   ✅ USANDO MÁXIMO: ${avgFinal} un/mês`);
+  console.log(`      (max entre ${avg3months} e ${avg6months})\n`);
+  
+  const avgMonthly = avgFinal;
+  const rop = calculateROP(avgMonthly);
+  console.log(`2️⃣ ROP (Reorder Point):`);
+  console.log(`   Fórmula: (Média × 5 meses) + (Média × 0.5 buffer)`);
+  console.log(`   Cálculo: (${avgMonthly} × 5) + (${avgMonthly} × 0.5)`);
+  console.log(`   ROP: ${rop} unidades\n`);
+  
+  const orderQty = calculateOrderQuantity(avgMonthly);
+  console.log(`3️⃣ QUANTIDADE A PEDIR:`);
+  console.log(`   Fórmula: (Média × 3 meses) + (Média × 0.5 buffer)`);
+  console.log(`   Cálculo: (${avgMonthly} × 3) + (${avgMonthly} × 0.5)`);
+  console.log(`   Qtd Sugerida: ${orderQty} unidades\n`);
+  
+  const currentStock = APP.estoque && APP.estoque[String(sku)] ? APP.estoque[String(sku)].estoque : Math.round(skuInfo.TotalQtd * 0.3);
+  const estoqueReal = APP.estoque && APP.estoque[String(sku)] ? true : false;
+  console.log(`4️⃣ ESTOQUE ATUAL:`);
+  console.log(`   Valor: ${currentStock} unidades`);
+  console.log(`   Tipo: ${estoqueReal ? '✅ REAL (do Sheets)' : '⚠️ ESTIMADO (30%)'}\n`);
+  
+  const priority = getPriority(currentStock, rop);
+  console.log(`5️⃣ PRIORIDADE:`);
+  console.log(`   Status: ${priority.label}`);
+  if (currentStock < rop) {
+    console.log(`   ⚠️ Estoque (${currentStock}) < ROP (${rop}) → COMPRAR!`);
+    console.log(`   Quantidade recomendada: ${orderQty} unidades`);
+  } else {
+    console.log(`   ✅ Estoque (${currentStock}) >= ROP (${rop}) → OK, não comprar`);
+  }
+  
+  console.log('\n' + '='.repeat(70) + '\n');
+}
+
 function calculateDeliveryDate() {
   const d = new Date();
   d.setMonth(d.getMonth() + SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS);
@@ -2909,6 +3034,94 @@ function resetFilteresSugestao() {
   document.getElementById('filterPrioridade').value = '';
   document.getElementById('filterSKU').value = '';
   if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
+}
+
+// Função para exportar sugestão de compras para Excel
+function exportarSugestaoExcel() {
+  if (!window.allSugestoes || window.allSugestoes.length === 0) {
+    alert('Nenhuma sugestão para exportar!');
+    return;
+  }
+  
+  // Filtrar apenas sugestões que precisam comprar
+  const sugestoesCompra = window.allSugestoes.filter(s => s.sugerir);
+  
+  if (sugestoesCompra.length === 0) {
+    alert('Nenhum produto precisa ser comprado no momento!');
+    return;
+  }
+  
+  // Preparar dados para Excel
+  const dados = [
+    ['SUGESTÃO DE COMPRAS - JOLI', '', '', '', '', '', '', '', ''],
+    [`Gerado em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`, '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', ''],
+    [
+      'SKU',
+      'Produto',
+      'Estoque Atual',
+      'Média Mensal',
+      'ROP (Reorder Point)',
+      'Quantidade Sugerida',
+      'Preço Unitário',
+      'Custo Estimado',
+      'Prioridade',
+      'Data Entrega Est.'
+    ]
+  ];
+  
+  // Adicionar cada sugestão
+  sugestoesCompra.forEach(s => {
+    dados.push([
+      s.sku,
+      s.produto,
+      s.estoque,
+      s.avgMonthly,
+      s.rop,
+      s.orderQty,
+      `R$ ${s.precoUnit}`,
+      `R$ ${s.custo}`,
+      s.priority.label,
+      s.deliveryDate
+    ]);
+  });
+  
+  // Resumo final
+  dados.push(['', '', '', '', '', '', '', '', '']);
+  dados.push(['RESUMO']);
+  dados.push(['Total de Produtos para Comprar:', sugestoesCompra.length]);
+  dados.push(['Total de Unidades a Comprar:', sugestoesCompra.reduce((s, x) => s + x.orderQty, 0)]);
+  dados.push(['Investimento Total:', `R$ ${sugestoesCompra.reduce((s, x) => s + x.custo, 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`];
+  
+  // Notas
+  dados.push(['', '', '', '', '', '', '', '', '']);
+  dados.push(['NOTAS METODOLÓGICAS']);
+  dados.push(['Média Mensal:', 'Máximo entre média de 3 meses e 6 meses de vendas (evita distorção por falta de estoque)']);
+  dados.push(['ROP:', '(Média × 5 meses lead time) + (Média × 0.5 buffer segurança)']);
+  dados.push(['QTD Sugerida:', '(Média × 3 meses cobertura) + (Média × 0.5 buffer segurança)']);
+  dados.push(['Prioridade:', '🔴 Crítico (est. < 50% ROP) | 🟡 Aviso (est. < ROP) | 🟢 OK (est. ≥ ROP)']);
+  
+  // Converter para CSV (mais compatível com Excel)
+  const csv = dados.map(linha => 
+    linha.map(celula => {
+      // Escapar aspas e envolver em aspas se contiver vírgula
+      const valor = String(celula).replace(/"/g, '""');
+      return valor.includes(',') ? `"${valor}"` : valor;
+    }).join(',')
+  ).join('\n');
+  
+  // Download
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `Sugestao_Compras_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  alert(`✅ Relatório exportado com ${sugestoesCompra.length} produtos!`);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
