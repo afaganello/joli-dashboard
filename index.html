@@ -252,6 +252,34 @@ tbody tr:hover td{background:#FAFAF8}
 .analise-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px}
 .analise-empty-icon{font-size:32px;margin-bottom:12px}
 @media(max-width:900px){.analise-layout{grid-template-columns:1fr}.analise-sidebar{position:static}}
+/* ── PRODUCT SEARCH ── */
+.prod-search-wrap{position:relative}
+.prod-search-input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;transition:border-color .15s}
+.prod-search-input:focus{border-color:var(--text);background:var(--surface)}
+.prod-search-input::placeholder{color:var(--text3)}
+.prod-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:300;max-height:220px;overflow-y:auto;display:none}
+.prod-dropdown.open{display:block}
+.prod-dropdown-item{padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--border);color:var(--text2);transition:background .1s}
+.prod-dropdown-item:last-child{border-bottom:none}
+.prod-dropdown-item:hover{background:#FAFAF8}
+.prod-dropdown-item strong{color:var(--text);font-weight:500}
+.prod-dropdown-item span{color:var(--text3);font-size:10px;font-family:'DM Mono',monospace}
+.prod-dropdown-empty{padding:12px;font-size:12px;color:var(--text3);text-align:center}
+.prod-selected-chip{display:flex;align-items:center;gap:6px;background:var(--text);color:#fff;border-radius:6px;padding:6px 10px;margin-top:8px;font-size:11px}
+.prod-selected-chip-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.prod-selected-chip-x{cursor:pointer;opacity:.7;font-size:14px;flex-shrink:0}
+.prod-selected-chip-x:hover{opacity:1}
+/* Mode indicator */
+.analise-mode-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-family:'DM Mono',monospace;font-weight:500}
+.analise-mode-badge.mode-cat{background:var(--bg);border:1px solid var(--border);color:var(--text2)}
+.analise-mode-badge.mode-sub{background:var(--blue-bg);border:1px solid #BFDBFE;color:var(--blue)}
+.analise-mode-badge.mode-prod{background:#EDE9FE;border:1px solid #C4B5FD;color:#5B21B6}
+/* Comparison chart */
+.comp-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.comp-label{width:120px;flex-shrink:0;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.comp-bar-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.comp-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.comp-value{width:70px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);flex-shrink:0}
 </style>
 </head>
 <body>
@@ -409,7 +437,26 @@ tbody tr:hover td{background:#FAFAF8}
           <div class="analise-sidebar-label">Subcategoria</div>
           <div id="analiseSubcatList"></div>
         </div>
-      </div>
+
+        <!-- Produto -->
+        <div class="analise-sidebar-section">
+          <div class="analise-sidebar-label">Produto específico</div>
+          <div class="prod-search-wrap">
+            <input class="prod-search-input" id="prodSearchInput" type="text"
+              placeholder="Buscar por nome ou SKU..."
+              oninput="onProdSearchInput(this.value)"
+              onfocus="onProdSearchFocus()"
+              autocomplete="off"/>
+            <div class="prod-dropdown" id="prodDropdown"></div>
+          </div>
+          <div id="prodSelectedChip" style="display:none">
+            <div class="prod-selected-chip">
+              <span class="prod-selected-chip-name" id="prodChipName">—</span>
+              <span class="prod-selected-chip-x" onclick="clearProdSelection()">×</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /analise-sidebar -->
 
       <!-- CONTEÚDO ANÁLISE -->
       <div class="analise-content">
@@ -453,6 +500,13 @@ tbody tr:hover td{background:#FAFAF8}
             <div class="chart-title">Participação por subcategoria</div>
             <div class="chart-subtitle" style="margin-bottom:16px">Evolução do mix interno da categoria</div>
             <div class="chart-wrap tall"><canvas id="cAnaliseSubcat"></canvas></div>
+          </div>
+
+          <!-- Comparação produto vs categoria (só modo produto) -->
+          <div class="chart-box" style="margin-bottom:16px" id="analiseCompBox" style="display:none">
+            <div class="chart-title">Comparação produto vs categoria</div>
+            <div class="chart-subtitle" style="margin-bottom:16px">Top produtos por faturamento no período selecionado</div>
+            <div id="analiseCompContent"></div>
           </div>
 
           <!-- Tabela de produtos -->
@@ -1537,11 +1591,84 @@ function showTab(id){
 
 const ANALISE = {
   cat: null,
-  sub: null,        // null = todas subcats da categoria
-  period: 'all',    // 'all'|'6'|'3'|'1'
-  metric: 'valor',  // 'valor'|'qtd'|'ticket'
+  sub: null,
+  sku: null,         // selected product SKU (integer) or null
+  period: 'all',
+  metric: 'valor',
   page: 0,
 };
+
+// ── PRODUCT SEARCH ────────────────────────────────────────────────────────────
+
+function onProdSearchInput(q){
+  ANALISE.sku=null; // clear product when typing
+  updateProdChip();
+  renderProdDropdown(q);
+}
+
+function onProdSearchFocus(){
+  const q=document.getElementById('prodSearchInput').value;
+  renderProdDropdown(q);
+}
+
+function renderProdDropdown(q){
+  const dd=document.getElementById('prodDropdown');
+  const raw=q.trim().toLowerCase();
+  if(!raw){ dd.classList.remove('open'); return; }
+
+  const all=APP.allSkus;
+  const matches=all.filter(s=>
+    s.nome.toLowerCase().includes(raw)||String(s.sku).includes(raw)
+  ).slice(0,12);
+
+  if(!matches.length){
+    dd.innerHTML=`<div class="prod-dropdown-empty">Nenhum produto encontrado</div>`;
+  } else {
+    dd.innerHTML=matches.map(s=>`
+      <div class="prod-dropdown-item" onclick="selectProd(${s.sku})">
+        <strong>${s.nome}</strong><br>
+        <span>${s.sku} · ${s.cat} › ${s.sub} · ${s.marca||'—'}</span>
+      </div>`).join('');
+  }
+  dd.classList.add('open');
+}
+
+function selectProd(sku){
+  const s=APP.allSkus.find(x=>x.sku===sku);
+  if(!s) return;
+  ANALISE.sku=sku;
+  // Auto-set cat/sub to match the product
+  ANALISE.cat=s.cat;
+  ANALISE.sub=null;
+  document.getElementById('prodSearchInput').value='';
+  document.getElementById('prodDropdown').classList.remove('open');
+  updateProdChip(s);
+  buildAnaliseCatList();
+  buildAnaliseSubcatList();
+  renderAnalise();
+}
+
+function clearProdSelection(){
+  ANALISE.sku=null;
+  document.getElementById('prodSearchInput').value='';
+  updateProdChip();
+  if(ANALISE.cat) renderAnalise();
+}
+
+function updateProdChip(s){
+  const chip=document.getElementById('prodSelectedChip');
+  if(!s&&!ANALISE.sku){ chip.style.display='none'; return; }
+  const prod=s||APP.allSkus.find(x=>x.sku===ANALISE.sku);
+  if(!prod){ chip.style.display='none'; return; }
+  chip.style.display='block';
+  document.getElementById('prodChipName').textContent=prod.nome;
+}
+
+// Close dropdown on outside click
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.prod-search-wrap'))
+    document.getElementById('prodDropdown')?.classList.remove('open');
+});
 
 function initAnalise(){
   buildAnaliseCatList();
@@ -1608,9 +1735,10 @@ function getAnaliseMonths(){
 
 // Get filtered SKUs for the current analise selection
 function getAnaliseSkus(){
+  if(ANALISE.sku) return APP.allSkus.filter(s=>s.sku===ANALISE.sku);
   return APP.allSkus.filter(s=>{
-    if(s.cat !== ANALISE.cat) return false;
-    if(ANALISE.sub && s.sub !== ANALISE.sub) return false;
+    if(ANALISE.cat && s.cat!==ANALISE.cat) return false;
+    if(ANALISE.sub && s.sub!==ANALISE.sub) return false;
     return true;
   });
 }
@@ -1621,18 +1749,30 @@ function getAnaliseMonthlyData(){
   const byMonth={};
   months.forEach(l=>byMonth[l]={label:l,v:0,q:0});
   const raw=APP.rawSalesBySku||{};
-  for(const [,data] of Object.entries(raw)){
-    if(data.cat!==ANALISE.cat) continue;
-    if(ANALISE.sub && data.sub!==ANALISE.sub) continue;
-    for(const [label,vals] of Object.entries(data.meses)){
-      if(byMonth[label]){ byMonth[label].v+=vals.v; byMonth[label].q+=vals.q; }
+
+  if(ANALISE.sku){
+    // Single product mode
+    const data=raw[String(ANALISE.sku)];
+    if(data){
+      for(const [label,vals] of Object.entries(data.meses)){
+        if(byMonth[label]){ byMonth[label].v+=vals.v; byMonth[label].q+=vals.q; }
+      }
+    }
+  } else {
+    // Category / subcat mode
+    for(const [,data] of Object.entries(raw)){
+      if(ANALISE.cat && data.cat!==ANALISE.cat) continue;
+      if(ANALISE.sub && data.sub!==ANALISE.sub) continue;
+      for(const [label,vals] of Object.entries(data.meses)){
+        if(byMonth[label]){ byMonth[label].v+=vals.v; byMonth[label].q+=vals.q; }
+      }
     }
   }
   return months.map(l=>byMonth[l]);
 }
 
 function renderAnalise(){
-  if(!ANALISE.cat){
+  if(!ANALISE.cat&&!ANALISE.sku){
     document.getElementById('analiseEmpty').style.display='block';
     document.getElementById('analiseConteudo').style.display='none';
     return;
@@ -1640,38 +1780,61 @@ function renderAnalise(){
   document.getElementById('analiseEmpty').style.display='none';
   document.getElementById('analiseConteudo').style.display='block';
 
+  const isProdMode=!!ANALISE.sku;
+  const prod=isProdMode?APP.allSkus.find(x=>x.sku===ANALISE.sku):null;
+
   const months=getAnaliseMonths();
-  const skus=getAnaliseSkus();
-  const monthly=getAnaliseMonthlyData();
+  const monthly=getAnaliseMonthlyData();     // respects cat+sub+sku
+  const skus=getAnaliseSkus();               // respects cat+sub+sku
+
   const totalV=monthly.reduce((s,m)=>s+m.v,0);
   const totalQ=monthly.reduce((s,m)=>s+m.q,0);
   const ticket=totalQ>0?Math.round(totalV/totalQ):0;
   const last=monthly[monthly.length-1]||{v:0,q:0};
   const prev=monthly[monthly.length-2]||{v:0,q:0};
   const mmV=prev.v>0?pct(last.v,prev.v):0;
-  const color=getCatColor(ANALISE.cat);
+  const color=getCatColor(ANALISE.cat||'');
 
-  // Header
-  const selLabel=ANALISE.sub||ANALISE.cat;
-  document.getElementById('analiseHeaderTitle').textContent=selLabel;
-  document.getElementById('analiseHeaderSub').textContent=
-    ANALISE.sub ? `Subcategoria de ${ANALISE.cat} · ${months.length} meses` :
-    `${Object.keys(APP.subcatMap[ANALISE.cat]||{}).length} subcategorias · ${months.length} meses`;
+  // ── Header ──
+  let title, subtitle, badgeHtml;
+  if(isProdMode){
+    title=prod?.nome||'Produto';
+    subtitle=`${prod?.cat} › ${prod?.sub||'—'} · SKU ${ANALISE.sku}`;
+    badgeHtml=`<span class="analise-mode-badge mode-prod">Produto</span>`;
+  } else if(ANALISE.sub){
+    title=ANALISE.sub;
+    subtitle=`Subcategoria de ${ANALISE.cat} · ${months.length} meses`;
+    badgeHtml=`<span class="analise-mode-badge mode-sub">Subcategoria</span>`;
+  } else {
+    title=ANALISE.cat;
+    subtitle=`${Object.keys(APP.subcatMap[ANALISE.cat]||{}).length} subcategorias · ${months.length} meses`;
+    badgeHtml=`<span class="analise-mode-badge mode-cat">Categoria</span>`;
+  }
+  document.getElementById('analiseHeaderTitle').textContent=title;
+  document.getElementById('analiseHeaderSub').textContent=subtitle;
   document.getElementById('analiseHeaderBadge').innerHTML=
-    `<span style="background:${color};color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-family:'DM Mono',monospace">${skus.length} SKUs</span>`;
+    `${badgeHtml}<span style="margin-left:8px;background:${color};color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-family:'DM Mono',monospace">${isProdMode?'1 SKU':skus.length+' SKUs'}</span>`;
 
-  // KPIs
+  // ── KPIs ──
   const skusA=skus.filter(s=>s.abcV==='A').length;
+  // For product mode: share of category
+  let shareHtml='';
+  if(isProdMode&&ANALISE.cat){
+    const catV=APP.categories.find(c=>c.Categoria===ANALISE.cat)?.Valor||0;
+    const share=catV>0?Math.round(totalV/catV*100):0;
+    shareHtml=`<div class="analise-kpi-sub">${share}% da categoria ${ANALISE.cat}</div>`;
+  }
   document.getElementById('analiseKpis').innerHTML=`
     <div class="analise-kpi">
       <div class="analise-kpi-label">Faturamento</div>
       <div class="analise-kpi-value" style="color:${color}">${fmtK(totalV)}</div>
       <div class="analise-kpi-sub">${months[0].label} → ${months[months.length-1].label}</div>
+      ${shareHtml}
     </div>
     <div class="analise-kpi">
       <div class="analise-kpi-label">Unidades</div>
       <div class="analise-kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div>
-      <div class="analise-kpi-sub">${skus.length} SKUs ativos</div>
+      <div class="analise-kpi-sub">${isProdMode?'un. vendidas':''+skus.length+' SKUs ativos'}</div>
     </div>
     <div class="analise-kpi">
       <div class="analise-kpi-label">Último mês</div>
@@ -1681,11 +1844,12 @@ function renderAnalise(){
     <div class="analise-kpi">
       <div class="analise-kpi-label">Ticket médio</div>
       <div class="analise-kpi-value">R$ ${ticket.toLocaleString('pt-BR')}</div>
-      <div class="analise-kpi-sub">${skusA} SKUs classe A</div>
+      <div class="analise-kpi-sub">${isProdMode?'R$/un':skusA+' SKUs classe A'}</div>
     </div>`;
 
   buildAnaliseEvolChart();
   buildAnaliseSubcatChart();
+  buildAnaliseCompBox();
   renderAnaliseTabela();
 }
 
@@ -1773,35 +1937,80 @@ function buildAnaliseSubcatChart(){
   });
 }
 
-let analisePage=0;
+function buildAnaliseCompBox(){
+  const box=document.getElementById('analiseCompBox');
+  if(!ANALISE.sku||!ANALISE.cat){ box.style.display='none'; return; }
+  box.style.display='block';
+
+  // Get all products in the same category, sort by value in the period
+  const months=getAnaliseMonths();
+  const raw=APP.rawSalesBySku||{};
+  const catProds=[];
+  for(const [sku,data] of Object.entries(raw)){
+    if(data.cat!==ANALISE.cat) continue;
+    const v=months.reduce((s,l)=>s+(data.meses[l]?.v||0),0);
+    if(v>0) catProds.push({sku:parseInt(sku),nome:data.nome,v});
+  }
+  catProds.sort((a,b)=>b.v-a.v);
+  const top=catProds.slice(0,10);
+  const maxV=top[0]?.v||1;
+  const color=getCatColor(ANALISE.cat);
+  const selectedSku=ANALISE.sku;
+
+  const content=top.map((p,i)=>{
+    const isSelected=p.sku===selectedSku;
+    const pct=Math.round(p.v/maxV*100);
+    const rank=catProds.findIndex(x=>x.sku===selectedSku)+1;
+    return `<div class="comp-row" style="${isSelected?'background:var(--bg);border-radius:6px;padding:2px 6px;margin:0 -6px 4px':'margin-bottom:4px'}">
+      <div class="comp-label" title="${p.nome}">${isSelected?'<strong>':''} ${i+1}. ${p.nome.length>22?p.nome.slice(0,22)+'…':p.nome}${isSelected?'</strong>':''}</div>
+      <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${pct}%;background:${isSelected?color:'var(--border2)'}"></div></div>
+      <div class="comp-value">${fmtK(p.v)}</div>
+    </div>`;
+  }).join('');
+
+  const prodRank=catProds.findIndex(x=>x.sku===selectedSku)+1;
+  const rankLabel=prodRank>0?`#${prodRank} de ${catProds.length} na categoria`:'não está no top da categoria';
+  document.getElementById('analiseCompContent').innerHTML=`
+    <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:12px">${rankLabel} · período selecionado</div>
+    ${content}
+    ${catProds.length>10?`<div style="font-size:11px;color:var(--text3);margin-top:8px">+ ${catProds.length-10} outros produtos na categoria</div>`:''}`;
+}
 function renderAnaliseTabela(){
   const q=(document.getElementById('analiseSearch')?.value||'').toLowerCase();
+  const isProdMode=!!ANALISE.sku;
   let skus=getAnaliseSkus();
-  if(q) skus=skus.filter(s=>s.nome.toLowerCase().includes(q)||String(s.sku).includes(q));
+  if(q&&!isProdMode) skus=skus.filter(s=>s.nome.toLowerCase().includes(q)||String(s.sku).includes(q));
   skus=[...skus].sort((a,b)=>b.TotalValor-a.TotalValor);
 
-  const label=ANALISE.sub||ANALISE.cat;
-  document.getElementById('analiseTblTitle').textContent=`${skus.length} produto${skus.length!==1?'s':''} em ${label}`;
+  const label=isProdMode?(APP.allSkus.find(x=>x.sku===ANALISE.sku)?.nome||'Produto'):
+    (ANALISE.sub||ANALISE.cat||'Seleção');
+  document.getElementById('analiseTblTitle').textContent=
+    isProdMode ? label : `${skus.length} produto${skus.length!==1?'s':''} em ${label}`;
 
+  const searchEl=document.getElementById('analiseSearch');
+  if(searchEl) searchEl.style.display=isProdMode?'none':'block';
+
+  const months=getAnaliseMonths();
   const PAGE_A=20;
   const start=analisePage*PAGE_A;
   const slice=skus.slice(start,start+PAGE_A);
 
-  // Build table rows with per-product sparkline data
   const rows=slice.map((s,i)=>{
-    const months=getAnaliseMonths();
-    const raw=APP.rawSalesBySku?.[String(s.sku)]?.meses||{};
-    const vals=months.map(l=>Math.round((raw[l]||{}).v||0));
-    const maxVal=Math.max(...vals)||1;
+    const rawMeses=APP.rawSalesBySku?.[String(s.sku)]?.meses||{};
+    const vals=months.map(l=>Math.round((rawMeses[l]||{}).v||0));
+    const maxVal=Math.max(...vals,1);
     const sparkBars=vals.map(v=>`<span style="display:inline-block;width:6px;height:${Math.max(2,Math.round(v/maxVal*22))}px;background:${v>0?getCatColor(s.cat):'var(--border)'};border-radius:1px;vertical-align:bottom;margin:0 1px"></span>`).join('');
-    return `<tr>
+    const periodV=vals.reduce((a,b)=>a+b,0);
+    const periodQ=months.reduce((s2,l)=>s2+Math.round((rawMeses[l]||{}).q||0),0);
+    return `<tr ${isProdMode?'style="background:var(--bg)"':''}>
       <td>${start+i+1}</td>
       <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
       <td class="prod-name" title="${s.nome}">${s.nome}</td>
+      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500">${s.cat}</td>
       <td style="font-size:11px;color:var(--text3)">${s.sub||'—'}</td>
       <td style="font-size:11px;color:var(--text3)">${s.marca||'—'}</td>
-      <td class="num">${Math.round(s.TotalValor).toLocaleString('pt-BR')}</td>
-      <td class="num">${Math.round(s.TotalQtd).toLocaleString('pt-BR')}</td>
+      <td class="num">${Math.round(periodV).toLocaleString('pt-BR')}</td>
+      <td class="num">${Math.round(periodQ).toLocaleString('pt-BR')}</td>
       <td><span class="badge ${s.abcV}">${s.abcV}</span></td>
       <td style="white-space:nowrap"><span style="display:inline-flex;align-items:flex-end;gap:0;height:24px">${sparkBars}</span></td>
     </tr>`;
@@ -1809,14 +2018,14 @@ function renderAnaliseTabela(){
 
   document.getElementById('analiseTbl').innerHTML=`<div class="tbl-wrap"><table>
     <thead><tr>
-      <th>#</th><th>SKU</th><th>Produto</th><th>Subcategoria</th><th>Marca</th>
-      <th style="text-align:right">Valor R$</th><th style="text-align:right">Qtd</th>
-      <th>ABC</th><th>Evolução</th>
+      <th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>Marca</th>
+      <th style="text-align:right">Valor período</th><th style="text-align:right">Qtd</th>
+      <th>ABC</th><th>Evolução ${months[0]?.label}→${months[months.length-1]?.label}</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table></div>`;
 
-  document.getElementById('analisePag').innerHTML=skus.length>PAGE_A?`
+  document.getElementById('analisePag').innerHTML=(!isProdMode&&skus.length>PAGE_A)?`
     <button class="pag-btn" onclick="analisePage--;renderAnaliseTabela()" ${analisePage===0?'disabled':''}>← Anterior</button>
     <span class="pag-info">${start+1}–${Math.min(start+PAGE_A,skus.length)} de ${skus.length}</span>
     <button class="pag-btn" onclick="analisePage++;renderAnaliseTabela()" ${start+PAGE_A>=skus.length?'disabled':''}>Próximo →</button>
