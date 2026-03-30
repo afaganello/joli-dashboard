@@ -748,20 +748,34 @@ async function loadData(){
 
     // ── 1.5. Load ESTOQUE tab ──────────────────────────────────────
     APP.estoque = {};
+    console.log('🔍 Tentando carregar aba "estoque"...');
     try {
       setProgress(16,'Carregando estoque...');
+      console.log('📊 Chamando fetchSheet("estoque")...');
       const estoqueRows = await fetchSheet('estoque');
-      estoqueRows.forEach(r => {
-        if (!r[0]) return;
-        const sku = String(r[0]).trim().replace('.0', '');
-        const qtd = num(r[2]); // Coluna C: Quantidade
-        if (qtd > 0) {
-          APP.estoque[sku] = { estoque: qtd };
-        }
-      });
-      console.log(`✅ Estoque carregado: ${Object.keys(APP.estoque).length} SKUs`);
+      console.log(`📊 Retornou ${estoqueRows.length} linhas`);
+      
+      if (!estoqueRows || estoqueRows.length === 0) {
+        console.log('⚠️ Nenhuma linha em estoque');
+      } else {
+        let skusProcessados = 0;
+        estoqueRows.forEach((r, idx) => {
+          console.log(`  Linha ${idx}: SKU="${r[0]}" | Nome="${r[1]}" | Qtd="${r[2]}"`);
+          if (!r[0]) return;
+          const sku = String(r[0]).trim().replace('.0', '');
+          const qtd = num(r[2]); // Coluna C: Quantidade
+          console.log(`    → SKU processado: "${sku}" | Qtd: ${qtd}`);
+          if (qtd > 0) {
+            APP.estoque[sku] = { estoque: qtd };
+            skusProcessados++;
+            console.log(`    ✅ Armazenado`);
+          }
+        });
+        console.log(`✅ Total: ${skusProcessados} SKUs com estoque carregado`);
+      }
     } catch(e) {
-      console.log(`⚠️ Estoque não carregado (usando estimativa): ${e.message}`);
+      console.error(`❌ Erro ao carregar estoque: ${e.message}`);
+      console.error(`Stack: ${e.stack}`);
     }
 
     // ── 2. Load monthly sales tabs ──────────────────────────────────────
