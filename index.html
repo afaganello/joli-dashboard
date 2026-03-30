@@ -823,7 +823,34 @@ async function loadData(){
     APP.skuMap=skuMap;
     setProgress(15,`${Object.keys(skuMap).length} produtos classificados`);
 
-    // ── 2. Load monthly sales tabs ──────────────────────────────────────
+    // ── 2. Load ESTOQUE DIAL ATUAL tab ────────────────────────────────────
+    setProgress(15,'Carregando dados de estoque...');
+    const estoqueMap={};
+    try {
+      const estoqueRows = await fetchSheet('ESTOQUE DIAL ATUAL');
+      estoqueRows.forEach(r => {
+        if (!r[0]) return;
+        const sku = String(r[0]).trim().replace('.0', '');
+        const skuInt = parseInt(sku);
+        if (isNaN(skuInt) || skuInt < 1000000) return;
+        
+        const qtdEstoque = num(r[1]); // Coluna B: Quantidade em Estoque
+        const precoUnit = num(r[2]); // Coluna C: Preço Unitário (opcional)
+        
+        estoqueMap[sku] = {
+          estoque: qtdEstoque,
+          precoUnit: precoUnit || 0
+        };
+      });
+      APP.estoque = estoqueMap;
+      setProgress(16, `${Object.keys(estoqueMap).length} SKUs com estoque carregado`);
+    } catch (e) {
+      console.warn('⚠️ Aba "ESTOQUE DIAL ATUAL" não encontrada ou vazia:', e.message);
+      APP.estoque = {}; // Vazio se não conseguir carregar
+      setProgress(16, 'Estoque não disponível (usando estimativas)');
+    }
+
+    // ── 3. Load monthly sales tabs ──────────────────────────────────────
     const rawSales={};
     for(let i=0;i<MONTH_SHEETS.length;i++){
       const {sheet,label}=MONTH_SHEETS[i];
@@ -2558,6 +2585,63 @@ async function debugTodosDuplicados() {
   }
 }
 
+// Função para debugar estoque carregado
+function debugEstoqueCarregado() {
+  console.log('\n' + '='.repeat(70));
+  console.log('🔍 DEBUG - ESTOQUE CARREGADO');
+  console.log('='.repeat(70) + '\n');
+  
+  if (!APP.estoque || Object.keys(APP.estoque).length === 0) {
+    console.log('❌ NENHUM ESTOQUE CARREGADO!');
+    console.log('   A aba "ESTOQUE DIAL ATUAL" pode não existir ou estar vazia.');
+    console.log('   Usando estimativas (30% do volume vendido).\n');
+    return;
+  }
+  
+  console.log(`✅ ESTOQUE CARREGADO PARA ${Object.keys(APP.estoque).length} SKUs\n`);
+  
+  console.log('Primeiros 10 SKUs com estoque:');
+  Object.entries(APP.estoque).slice(0, 10).forEach(([sku, data]) => {
+    const skuInfo = APP.allSkus.find(s => s.sku === parseInt(sku));
+    console.log(`  SKU ${sku}: ${data.estoque.toLocaleString('pt-BR')} un | Preço: R$ ${data.precoUnit || 'N/A'} ${skuInfo ? `| ${skuInfo.nome}` : ''}`);
+  });
+  
+  console.log('\n' + '='.repeat(70) + '\n');
+}
+
+// Função para comparar estoque estimado vs real
+function debugEstoqueComparacao(sku) {
+  console.log('\n' + '='.repeat(70));
+  console.log(`🔍 COMPARAÇÃO DE ESTOQUE - SKU ${sku}`);
+  console.log('='.repeat(70) + '\n');
+  
+  const skuInfo = APP.allSkus.find(s => s.sku === sku);
+  if (!skuInfo) {
+    console.log(`❌ SKU ${sku} não encontrado\n`);
+    return;
+  }
+  
+  const estoqueReal = APP.estoque && APP.estoque[String(sku)] ? APP.estoque[String(sku)].estoque : null;
+  const estoqueEstimado = Math.round(skuInfo.TotalQtd * 0.3);
+  
+  console.log(`Produto: ${skuInfo.nome}`);
+  console.log(`Total vendido (histórico): ${skuInfo.TotalQtd.toLocaleString('pt-BR')} un\n`);
+  
+  console.log(`Estoque Estimado (30%): ${estoqueEstimado.toLocaleString('pt-BR')} un`);
+  
+  if (estoqueReal !== null) {
+    console.log(`Estoque Real (Sheets): ${estoqueReal.toLocaleString('pt-BR')} un`);
+    const diff = estoqueReal - estoqueEstimado;
+    console.log(`\nDiferença: ${diff > 0 ? '+' : ''}${diff.toLocaleString('pt-BR')} un (${((diff / estoqueEstimado) * 100).toFixed(1)}%)`);
+    console.log(`${diff > 0 ? '📈 Estoque REAL é maior que estimado' : '📉 Estoque REAL é menor que estimado'}`);
+  } else {
+    console.log(`⚠️ Estoque Real: NÃO DISPONÍVEL`);
+    console.log(`   Usando estimativa!`);
+  }
+  
+  console.log('\n' + '='.repeat(70) + '\n');
+}
+
 function calculateROP(avgMonthly) {
   if (avgMonthly === 0) return 0;
   const demandDuringLeadTime = avgMonthly * SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS;
@@ -2599,16 +2683,24 @@ function renderSugestaoCompras() {
     const avgMonthly = calculateAverageMonthlySales(item.sku);
     const rop = calculateROP(avgMonthly);
     
-    // Usar TotalValor para calcular "estoque virtual" (proxy)
-    const estimatedCurrentStock = avgMonthly > 0 ? Math.round(item.TotalQtd * 0.3) : 0;
-    const orderQty = avgMonthly > 0 && estimatedCurrentStock < rop ? calculateOrderQuantity(avgMonthly) : 0;
-    const priority = getPriority(estimatedCurrentStock, rop);
+    // USAR ESTOQUE REAL se disponível, senão usar estimativa
+    let currentStock = 0;
+    if (APP.estoque && APP.estoque[String(item.sku)]) {
+      // Estoque real do Sheets
+      currentStock = APP.estoque[String(item.sku)].estoque;
+    } else {
+      // Fallback: estimativa baseada em vendas
+      currentStock = avgMonthly > 0 ? Math.round(item.TotalQtd * 0.3) : 0;
+    }
+    
+    const orderQty = avgMonthly > 0 && currentStock < rop ? calculateOrderQuantity(avgMonthly) : 0;
+    const priority = getPriority(currentStock, rop);
     
     // Mostrar TODOS os produtos
     sugestoes.push({
       sku: item.sku,
       produto: item.nome,
-      estoque: estimatedCurrentStock,
+      estoque: currentStock,
       precoUnit: item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0,
       avgMonthly: avgMonthly,
       rop: rop,
@@ -2618,7 +2710,8 @@ function renderSugestaoCompras() {
       custo: orderQty * (item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0),
       totalValor: item.TotalValor,
       totalQtd: item.TotalQtd,
-      sugerir: orderQty > 0 // Flag indicando se deve comprar
+      sugerir: orderQty > 0,
+      estoqueReal: APP.estoque && APP.estoque[String(item.sku)] ? true : false // Flag indicando se é estoque real
     });
   });
   
