@@ -827,31 +827,67 @@ async function loadData(){
     setProgress(15,'Carregando dados de estoque...');
     const estoqueMap={};
     try {
+      console.log('🔍 Tentando carregar aba "estoque"...');
       const estoqueRows = await fetchSheet('estoque');
-      console.log(`✅ Aba "estoque" carregada com ${estoqueRows.length} linhas`);
+      console.log(`📊 fetchSheet retornou ${estoqueRows.length} linhas`);
       
+      if (!estoqueRows || estoqueRows.length === 0) {
+        console.log('❌ ABA VAZIA! Nenhuma linha retornou');
+        throw new Error('Aba "estoque" está vazia');
+      }
+      
+      // Debug: mostrar primeiras linhas
+      console.log('Primeiras 5 linhas da aba:');
+      estoqueRows.slice(0, 5).forEach((r, idx) => {
+        console.log(`  Linha ${idx}: [${r[0]}, ${r[1]}, ${r[2]}]`);
+      });
+      
+      let skusComEstoque = 0;
       estoqueRows.forEach((r, idx) => {
-        if (!r[0]) return;
+        if (!r[0]) {
+          console.log(`  Linha ${idx}: SKU vazio`);
+          return;
+        }
+        
         const sku = String(r[0]).trim().replace('.0', '');
+        console.log(`  Processando SKU: "${r[0]}" → "${sku}"`);
+        
         const skuInt = parseInt(sku);
-        if (isNaN(skuInt) || skuInt < 1000000) return;
+        if (isNaN(skuInt)) {
+          console.log(`    ❌ Não é número: ${sku}`);
+          return;
+        }
+        if (skuInt < 1000000) {
+          console.log(`    ❌ SKU muito pequeno: ${skuInt}`);
+          return;
+        }
         
         // Coluna C (índice 2): Quantidade em Estoque
         const qtdEstoque = num(r[2]);
+        console.log(`    Coluna C (estoque): "${r[2]}" → ${qtdEstoque}`);
         
         if (qtdEstoque > 0) {
           estoqueMap[sku] = {
             estoque: qtdEstoque
           };
-          if (idx < 5) console.log(`  SKU ${sku}: ${qtdEstoque} un`);
+          skusComEstoque++;
+          console.log(`    ✅ Armazenado: SKU ${sku} = ${qtdEstoque} un`);
+        } else {
+          console.log(`    ⚠️ Qtd = 0, ignorando`);
         }
       });
       
       APP.estoque = estoqueMap;
-      console.log(`✅ Total de ${Object.keys(estoqueMap).length} SKUs com estoque carregado`);
+      console.log(`\n✅ RESULTADO FINAL:`);
+      console.log(`   Total de linhas lidas: ${estoqueRows.length}`);
+      console.log(`   SKUs com estoque armazenado: ${skusComEstoque}`);
+      console.log(`   APP.estoque tem ${Object.keys(APP.estoque).length} SKUs`);
+      
       setProgress(16, `${Object.keys(estoqueMap).length} SKUs com estoque carregado`);
     } catch (e) {
-      console.error('❌ Erro ao carregar aba "estoque":', e.message);
+      console.error('❌ ERRO ao carregar aba "estoque":');
+      console.error(`   Mensagem: ${e.message}`);
+      console.error(`   Stack: ${e.stack}`);
       APP.estoque = {}; // Vazio se não conseguir carregar
       setProgress(16, 'Estoque não disponível (usando estimativas)');
     }
