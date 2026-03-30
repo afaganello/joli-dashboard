@@ -746,36 +746,20 @@ async function loadData(){
     APP.skuMap=skuMap;
     setProgress(15,`${Object.keys(skuMap).length} produtos classificados`);
 
-    // ── 1.5. Load ESTOQUE tab ──────────────────────────────────────
+    // ── 1.5. Load ESTOQUE tab (simples, sem quebrar) ──────────────
     APP.estoque = {};
-    console.log('🔍 Tentando carregar aba "estoque"...');
     try {
-      setProgress(16,'Carregando estoque...');
-      console.log('📊 Chamando fetchSheet("estoque")...');
       const estoqueRows = await fetchSheet('estoque');
-      console.log(`📊 Retornou ${estoqueRows.length} linhas`);
-      
-      if (!estoqueRows || estoqueRows.length === 0) {
-        console.log('⚠️ Nenhuma linha em estoque');
-      } else {
-        let skusProcessados = 0;
-        estoqueRows.forEach((r, idx) => {
-          console.log(`  Linha ${idx}: SKU="${r[0]}" | Nome="${r[1]}" | Qtd="${r[2]}"`);
-          if (!r[0]) return;
+      estoqueRows.forEach(r => {
+        if (r[0]) {
           const sku = String(r[0]).trim().replace('.0', '');
-          const qtd = num(r[2]); // Coluna C: Quantidade
-          console.log(`    → SKU processado: "${sku}" | Qtd: ${qtd}`);
-          if (qtd > 0) {
-            APP.estoque[sku] = { estoque: qtd };
-            skusProcessados++;
-            console.log(`    ✅ Armazenado`);
-          }
-        });
-        console.log(`✅ Total: ${skusProcessados} SKUs com estoque carregado`);
-      }
+          const qtd = num(r[2]); // Coluna C
+          if (qtd > 0) APP.estoque[sku] = qtd;
+        }
+      });
+      console.log(`✅ Estoque: ${Object.keys(APP.estoque).length} SKUs`);
     } catch(e) {
-      console.error(`❌ Erro ao carregar estoque: ${e.message}`);
-      console.error(`Stack: ${e.stack}`);
+      console.log(`⚠️ Estoque não disponível`);
     }
 
     // ── 2. Load monthly sales tabs ──────────────────────────────────────
@@ -2062,61 +2046,6 @@ function renderAnaliseTabela(){
     <span class="pag-info">${start+1}–${Math.min(start+PAGE_A,skus.length)} de ${skus.length}</span>
     <button class="pag-btn" onclick="analisePage++;renderAnaliseTabela()" ${start+PAGE_A>=skus.length?'disabled':''}>Próximo →</button>
   `:'';
-}
-
-
-// ── FUNÇÕES DE CÁLCULO (Opção 3: máximo entre 3 e 6 meses) ────
-function calculateAverageMonthlySales(sku) {
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  if (!rawData.meses || Object.keys(rawData.meses).length === 0) return 0;
-  
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const monthsWithData = monthLabels.filter(label => rawData.meses[label] && (rawData.meses[label].q || 0) > 0);
-  
-  if (monthsWithData.length === 0) return 0;
-  
-  // Calcular média de 3 meses
-  const last3Months = monthsWithData.slice(-3);
-  let totalQty3 = 0;
-  last3Months.forEach(label => {
-    totalQty3 += rawData.meses[label]?.q || 0;
-  });
-  const avg3months = Math.round(totalQty3 / last3Months.length);
-  
-  // Calcular média de 6 meses
-  let avg6months = avg3months;
-  if (monthsWithData.length >= 6) {
-    const last6Months = monthsWithData.slice(-6);
-    let totalQty6 = 0;
-    last6Months.forEach(label => {
-      totalQty6 += rawData.meses[label]?.q || 0;
-    });
-    avg6months = Math.round(totalQty6 / last6Months.length);
-  }
-  
-  // Usar o MAIOR (Opção 3!)
-  return Math.max(avg3months, avg6months);
-}
-
-function calculateROP(avgMonthly) {
-  if (avgMonthly === 0) return 0;
-  const demandDuringLeadTime = avgMonthly * 5; // 5 meses de lead time
-  const safetyStock = avgMonthly * 0.5; // Buffer de segurança
-  return Math.round(demandDuringLeadTime + safetyStock);
-}
-
-function calculateOrderQuantity(avgMonthly) {
-  if (avgMonthly === 0) return 0;
-  const coverageDemand = avgMonthly * 3; // 3 meses de cobertura
-  const safetyStock = avgMonthly * 0.5; // Buffer de segurança
-  return Math.round(coverageDemand + safetyStock);
-}
-
-function getPriority(currentStock, rop) {
-  if (rop === 0) return { label: '🟢 OK', value: 3 };
-  if (currentStock < rop * 0.5) return { label: '🔴 Crítico', value: 1 };
-  if (currentStock < rop) return { label: '🟡 Aviso', value: 2 };
-  return { label: '🟢 OK', value: 3 };
 }
 
 
