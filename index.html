@@ -746,6 +746,24 @@ async function loadData(){
     APP.skuMap=skuMap;
     setProgress(15,`${Object.keys(skuMap).length} produtos classificados`);
 
+    // ── 1.5. Load ESTOQUE tab ──────────────────────────────────────
+    APP.estoque = {};
+    try {
+      setProgress(16,'Carregando estoque...');
+      const estoqueRows = await fetchSheet('estoque');
+      estoqueRows.forEach(r => {
+        if (!r[0]) return;
+        const sku = String(r[0]).trim().replace('.0', '');
+        const qtd = num(r[2]); // Coluna C: Quantidade
+        if (qtd > 0) {
+          APP.estoque[sku] = { estoque: qtd };
+        }
+      });
+      console.log(`✅ Estoque carregado: ${Object.keys(APP.estoque).length} SKUs`);
+    } catch(e) {
+      console.log(`⚠️ Estoque não carregado (usando estimativa): ${e.message}`);
+    }
+
     // ── 2. Load monthly sales tabs ──────────────────────────────────────
     const rawSales={};
     for(let i=0;i<MONTH_SHEETS.length;i++){
