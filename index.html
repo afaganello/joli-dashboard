@@ -308,6 +308,7 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
   <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
+  <div class="tab" onclick="showTab('sugestaoCompras')">Sugestão de Compras</div>
 </nav>
 
 <!-- ── GLOBAL FILTER BAR ── -->
@@ -661,6 +662,69 @@ tbody tr:hover td{background:#FAFAF8}
     </div>
     <div id="tblTodos"></div>
     <div class="pag" id="pag"></div>
+  </div>
+
+  <!-- ===== PAINEL: SUGESTÃO DE COMPRAS ===== -->
+  <div id="sugestaoComprasPanel" style="display:none">
+    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Sugestão de Novas Compras</h2>
+    
+    <!-- FILTROS -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+      <select id="filterPrioridade" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
+        <option value="">Prioridade: Todas</option>
+        <option value="critico">🔴 Crítico</option>
+        <option value="aviso">🟡 Aviso</option>
+        <option value="ok">🟢 OK</option>
+      </select>
+      
+      <input type="text" id="filterSKU" placeholder="Buscar SKU ou produto..." 
+        style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:200px;font-family:'DM Sans',sans-serif">
+      
+      <button onclick="resetFilteresSugestao()" 
+        style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3);font-family:'DM Sans',sans-serif;transition:all .15s;user-select:none">↻ Limpar</button>
+    </div>
+
+    <!-- TABELA -->
+    <div style="overflow-x:auto;margin-bottom:20px">
+      <table id="tabelaSugestao" style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
+            <th style="text-align:left;padding:10px;color:var(--text3);font-weight:500">SKU</th>
+            <th style="text-align:left;padding:10px;color:var(--text3);font-weight:500">Produto</th>
+            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">Estoque</th>
+            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">Média/mês</th>
+            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">ROP</th>
+            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">QTD Sugerida</th>
+            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">Custo Est.</th>
+            <th style="text-align:center;padding:10px;color:var(--text3);font-weight:500">Prioridade</th>
+            <th style="text-align:center;padding:10px;color:var(--text3);font-weight:500">Entrega Est.</th>
+          </tr>
+        </thead>
+        <tbody id="corpTabelaSugestao" style="background:var(--surface)">
+          <tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text3)">Carregando dados...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+      <div class="kpi">
+        <div class="kpi-label">Produtos Críticos</div>
+        <div class="kpi-value" id="statsCritico">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Em Aviso</div>
+        <div class="kpi-value" id="statsAviso">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Total a Comprar</div>
+        <div class="kpi-value" id="statsTotal">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Investimento Total</div>
+        <div class="kpi-value" id="statsInvestimento">R$ 0</div>
+      </div>
+    </div>
   </div>
 </main>
 
@@ -1580,11 +1644,13 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestaoCompras'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs.indexOf(id)===i));
+  document.querySelectorAll('[id$="-panel"], #sugestaoComprasPanel').forEach(p=>p.style.display='none');
+  const panel=document.getElementById(id+'Panel') || document.getElementById('sugestaoComprasPanel');
+  if(panel) panel.style.display='block';
   if(id==='analise') initAnalise();
+  if(id==='sugestaoCompras') renderSugestaoCompras();
 }
 
 // ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
@@ -2032,6 +2098,154 @@ function renderAnaliseTabela(){
   `:'';
 }
 
+
+// ===== SUGESTÃO DE COMPRAS =====
+const SUPPLY_CHAIN_CONFIG = {
+  LEAD_TIME_MONTHS: 5,
+  ANALYSIS_MONTHS: 3,
+  SAFETY_BUFFER: 1.5,
+  COVERAGE_MONTHS: 3,
+};
+
+function calculateAverageMonthlySales(sku) {
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  if (!rawData.meses) return 0;
+  let totalQty = 0;
+  Object.values(rawData.meses).forEach(m => {
+    totalQty += m.q || 0;
+  });
+  return Math.round(totalQty / SUPPLY_CHAIN_CONFIG.ANALYSIS_MONTHS);
+}
+
+function calculateROP(avgMonthly) {
+  const demandDuringLeadTime = avgMonthly * SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS;
+  const safetyStock = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
+  return Math.round(demandDuringLeadTime + safetyStock);
+}
+
+function calculateOrderQuantity(avgMonthly) {
+  const coverageDemand = avgMonthly * SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS;
+  const safetyStock = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
+  return Math.round(coverageDemand + safetyStock);
+}
+
+function getPriority(currentStock, rop) {
+  if (currentStock < rop * 0.5) return { label: '🔴 Crítico', value: 1, color: '#991B1B' };
+  if (currentStock < rop) return { label: '🟡 Aviso', value: 2, color: '#92400E' };
+  return { label: '🟢 OK', value: 3, color: '#166534' };
+}
+
+function calculateDeliveryDate() {
+  const d = new Date();
+  d.setMonth(d.getMonth() + SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS);
+  return d.toLocaleDateString('pt-BR');
+}
+
+function renderSugestaoCompras() {
+  const sugestoes = [];
+  if (!APP.estoque || APP.estoque.length === 0) return;
+  
+  APP.estoque.forEach(item => {
+    const avgMonthly = calculateAverageMonthlySales(item.sku);
+    const rop = calculateROP(avgMonthly);
+    const shouldOrder = item.estoque < rop;
+    const orderQty = shouldOrder ? calculateOrderQuantity(avgMonthly) : 0;
+    const priority = getPriority(item.estoque, rop);
+    
+    if (orderQty > 0) {
+      sugestoes.push({
+        sku: item.sku,
+        produto: item.produto,
+        estoque: item.estoque,
+        precoUnit: item.precoUnit || 0,
+        avgMonthly: avgMonthly,
+        rop: rop,
+        orderQty: orderQty,
+        priority: priority,
+        deliveryDate: calculateDeliveryDate(),
+        custo: orderQty * (item.precoUnit || 0)
+      });
+    }
+  });
+  
+  sugestoes.sort((a, b) => a.priority.value - b.priority.value);
+  window.allSugestoes = sugestoes;
+  applyFiltersAndRenderSugestao(sugestoes);
+}
+
+function applyFiltersAndRenderSugestao(allSugestoes) {
+  const priorityFilter = document.getElementById('filterPrioridade')?.value || '';
+  const skuSearch = document.getElementById('filterSKU')?.value?.toLowerCase() || '';
+  
+  let filtered = allSugestoes.filter(s => {
+    let matchPriority = true;
+    if (priorityFilter === 'critico') matchPriority = s.priority.value === 1;
+    else if (priorityFilter === 'aviso') matchPriority = s.priority.value === 2;
+    else if (priorityFilter === 'ok') matchPriority = s.priority.value === 3;
+    
+    let matchSearch = !skuSearch || 
+      s.sku.toLowerCase().includes(skuSearch) || 
+      s.produto.toLowerCase().includes(skuSearch);
+    
+    return matchPriority && matchSearch;
+  });
+  
+  const tbody = document.getElementById('corpTabelaSugestao');
+  if (!tbody) return;
+  
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text3)">Nenhum produto em falta no momento</td></tr>';
+  } else {
+    tbody.innerHTML = filtered.map(s => `
+      <tr style="border-bottom:1px solid var(--border);height:40px">
+        <td style="padding:8px;text-align:left"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
+        <td style="padding:8px;text-align:left">${s.produto}</td>
+        <td style="padding:8px;text-align:right;color:var(--text3)">${s.estoque.toLocaleString('pt-BR')}</td>
+        <td style="padding:8px;text-align:right;color:var(--text3)">${s.avgMonthly.toLocaleString('pt-BR')}</td>
+        <td style="padding:8px;text-align:right;color:var(--text3)">${s.rop.toLocaleString('pt-BR')}</td>
+        <td style="padding:8px;text-align:right;font-weight:600;color:var(--red)">${s.orderQty.toLocaleString('pt-BR')}</td>
+        <td style="padding:8px;text-align:right;color:var(--text2)">R$ ${(s.custo).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+        <td style="padding:8px;text-align:center">${s.priority.label}</td>
+        <td style="padding:8px;text-align:center;color:var(--text3);font-size:11px">${s.deliveryDate}</td>
+      </tr>
+    `).join('');
+  }
+  
+  const stats = {
+    critico: filtered.filter(s => s.priority.value === 1).length,
+    aviso: filtered.filter(s => s.priority.value === 2).length,
+    total: filtered.length,
+    investimento: filtered.reduce((sum, s) => sum + s.custo, 0)
+  };
+  
+  document.getElementById('statsCritico').textContent = stats.critico;
+  document.getElementById('statsAviso').textContent = stats.aviso;
+  document.getElementById('statsTotal').textContent = stats.total;
+  document.getElementById('statsInvestimento').textContent = `R$ ${(stats.investimento).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+}
+
+function resetFilteresSugestao() {
+  document.getElementById('filterPrioridade').value = '';
+  document.getElementById('filterSKU').value = '';
+  if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const filterPrio = document.getElementById('filterPrioridade');
+  const filterSKU = document.getElementById('filterSKU');
+  
+  if (filterPrio) {
+    filterPrio.addEventListener('change', function() {
+      if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
+    });
+  }
+  
+  if (filterSKU) {
+    filterSKU.addEventListener('input', function() {
+      if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
+    });
+  }
+});
 
 loadData();
 </script>
