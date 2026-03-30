@@ -2451,6 +2451,113 @@ function debugTodosSKUs() {
   });
 }
 
+// Função para debugar duplicação de SKUs nos Sheets
+async function debugSKUDuplicados(sku) {
+  console.log(`\n${'='.repeat(70)}`);
+  console.log(`🔍 DEBUG DE DUPLICAÇÃO - SKU ${sku}`);
+  console.log(`${'='.repeat(70)}\n`);
+  
+  let totalEncontrado = 0;
+  
+  for (const {sheet, label} of MONTH_SHEETS) {
+    try {
+      const rows = await fetchSheet(sheet);
+      const ocorrencias = [];
+      
+      rows.forEach((row, idx) => {
+        if (!row[0]) return;
+        const rowSKU = String(row[0]).trim().replace('.0', '');
+        
+        if (rowSKU === String(sku)) {
+          const qtd = num(row[2]);
+          ocorrencias.push({
+            linha: idx + 1,
+            nome: String(row[1] || '').trim(),
+            qtd: qtd,
+            valor: num(row[3])
+          });
+          totalEncontrado += qtd;
+        }
+      });
+      
+      if (ocorrencias.length > 0) {
+        console.log(`📅 ${label}:`);
+        if (ocorrencias.length > 1) {
+          console.log(`  ⚠️ ENCONTRADO ${ocorrencias.length}× O MESMO SKU! (DUPLICADO!)`);
+        }
+        ocorrencias.forEach(o => {
+          console.log(`  Linha ${o.linha}: "${o.nome}" - ${o.qtd} un (R$ ${o.valor})`);
+        });
+        if (ocorrencias.length > 1) {
+          const soma = ocorrencias.reduce((s, o) => s + o.qtd, 0);
+          console.log(`  SOMA: ${ocorrencias.map(o => o.qtd).join(' + ')} = ${soma}`);
+        }
+      }
+    } catch (e) {
+      console.error(`  Erro ao ler ${label}:`, e.message);
+    }
+  }
+  
+  console.log(`\n📊 TOTAL GERAL ENCONTRADO: ${totalEncontrado} unidades`);
+  const htmlTotal = APP.rawSalesBySku[String(sku)]?.meses ? Object.values(APP.rawSalesBySku[String(sku)].meses).reduce((s, m) => s + (m.q || 0), 0) : 'N/A';
+  console.log(`📊 TOTAL NO HTML: ${htmlTotal}`);
+  console.log(`\n${'='.repeat(70)}\n`);
+}
+
+// Função para listar todos os SKUs duplicados
+async function debugTodosDuplicados() {
+  console.clear();
+  console.log('🔍 VERIFICANDO TODOS OS SKUs PARA DUPLICAÇÃO...\n');
+  
+  const duplicados = new Map();
+  
+  for (const {sheet, label} of MONTH_SHEETS) {
+    try {
+      const rows = await fetchSheet(sheet);
+      const skuCount = new Map();
+      
+      rows.forEach((row, idx) => {
+        if (!row[0]) return;
+        const sku = String(row[0]).trim().replace('.0', '');
+        if (!skuCount.has(sku)) skuCount.set(sku, []);
+        skuCount.get(sku).push({
+          linha: idx + 1,
+          qtd: num(row[2]),
+          nome: String(row[1] || '').trim()
+        });
+      });
+      
+      // Encontrar SKUs com mais de 1 ocorrência
+      skuCount.forEach((ocorrencias, sku) => {
+        if (ocorrencias.length > 1) {
+          if (!duplicados.has(sku)) duplicados.set(sku, []);
+          duplicados.get(sku).push({
+            mes: label,
+            ocorrencias: ocorrencias.length,
+            qtds: ocorrencias.map(o => o.qtd)
+          });
+        }
+      });
+    } catch (e) {
+      console.error(`Erro ao ler ${label}:`, e.message);
+    }
+  }
+  
+  if (duplicados.size === 0) {
+    console.log('✅ Nenhum SKU duplicado encontrado!\n');
+  } else {
+    console.log(`❌ ENCONTRADOS ${duplicados.size} SKUs COM DUPLICAÇÃO:\n`);
+    
+    duplicados.forEach((meses, sku) => {
+      console.log(`SKU ${sku}:`);
+      meses.forEach(m => {
+        const soma = m.qtds.reduce((s, q) => s + q, 0);
+        console.log(`  ${m.mes}: ${m.ocorrencias}× encontrado | Qtds: ${m.qtds.join(' + ')} = ${soma}`);
+      });
+    });
+  }
+}
+
 function calculateROP(avgMonthly) {
   if (avgMonthly === 0) return 0;
   const demandDuringLeadTime = avgMonthly * SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS;
