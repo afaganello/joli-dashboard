@@ -2289,12 +2289,166 @@ const SUPPLY_CHAIN_CONFIG = {
 
 function calculateAverageMonthlySales(sku) {
   const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  if (!rawData.meses) return 0;
+  if (!rawData.meses || Object.keys(rawData.meses).length === 0) return 0;
+  
+  // Pegar os últimos 3 meses com dados (em ordem cronológica)
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const monthsWithData = monthLabels.filter(label => rawData.meses[label] && (rawData.meses[label].q || 0) > 0);
+  
+  if (monthsWithData.length === 0) return 0;
+  
+  // Usar últimos 3 meses disponíveis
+  const last3Months = monthsWithData.slice(-3);
+  
+  // DEBUG: mostrar o que está usando
+  console.log(`[DEBUG] SKU ${sku}: Usando meses ${last3Months.join(', ')}`);
+  
   let totalQty = 0;
-  Object.values(rawData.meses).forEach(m => {
-    totalQty += m.q || 0;
+  last3Months.forEach(label => {
+    const qty = rawData.meses[label]?.q || 0;
+    console.log(`  ${label}: ${qty} unidades`);
+    totalQty += qty;
   });
-  return Math.round(totalQty / SUPPLY_CHAIN_CONFIG.ANALYSIS_MONTHS);
+  
+  const avgMonthly = Math.round(totalQty / last3Months.length);
+  console.log(`  SOMA: ${totalQty} | DIVISÃO: ${totalQty} ÷ ${last3Months.length} = ${avgMonthly}\n`);
+  
+  return avgMonthly;
+}
+
+// Função de debug - mostra os cálculos para um SKU específico
+function debugCalculosSKU(sku) {
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  const skuInfo = APP.allSkus.find(s => s.sku === sku);
+  
+  if (!skuInfo) {
+    console.error(`SKU ${sku} não encontrado`);
+    return;
+  }
+  
+  console.log(`\n${'='.repeat(60)}`);
+  console.log(`🔍 DEBUG SKU ${sku}: ${skuInfo.nome}`);
+  console.log(`${'='.repeat(60)}\n`);
+  
+  // 1. Dados brutos
+  console.log('📊 DADOS BRUTOS DO SKU:');
+  console.log(`  Total Valor: R$ ${skuInfo.TotalValor.toLocaleString('pt-BR')}`);
+  console.log(`  Total Qtd: ${skuInfo.TotalQtd.toLocaleString('pt-BR')} unidades`);
+  console.log(`  Classe ABC: ${skuInfo.abcV}`);
+  
+  // 2. Vendas por mês
+  console.log('\n📅 VENDAS POR MÊS:');
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  monthLabels.forEach(label => {
+    const monthData = rawData.meses?.[label];
+    if (monthData && monthData.q > 0) {
+      console.log(`  ${label}: ${monthData.q.toLocaleString('pt-BR')} un | R$ ${monthData.v.toLocaleString('pt-BR')}`);
+    }
+  });
+  
+  // 3. Últimos 3 meses
+  const monthsWithData = monthLabels.filter(label => rawData.meses[label] && rawData.meses[label].q > 0);
+  const last3Months = monthsWithData.slice(-3);
+  
+  console.log(`\n📌 ÚLTIMOS 3 MESES COM VENDAS: [${last3Months.join(', ')}]`);
+  
+  let totalQty = 0;
+  last3Months.forEach(label => {
+    const qty = rawData.meses[label]?.q || 0;
+    totalQty += qty;
+    console.log(`  ${label}: ${qty.toLocaleString('pt-BR')} unidades`);
+  });
+  
+  const avgMonthly = Math.round(totalQty / last3Months.length);
+  console.log(`\n📈 CÁLCULO DA MÉDIA:`);
+  console.log(`  Total últimos 3 meses: ${totalQty.toLocaleString('pt-BR')} un`);
+  console.log(`  Meses contados: ${last3Months.length}`);
+  console.log(`  MÉDIA MENSAL: ${totalQty} ÷ ${last3Months.length} = ${avgMonthly} un/mês`);
+  
+  // 4. Cálculos de ROP
+  const demandLeadTime = avgMonthly * SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS;
+  const safetyStock = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
+  const rop = Math.round(demandLeadTime + safetyStock);
+  
+  console.log(`\n🎯 CÁLCULO DO ROP (Reorden Point):`);
+  console.log(`  Lead Time: ${SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS} meses`);
+  console.log(`  Demanda durante lead time: ${avgMonthly} × ${SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS} = ${demandLeadTime}`);
+  console.log(`  Buffer de segurança: ${avgMonthly} × 0.5 = ${safetyStock}`);
+  console.log(`  ROP = ${demandLeadTime} + ${safetyStock} = ${rop} unidades`);
+  
+  // 5. Estoque estimado
+  const estimatedStock = Math.round(skuInfo.TotalQtd * 0.3);
+  console.log(`\n📦 ESTOQUE ESTIMADO:`);
+  console.log(`  Total vendido: ${skuInfo.TotalQtd.toLocaleString('pt-BR')} un`);
+  console.log(`  Estoque estimado (30%): ${skuInfo.TotalQtd} × 0.3 = ${estimatedStock} unidades`);
+  
+  // 6. Prioridade
+  const priority = getPriority(estimatedStock, rop);
+  console.log(`\n🚨 PRIORIDADE: ${priority.label}`);
+  console.log(`  Estoque (${estimatedStock}) vs ROP (${rop})`);
+  if (estimatedStock < rop * 0.5) {
+    console.log(`  ${estimatedStock} < ${Math.round(rop * 0.5)} (50% de ROP) → CRÍTICO`);
+  } else if (estimatedStock < rop) {
+    console.log(`  ${estimatedStock} < ${rop} → AVISO`);
+  } else {
+    console.log(`  ${estimatedStock} ≥ ${rop} → OK`);
+  }
+  
+  // 7. Quantidade a pedir
+  const coverageDemand = avgMonthly * SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS;
+  const safetyForOrder = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
+  const orderQty = Math.round(coverageDemand + safetyForOrder);
+  
+  console.log(`\n📋 QUANTIDADE A PEDIR:`);
+  console.log(`  Cobertura: ${SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS} meses`);
+  console.log(`  Demanda de cobertura: ${avgMonthly} × ${SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS} = ${coverageDemand}`);
+  console.log(`  Buffer de segurança: ${avgMonthly} × 0.5 = ${safetyForOrder}`);
+  console.log(`  QTD A PEDIR = ${coverageDemand} + ${safetyForOrder} = ${orderQty} unidades`);
+  
+  // 8. Custo
+  const precoUnit = skuInfo.TotalValor > 0 && skuInfo.TotalQtd > 0 ? Math.round(skuInfo.TotalValor / skuInfo.TotalQtd) : 0;
+  const custoPedido = orderQty * precoUnit;
+  
+  console.log(`\n💰 CUSTO ESTIMADO:`);
+  console.log(`  Preço unitário: R$ ${precoUnit.toLocaleString('pt-BR')}`);
+  console.log(`  Quantidade: ${orderQty} unidades`);
+  console.log(`  CUSTO TOTAL = ${orderQty} × R$ ${precoUnit} = R$ ${custoPedido.toLocaleString('pt-BR')}`);
+  
+  console.log(`\n${'='.repeat(60)}\n`);
+  
+  return {
+    sku,
+    nome: skuInfo.nome,
+    avgMonthly,
+    rop,
+    estimatedStock,
+    priority,
+    orderQty,
+    precoUnit,
+    custoPedido
+  };
+}
+
+// Função para debugar TODOS os SKUs
+function debugTodosSKUs() {
+  console.clear();
+  console.log('🔍 DEBUGANDO TODOS OS SKUs...\n');
+  
+  const resultados = [];
+  APP.allSkus.forEach(skuInfo => {
+    const resultado = debugCalculosSKU(skuInfo.sku);
+    if (resultado && resultado.orderQty > 0) {
+      resultados.push(resultado);
+    }
+  });
+  
+  console.log('\n📊 RESUMO DOS PRODUTOS QUE PRECISAM COMPRA:');
+  console.log(`Total: ${resultados.length} produtos\n`);
+  
+  resultados.forEach(r => {
+    console.log(`✅ SKU ${r.sku}: ${r.nome}`);
+    console.log(`   Média: ${r.avgMonthly}/mês | ROP: ${r.rop} | Estoque: ${r.estimatedStock} | Pedir: ${r.orderQty} un | Custo: R$ ${r.custoPedido.toLocaleString('pt-BR')}`);
+  });
 }
 
 function calculateROP(avgMonthly) {
@@ -2338,35 +2492,35 @@ function renderSugestaoCompras() {
     const avgMonthly = calculateAverageMonthlySales(item.sku);
     const rop = calculateROP(avgMonthly);
     
-    // Se não há vendas ou média é 0, não sugerir compra
-    if (avgMonthly === 0) return;
-    
     // Usar TotalValor para calcular "estoque virtual" (proxy)
-    // Na falta de estoque real, usar a quantidade vendida como base
-    const estimatedCurrentStock = Math.round(item.TotalQtd * 0.3); // Estimativa conservadora
-    const shouldOrder = estimatedCurrentStock < rop;
-    const orderQty = shouldOrder ? calculateOrderQuantity(avgMonthly) : 0;
+    const estimatedCurrentStock = avgMonthly > 0 ? Math.round(item.TotalQtd * 0.3) : 0;
+    const orderQty = avgMonthly > 0 && estimatedCurrentStock < rop ? calculateOrderQuantity(avgMonthly) : 0;
     const priority = getPriority(estimatedCurrentStock, rop);
     
-    if (orderQty > 0) {
-      sugestoes.push({
-        sku: item.sku,
-        produto: item.nome,
-        estoque: estimatedCurrentStock,
-        precoUnit: item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0,
-        avgMonthly: avgMonthly,
-        rop: rop,
-        orderQty: orderQty,
-        priority: priority,
-        deliveryDate: calculateDeliveryDate(),
-        custo: orderQty * (item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0),
-        totalValor: item.TotalValor,
-        totalQtd: item.TotalQtd
-      });
-    }
+    // Mostrar TODOS os produtos
+    sugestoes.push({
+      sku: item.sku,
+      produto: item.nome,
+      estoque: estimatedCurrentStock,
+      precoUnit: item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0,
+      avgMonthly: avgMonthly,
+      rop: rop,
+      orderQty: orderQty,
+      priority: priority,
+      deliveryDate: calculateDeliveryDate(),
+      custo: orderQty * (item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0),
+      totalValor: item.TotalValor,
+      totalQtd: item.TotalQtd,
+      sugerir: orderQty > 0 // Flag indicando se deve comprar
+    });
   });
   
-  sugestoes.sort((a, b) => a.priority.value - b.priority.value);
+  sugestoes.sort((a, b) => {
+    // Ordenar: primeiro os que sugerem compra, depois por prioridade
+    if (a.sugerir !== b.sugerir) return b.sugerir - a.sugerir;
+    return a.priority.value - b.priority.value;
+  });
+  
   window.allSugestoes = sugestoes;
   applyFiltersAndRenderSugestao(sugestoes);
 }
@@ -2375,7 +2529,10 @@ function applyFiltersAndRenderSugestao(allSugestoes) {
   const priorityFilter = document.getElementById('filterPrioridade')?.value || '';
   const skuSearch = document.getElementById('filterSKU')?.value?.toLowerCase() || '';
   
+  // Filtrar APENAS os que precisam de compra
   let filtered = allSugestoes.filter(s => {
+    if (s.orderQty === 0) return false; // Não mostrar os que não precisam comprar
+    
     let matchPriority = true;
     if (priorityFilter === 'critico') matchPriority = s.priority.value === 1;
     else if (priorityFilter === 'aviso') matchPriority = s.priority.value === 2;
@@ -2392,7 +2549,7 @@ function applyFiltersAndRenderSugestao(allSugestoes) {
   if (!tbody) return;
   
   if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text3)">Nenhum produto em falta no momento</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text3)">✅ Nenhum produto em falta — estoque em nível saudável!</td></tr>';
   } else {
     tbody.innerHTML = filtered.map(s => `
       <tr style="border-bottom:1px solid var(--border);height:40px">
@@ -2416,10 +2573,15 @@ function applyFiltersAndRenderSugestao(allSugestoes) {
     investimento: filtered.reduce((sum, s) => sum + s.custo, 0)
   };
   
-  document.getElementById('statsCritico').textContent = stats.critico;
-  document.getElementById('statsAviso').textContent = stats.aviso;
-  document.getElementById('statsTotal').textContent = stats.total;
-  document.getElementById('statsInvestimento').textContent = `R$ ${(stats.investimento).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+  const criticoEl = document.getElementById('statsCritico');
+  const avisoEl = document.getElementById('statsAviso');
+  const totalEl = document.getElementById('statsTotal');
+  const investEl = document.getElementById('statsInvestimento');
+  
+  if (criticoEl) criticoEl.textContent = stats.critico;
+  if (avisoEl) avisoEl.textContent = stats.aviso;
+  if (totalEl) totalEl.textContent = stats.total;
+  if (investEl) investEl.textContent = `R$ ${(stats.investimento).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 }
 
 function resetFilteresSugestao() {
