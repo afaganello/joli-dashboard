@@ -308,7 +308,7 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
   <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
-  <div class="tab" onclick="showTab('sugestaoCompras')">Sugestão de Compras</div>
+  <div class="tab" onclick="showTab('sugestao')">Sugestão de Compras</div>
 </nav>
 
 <!-- ── GLOBAL FILTER BAR ── -->
@@ -664,8 +664,8 @@ tbody tr:hover td{background:#FAFAF8}
     <div class="pag" id="pag"></div>
   </div>
 
-  <!-- ===== PAINEL: SUGESTÃO DE COMPRAS ===== -->
-  <div id="sugestaoComprasPanel" style="display:none">
+  <!-- PAINEL: SUGESTÃO DE COMPRAS -->
+  <div class="panel" id="sugestao">
     <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Sugestão de Novas Compras</h2>
     
     <!-- FILTROS -->
@@ -1644,13 +1644,13 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestaoCompras'];
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs.indexOf(id)===i));
-  document.querySelectorAll('[id$="-panel"], #sugestaoComprasPanel').forEach(p=>p.style.display='none');
-  const panel=document.getElementById(id+'Panel') || document.getElementById('sugestaoComprasPanel');
-  if(panel) panel.style.display='block';
+  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestao'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const panel = document.getElementById(id);
+  if(panel) panel.classList.add('active');
   if(id==='analise') initAnalise();
-  if(id==='sugestaoCompras') renderSugestaoCompras();
+  if(id==='sugestao') renderSugestaoCompras();
 }
 
 // ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
@@ -2130,9 +2130,9 @@ function calculateOrderQuantity(avgMonthly) {
 }
 
 function getPriority(currentStock, rop) {
-  if (currentStock < rop * 0.5) return { label: '🔴 Crítico', value: 1, color: '#991B1B' };
-  if (currentStock < rop) return { label: '🟡 Aviso', value: 2, color: '#92400E' };
-  return { label: '🟢 OK', value: 3, color: '#166534' };
+  if (currentStock < rop * 0.5) return { label: '🔴 Crítico', value: 1 };
+  if (currentStock < rop) return { label: '🟡 Aviso', value: 2 };
+  return { label: '🟢 OK', value: 3 };
 }
 
 function calculateDeliveryDate() {
@@ -2198,15 +2198,15 @@ function applyFiltersAndRenderSugestao(allSugestoes) {
   } else {
     tbody.innerHTML = filtered.map(s => `
       <tr style="border-bottom:1px solid var(--border);height:40px">
-        <td style="padding:8px;text-align:left"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
-        <td style="padding:8px;text-align:left">${s.produto}</td>
-        <td style="padding:8px;text-align:right;color:var(--text3)">${s.estoque.toLocaleString('pt-BR')}</td>
-        <td style="padding:8px;text-align:right;color:var(--text3)">${s.avgMonthly.toLocaleString('pt-BR')}</td>
-        <td style="padding:8px;text-align:right;color:var(--text3)">${s.rop.toLocaleString('pt-BR')}</td>
-        <td style="padding:8px;text-align:right;font-weight:600;color:var(--red)">${s.orderQty.toLocaleString('pt-BR')}</td>
-        <td style="padding:8px;text-align:right;color:var(--text2)">R$ ${(s.custo).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-        <td style="padding:8px;text-align:center">${s.priority.label}</td>
-        <td style="padding:8px;text-align:center;color:var(--text3);font-size:11px">${s.deliveryDate}</td>
+        <td style="padding:8px"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
+        <td style="padding:8px">${s.produto}</td>
+        <td class="num">${s.estoque.toLocaleString('pt-BR')}</td>
+        <td class="num">${s.avgMonthly.toLocaleString('pt-BR')}</td>
+        <td class="num">${s.rop.toLocaleString('pt-BR')}</td>
+        <td class="num" style="font-weight:600;color:var(--red)">${s.orderQty.toLocaleString('pt-BR')}</td>
+        <td class="num">R$ ${(s.custo).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+        <td style="text-align:center">${s.priority.label}</td>
+        <td style="text-align:center;color:var(--text3);font-size:11px">${s.deliveryDate}</td>
       </tr>
     `).join('');
   }
@@ -2246,6 +2246,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+// Carregar sugestões após finishLoad
+setTimeout(() => {
+  if (window.APP && APP.estoque) {
+    renderSugestaoCompras();
+  }
+}, 1000);
 
 loadData();
 </script>
