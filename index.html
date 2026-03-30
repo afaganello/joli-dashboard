@@ -823,12 +823,14 @@ async function loadData(){
     APP.skuMap=skuMap;
     setProgress(15,`${Object.keys(skuMap).length} produtos classificados`);
 
-    // ── 2. Load ESTOQUE DIAL ATUAL tab ────────────────────────────────────
+    // ── 2. Load ESTOQUE tab ────────────────────────────────────────
     setProgress(15,'Carregando dados de estoque...');
     const estoqueMap={};
     try {
-      const estoqueRows = await fetchSheet('ESTOQUE DIAL ATUAL');
-      estoqueRows.forEach(r => {
+      const estoqueRows = await fetchSheet('estoque');
+      console.log(`✅ Aba "estoque" carregada com ${estoqueRows.length} linhas`);
+      
+      estoqueRows.forEach((r, idx) => {
         if (!r[0]) return;
         const sku = String(r[0]).trim().replace('.0', '');
         const skuInt = parseInt(sku);
@@ -837,15 +839,20 @@ async function loadData(){
         const qtdEstoque = num(r[1]); // Coluna B: Quantidade em Estoque
         const precoUnit = num(r[2]); // Coluna C: Preço Unitário (opcional)
         
-        estoqueMap[sku] = {
-          estoque: qtdEstoque,
-          precoUnit: precoUnit || 0
-        };
+        if (qtdEstoque > 0) {
+          estoqueMap[sku] = {
+            estoque: qtdEstoque,
+            precoUnit: precoUnit || 0
+          };
+          console.log(`  SKU ${sku}: ${qtdEstoque} un | Preço: R$ ${precoUnit || 'N/A'}`);
+        }
       });
+      
       APP.estoque = estoqueMap;
+      console.log(`✅ Total de ${Object.keys(estoqueMap).length} SKUs com estoque carregado`);
       setProgress(16, `${Object.keys(estoqueMap).length} SKUs com estoque carregado`);
     } catch (e) {
-      console.warn('⚠️ Aba "ESTOQUE DIAL ATUAL" não encontrada ou vazia:', e.message);
+      console.error('❌ Erro ao carregar aba "estoque":', e.message);
       APP.estoque = {}; // Vazio se não conseguir carregar
       setProgress(16, 'Estoque não disponível (usando estimativas)');
     }
@@ -2585,7 +2592,111 @@ async function debugTodosDuplicados() {
   }
 }
 
-// Função para debugar estoque carregado
+// Função de diagnóstico completo do carregamento de estoque
+async function diagnosticoCompletoEstoque() {
+  console.clear();
+  console.log('\n' + '='.repeat(80));
+  console.log('🔍 DIAGNÓSTICO COMPLETO - CARREGAMENTO DE ESTOQUE');
+  console.log('='.repeat(80) + '\n');
+  
+  // 1. Verificar se APP.estoque existe
+  console.log('1️⃣ VERIFICAR APP.estoque:\n');
+  if (!APP.estoque) {
+    console.log('   ❌ APP.estoque NÃO EXISTE');
+  } else if (Object.keys(APP.estoque).length === 0) {
+    console.log('   ❌ APP.estoque VAZIO (0 SKUs)');
+  } else {
+    console.log(`   ✅ APP.estoque EXISTS (${Object.keys(APP.estoque).length} SKUs)`);
+    console.log('   Amostra de SKUs carregados:');
+    Object.entries(APP.estoque).slice(0, 5).forEach(([sku, data]) => {
+      console.log(`      SKU ${sku}: ${data.estoque} un | Preço: ${data.precoUnit}`);
+    });
+  }
+  
+  // 2. Tentar carregar manualmente
+  console.log('\n2️⃣ TENTAR CARREGAR ABA "ESTOQUE DIAL ATUAL" MANUALMENTE:\n');
+  try {
+    const rows = await fetchSheet('ESTOQUE DIAL ATUAL');
+    console.log(`   ✅ ABA ENCONTRADA! ${rows.length} linhas de dados`);
+    console.log('   Primeiras 5 linhas:');
+    rows.slice(0, 5).forEach((row, idx) => {
+      console.log(`      Linha ${idx + 1}: SKU=${row[0]}, Qtd=${row[1]}, Preço=${row[2]}`);
+    });
+  } catch (e) {
+    console.log(`   ❌ ERRO AO CARREGAR: ${e.message}`);
+    console.log('      Verifique se a aba se chama EXATAMENTE "ESTOQUE DIAL ATUAL"');
+  }
+  
+  // 3. Verificar estrutura esperada
+  console.log('\n3️⃣ ESTRUTURA ESPERADA:\n');
+  console.log('   Coluna A (índice 0): SKU (número 7 dígitos)');
+  console.log('   Coluna B (índice 1): Quantidade em Estoque (número)');
+  console.log('   Coluna C (índice 2): Preço Unitário (opcional)');
+  
+  // 4. Verificar SKU específico
+  console.log('\n4️⃣ TESTE COM SKU ESPECÍFICO:\n');
+  const testSKU = 1043982;
+  console.log(`   Testando SKU ${testSKU}:`);
+  
+  // Procurar na aba de estoque
+  try {
+    const rows = await fetchSheet('ESTOQUE DIAL ATUAL');
+    const encontrado = rows.find(row => {
+      const sku = String(row[0] || '').trim().replace('.0', '');
+      return sku === String(testSKU);
+    });
+    
+    if (encontrado) {
+      console.log(`   ✅ SKU ENCONTRADO NA ABA`);
+      console.log(`      Coluna A (SKU): ${encontrado[0]}`);
+      console.log(`      Coluna B (Qtd): ${encontrado[1]}`);
+      console.log(`      Coluna C (Preço): ${encontrado[2] || 'vazio'}`);
+      console.log(`      Valor armazenado em APP.estoque: ${APP.estoque[String(testSKU)]?.estoque || 'NÃO ENCONTRADO'}`);
+    } else {
+      console.log(`   ❌ SKU NÃO ENCONTRADO NA ABA "ESTOQUE DIAL ATUAL"`);
+      console.log(`      Verifique se o SKU ${testSKU} está realmente lá`);
+    }
+  } catch (e) {
+    console.log(`   ❌ ERRO: ${e.message}`);
+  }
+  
+  // 5. Comparar com APP.allSkus
+  console.log('\n5️⃣ VERIFICAR APP.allSkus:\n');
+  if (!APP.allSkus || APP.allSkus.length === 0) {
+    console.log('   ❌ APP.allSkus VAZIO ou não carregado');
+  } else {
+    console.log(`   ✅ APP.allSkus carregado (${APP.allSkus.length} SKUs)`);
+    const testProduct = APP.allSkus.find(s => s.sku === testSKU);
+    if (testProduct) {
+      console.log(`   SKU ${testSKU} em APP.allSkus:`);
+      console.log(`      Nome: ${testProduct.nome}`);
+      console.log(`      Total Valor: R$ ${testProduct.TotalValor}`);
+      console.log(`      Total Qtd: ${testProduct.TotalQtd}`);
+    } else {
+      console.log(`   ❌ SKU ${testSKU} não está em APP.allSkus`);
+    }
+  }
+  
+  // 6. Resumo final
+  console.log('\n' + '='.repeat(80));
+  console.log('📋 RESUMO:\n');
+  
+  const estoqueCarregado = APP.estoque && Object.keys(APP.estoque).length > 0;
+  const allSkusCarregado = APP.allSkus && APP.allSkus.length > 0;
+  
+  console.log(`Estoque Carregado: ${estoqueCarregado ? '✅ SIM' : '❌ NÃO'}`);
+  console.log(`AllSkus Carregado: ${allSkusCarregado ? '✅ SIM' : '❌ NÃO'}`);
+  
+  if (!estoqueCarregado) {
+    console.log('\n🚨 AÇÃO NECESSÁRIA:');
+    console.log('   1. Verifique se existe uma aba chamada "ESTOQUE DIAL ATUAL"');
+    console.log('   2. Certifique-se de que está escrito EXATAMENTE assim (maiúsculas/minúsculas)');
+    console.log('   3. Verifique se tem dados nas colunas A e B');
+    console.log('   4. Clique "Sincronizar" e tente novamente');
+  }
+  
+  console.log('\n' + '='.repeat(80) + '\n');
+}
 function debugEstoqueCarregado() {
   console.log('\n' + '='.repeat(70));
   console.log('🔍 DEBUG - ESTOQUE CARREGADO');
@@ -2678,25 +2789,26 @@ function renderSugestaoCompras() {
 
   const sugestoes = [];
   
-  // Usar APP.allSkus que contém todos os dados
   APP.allSkus.forEach(item => {
     const avgMonthly = calculateAverageMonthlySales(item.sku);
     const rop = calculateROP(avgMonthly);
     
     // USAR ESTOQUE REAL se disponível, senão usar estimativa
     let currentStock = 0;
+    let estoqueReal = false;
+    
     if (APP.estoque && APP.estoque[String(item.sku)]) {
-      // Estoque real do Sheets
       currentStock = APP.estoque[String(item.sku)].estoque;
+      estoqueReal = true;
+      console.log(`[REAL] SKU ${item.sku}: ${currentStock} un (do Sheets)`);
     } else {
-      // Fallback: estimativa baseada em vendas
       currentStock = avgMonthly > 0 ? Math.round(item.TotalQtd * 0.3) : 0;
+      console.log(`[EST] SKU ${item.sku}: ${currentStock} un (estimado 30%)`);
     }
     
     const orderQty = avgMonthly > 0 && currentStock < rop ? calculateOrderQuantity(avgMonthly) : 0;
     const priority = getPriority(currentStock, rop);
     
-    // Mostrar TODOS os produtos
     sugestoes.push({
       sku: item.sku,
       produto: item.nome,
@@ -2711,12 +2823,11 @@ function renderSugestaoCompras() {
       totalValor: item.TotalValor,
       totalQtd: item.TotalQtd,
       sugerir: orderQty > 0,
-      estoqueReal: APP.estoque && APP.estoque[String(item.sku)] ? true : false // Flag indicando se é estoque real
+      estoqueReal: estoqueReal // Flag indicando se é estoque real
     });
   });
   
   sugestoes.sort((a, b) => {
-    // Ordenar: primeiro os que sugerem compra, depois por prioridade
     if (a.sugerir !== b.sugerir) return b.sugerir - a.sugerir;
     return a.priority.value - b.priority.value;
   });
