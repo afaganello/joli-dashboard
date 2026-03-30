@@ -2157,18 +2157,21 @@ function calculateAverageMonthlySales(sku) {
 }
 
 function calculateROP(avgMonthly) {
+  if (avgMonthly === 0) return 0;
   const demandDuringLeadTime = avgMonthly * SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS;
   const safetyStock = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
   return Math.round(demandDuringLeadTime + safetyStock);
 }
 
 function calculateOrderQuantity(avgMonthly) {
+  if (avgMonthly === 0) return 0;
   const coverageDemand = avgMonthly * SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS;
   const safetyStock = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
   return Math.round(coverageDemand + safetyStock);
 }
 
 function getPriority(currentStock, rop) {
+  if (rop === 0) return { label: '🟢 OK', value: 3 };
   if (currentStock < rop * 0.5) return { label: '🔴 Crítico', value: 1 };
   if (currentStock < rop) return { label: '🟡 Aviso', value: 2 };
   return { label: '🟢 OK', value: 3 };
@@ -2181,28 +2184,43 @@ function calculateDeliveryDate() {
 }
 
 function renderSugestaoCompras() {
+  if (!APP.allSkus || APP.allSkus.length === 0) {
+    console.log('Aguardando dados de APP.allSkus...');
+    setTimeout(() => renderSugestaoCompras(), 500);
+    return;
+  }
+
   const sugestoes = [];
-  if (!APP.estoque || APP.estoque.length === 0) return;
   
-  APP.estoque.forEach(item => {
+  // Usar APP.allSkus que contém todos os dados
+  APP.allSkus.forEach(item => {
     const avgMonthly = calculateAverageMonthlySales(item.sku);
     const rop = calculateROP(avgMonthly);
-    const shouldOrder = item.estoque < rop;
+    
+    // Se não há vendas ou média é 0, não sugerir compra
+    if (avgMonthly === 0) return;
+    
+    // Usar TotalValor para calcular "estoque virtual" (proxy)
+    // Na falta de estoque real, usar a quantidade vendida como base
+    const estimatedCurrentStock = Math.round(item.TotalQtd * 0.3); // Estimativa conservadora
+    const shouldOrder = estimatedCurrentStock < rop;
     const orderQty = shouldOrder ? calculateOrderQuantity(avgMonthly) : 0;
-    const priority = getPriority(item.estoque, rop);
+    const priority = getPriority(estimatedCurrentStock, rop);
     
     if (orderQty > 0) {
       sugestoes.push({
         sku: item.sku,
-        produto: item.produto,
-        estoque: item.estoque,
-        precoUnit: item.precoUnit || 0,
+        produto: item.nome,
+        estoque: estimatedCurrentStock,
+        precoUnit: item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0,
         avgMonthly: avgMonthly,
         rop: rop,
         orderQty: orderQty,
         priority: priority,
         deliveryDate: calculateDeliveryDate(),
-        custo: orderQty * (item.precoUnit || 0)
+        custo: orderQty * (item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0),
+        totalValor: item.TotalValor,
+        totalQtd: item.TotalQtd
       });
     }
   });
@@ -2223,7 +2241,7 @@ function applyFiltersAndRenderSugestao(allSugestoes) {
     else if (priorityFilter === 'ok') matchPriority = s.priority.value === 3;
     
     let matchSearch = !skuSearch || 
-      s.sku.toLowerCase().includes(skuSearch) || 
+      s.sku.toString().includes(skuSearch) || 
       s.produto.toLowerCase().includes(skuSearch);
     
     return matchPriority && matchSearch;
