@@ -836,15 +836,14 @@ async function loadData(){
         const skuInt = parseInt(sku);
         if (isNaN(skuInt) || skuInt < 1000000) return;
         
-        const qtdEstoque = num(r[1]); // Coluna B: Quantidade em Estoque
-        const precoUnit = num(r[2]); // Coluna C: Preço Unitário (opcional)
+        // Coluna C (índice 2): Quantidade em Estoque
+        const qtdEstoque = num(r[2]);
         
         if (qtdEstoque > 0) {
           estoqueMap[sku] = {
-            estoque: qtdEstoque,
-            precoUnit: precoUnit || 0
+            estoque: qtdEstoque
           };
-          console.log(`  SKU ${sku}: ${qtdEstoque} un | Preço: R$ ${precoUnit || 'N/A'}`);
+          if (idx < 5) console.log(`  SKU ${sku}: ${qtdEstoque} un`);
         }
       });
       
