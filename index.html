@@ -2065,6 +2065,61 @@ function renderAnaliseTabela(){
 }
 
 
+// ── FUNÇÕES DE CÁLCULO (Opção 3: máximo entre 3 e 6 meses) ────
+function calculateAverageMonthlySales(sku) {
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  if (!rawData.meses || Object.keys(rawData.meses).length === 0) return 0;
+  
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const monthsWithData = monthLabels.filter(label => rawData.meses[label] && (rawData.meses[label].q || 0) > 0);
+  
+  if (monthsWithData.length === 0) return 0;
+  
+  // Calcular média de 3 meses
+  const last3Months = monthsWithData.slice(-3);
+  let totalQty3 = 0;
+  last3Months.forEach(label => {
+    totalQty3 += rawData.meses[label]?.q || 0;
+  });
+  const avg3months = Math.round(totalQty3 / last3Months.length);
+  
+  // Calcular média de 6 meses
+  let avg6months = avg3months;
+  if (monthsWithData.length >= 6) {
+    const last6Months = monthsWithData.slice(-6);
+    let totalQty6 = 0;
+    last6Months.forEach(label => {
+      totalQty6 += rawData.meses[label]?.q || 0;
+    });
+    avg6months = Math.round(totalQty6 / last6Months.length);
+  }
+  
+  // Usar o MAIOR (Opção 3!)
+  return Math.max(avg3months, avg6months);
+}
+
+function calculateROP(avgMonthly) {
+  if (avgMonthly === 0) return 0;
+  const demandDuringLeadTime = avgMonthly * 5; // 5 meses de lead time
+  const safetyStock = avgMonthly * 0.5; // Buffer de segurança
+  return Math.round(demandDuringLeadTime + safetyStock);
+}
+
+function calculateOrderQuantity(avgMonthly) {
+  if (avgMonthly === 0) return 0;
+  const coverageDemand = avgMonthly * 3; // 3 meses de cobertura
+  const safetyStock = avgMonthly * 0.5; // Buffer de segurança
+  return Math.round(coverageDemand + safetyStock);
+}
+
+function getPriority(currentStock, rop) {
+  if (rop === 0) return { label: '🟢 OK', value: 3 };
+  if (currentStock < rop * 0.5) return { label: '🔴 Crítico', value: 1 };
+  if (currentStock < rop) return { label: '🟡 Aviso', value: 2 };
+  return { label: '🟢 OK', value: 3 };
+}
+
+
 loadData();
 </script>
 </body>
