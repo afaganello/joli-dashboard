@@ -357,6 +357,18 @@ tbody tr:hover td{background:#FAFAF8}
       </div>
     </div>
     <div class="fb-sep"></div>
+    <!-- SKU -->
+    <div class="fb-drop" id="dropSKU">
+      <div class="fb-btn" id="btnSKU" onclick="toggleDrop('dropSKU')">
+        <span id="lblSKU">SKU</span><span class="fb-caret">▼</span>
+      </div>
+      <div class="fb-panel" id="panelSKU">
+        <div class="fb-panel-head"><span class="fb-panel-title">SKUs</span><span class="fb-clear-link" onclick="clearFilter('sku')">Limpar</span></div>
+        <input type="text" id="skuSearchInput" placeholder="Buscar SKU..." style="width:90%;margin:8px;padding:6px;border:1px solid var(--border);border-radius:4px;font-size:12px" onkeyup="renderSKUOptions(this.value)">
+        <div class="fb-options" id="optsSKU"></div>
+      </div>
+    </div>
+    <div class="fb-sep"></div>
     <div class="fb-active-chips" id="activeChips"></div>
     <button class="fb-reset" id="btnResetAll" onclick="resetAllFilters()" style="display:none">✕ Limpar tudo</button>
   </div>
@@ -764,6 +776,7 @@ const FILTER = {
   cats:    [],   // [] = all
   subcats: [],   // [] = all
   marcas:  [],   // [] = all
+  skus:    [],   // [] = all
   // Range selection state for month picker
   _rangeStart: null,
 };
@@ -901,6 +914,7 @@ async function loadData(){
     document.getElementById('filterBar').style.display='block';
     document.getElementById('lastUpdate').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     initFilterBar();
+    setTimeout(() => renderSugestaoCompras(), 100);
   }catch(err){
     document.getElementById('loadingScreen').classList.add('hidden');
     const eb=document.getElementById('errorBox');eb.textContent='⚠ Erro: '+err.message;eb.classList.add('visible');
@@ -952,6 +966,7 @@ function applyFilters(){
     if(FILTER.cats.length&&!FILTER.cats.includes(data.cat)) continue;
     if(FILTER.subcats.length&&!FILTER.subcats.includes(data.sub)) continue;
     if(FILTER.marcas.length&&!FILTER.marcas.includes(data.marca)) continue;
+    if(FILTER.skus.length&&!FILTER.skus.includes(parseInt(sku))) continue;
     let tv=0,tq=0;
     for(const label of months){
       const vals=data.meses[label];
@@ -1001,7 +1016,7 @@ function initFilterBar(){
   const labels=MONTH_SHEETS.map(m=>m.label);
   document.getElementById('monthGrid').innerHTML=labels.map(l=>`
     <div class="fb-month-chip" data-month="${l}" onclick="toggleMonth('${l}')">${l}</div>`).join('');
-  renderCatOptions();renderMarcaOptions();renderSubcatOptions();
+  renderCatOptions();renderMarcaOptions();renderSubcatOptions();renderSKUOptions();
   renderActiveChips();
 }
 
@@ -1091,18 +1106,35 @@ function toggleMarca(marca){
   renderMarcaOptions();triggerFilterUpdate();
 }
 
+function renderSKUOptions(query=''){
+  const allSKUs=[...new Set(Object.keys(APP.rawSalesBySku).map(s=>({sku:parseInt(s),nome:APP.rawSalesBySku[s].nome})))].sort((a,b)=>a.sku-b.sku);
+  const filtered=query?allSKUs.filter(s=>s.sku.toString().includes(query)||s.nome.toLowerCase().includes(query.toLowerCase())):allSKUs;
+  document.getElementById('optsSKU').innerHTML=filtered.map(s=>`
+    <label class="fb-option ${FILTER.skus.includes(s.sku)?'selected':''}">
+      <input type="checkbox" ${FILTER.skus.includes(s.sku)?'checked':''} onchange="toggleSKU(${s.sku})"/>
+      ${s.sku} — ${s.nome}
+    </label>`).join('');
+}
+
+function toggleSKU(sku){
+  const idx=FILTER.skus.indexOf(sku);
+  if(idx>=0) FILTER.skus.splice(idx,1); else FILTER.skus.push(sku);
+  renderSKUOptions();triggerFilterUpdate();
+}
+
 function clearFilter(type){
   if(type==='periodo'){FILTER.meses=[];FILTER._rangeStart=null;renderMonthGrid();}
   else if(type==='cat'){FILTER.cats=[];FILTER.subcats=[];renderCatOptions();renderSubcatOptions();}
   else if(type==='subcat'){FILTER.subcats=[];renderSubcatOptions();}
   else if(type==='marca'){FILTER.marcas=[];renderMarcaOptions();}
+  else if(type==='sku'){FILTER.skus=[];renderSKUOptions();}
   triggerFilterUpdate();
 }
 
 function resetAllFilters(){
-  FILTER.meses=[];FILTER.cats=[];FILTER.subcats=[];FILTER.marcas=[];FILTER._rangeStart=null;
+  FILTER.meses=[];FILTER.cats=[];FILTER.subcats=[];FILTER.marcas=[];FILTER.skus=[];FILTER._rangeStart=null;
   activePeriod.v='all';
-  renderMonthGrid();renderCatOptions();renderSubcatOptions();renderMarcaOptions();
+  renderMonthGrid();renderCatOptions();renderSubcatOptions();renderMarcaOptions();renderSKUOptions();
   triggerFilterUpdate();
 }
 
@@ -1135,6 +1167,11 @@ function updateFilterBtnLabels(){
   const lblM=document.getElementById('lblMarca');
   if(FILTER.marcas.length){lblM.textContent=FILTER.marcas.length===1?FILTER.marcas[0]:`${FILTER.marcas.length} marcas`;btnM.classList.add('has-value');}
   else{btnM.classList.remove('has-value');lblM.textContent='Marca';}
+  // SKU
+  const btnK=document.getElementById('btnSKU');
+  const lblK=document.getElementById('lblSKU');
+  if(FILTER.skus.length){lblK.textContent=FILTER.skus.length===1?`SKU ${FILTER.skus[0]}`:`${FILTER.skus.length} SKUs`;btnK.classList.add('has-value');}
+  else{btnK.classList.remove('has-value');lblK.textContent='SKU';}
 }
 
 function renderActiveChips(){
@@ -1144,6 +1181,7 @@ function renderActiveChips(){
   FILTER.cats.forEach(c=>chips.push({label:c,clear:'_cat_'+c}));
   FILTER.subcats.forEach(s=>chips.push({label:s,clear:'_sub_'+s}));
   FILTER.marcas.forEach(m=>chips.push({label:m,clear:'_marca_'+m}));
+  FILTER.skus.forEach(k=>chips.push({label:`SKU ${k}`,clear:'_sku_'+k}));
   const container=document.getElementById('activeChips');
   const resetBtn=document.getElementById('btnResetAll');
   if(!chips.length){container.innerHTML='';resetBtn.style.display='none';return;}
@@ -1157,6 +1195,7 @@ function removeChip(key){
   else if(key.startsWith('_cat_')){const c=key.slice(5);FILTER.cats=FILTER.cats.filter(x=>x!==c);FILTER.subcats=[];renderCatOptions();renderSubcatOptions();}
   else if(key.startsWith('_sub_')){const s=key.slice(5);FILTER.subcats=FILTER.subcats.filter(x=>x!==s);renderSubcatOptions();}
   else if(key.startsWith('_marca_')){const m=key.slice(7);FILTER.marcas=FILTER.marcas.filter(x=>x!==m);renderMarcaOptions();}
+  else if(key.startsWith('_sku_')){const k=parseInt(key.slice(5));FILTER.skus=FILTER.skus.filter(x=>x!==k);renderSKUOptions();}
   triggerFilterUpdate();
 }
 
