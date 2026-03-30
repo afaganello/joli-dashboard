@@ -308,7 +308,6 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
   <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
-  <div class="tab" onclick="showTab('sugestao')">Sugestão de Compras</div>
 </nav>
 
 <!-- ── GLOBAL FILTER BAR ── -->
@@ -354,18 +353,6 @@ tbody tr:hover td{background:#FAFAF8}
       <div class="fb-panel" id="panelMarca">
         <div class="fb-panel-head"><span class="fb-panel-title">Marcas</span><span class="fb-clear-link" onclick="clearFilter('marca')">Limpar</span></div>
         <div class="fb-options" id="optsMarca"></div>
-      </div>
-    </div>
-    <div class="fb-sep"></div>
-    <!-- SKU -->
-    <div class="fb-drop" id="dropSKU">
-      <div class="fb-btn" id="btnSKU" onclick="toggleDrop('dropSKU')">
-        <span id="lblSKU">SKU</span><span class="fb-caret">▼</span>
-      </div>
-      <div class="fb-panel" id="panelSKU">
-        <div class="fb-panel-head"><span class="fb-panel-title">SKUs</span><span class="fb-clear-link" onclick="clearFilter('sku')">Limpar</span></div>
-        <input type="text" id="skuSearchInput" placeholder="Buscar SKU..." style="width:90%;margin:8px;padding:6px;border:1px solid var(--border);border-radius:4px;font-size:12px" onkeyup="renderSKUOptions(this.value)">
-        <div class="fb-options" id="optsSKU"></div>
       </div>
     </div>
     <div class="fb-sep"></div>
@@ -675,83 +662,6 @@ tbody tr:hover td{background:#FAFAF8}
     <div id="tblTodos"></div>
     <div class="pag" id="pag"></div>
   </div>
-
-  <!-- PAINEL: SUGESTÃO DE COMPRAS -->
-  <div class="panel" id="sugestao">
-    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Sugestão de Novas Compras</h2>
-    
-    <!-- FILTROS E BOTÕES -->
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;justify-content:space-between">
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;flex:1">
-        <select id="filterPrioridade" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
-          <option value="">Prioridade: Todas</option>
-          <option value="critico">🔴 Crítico</option>
-          <option value="aviso">🟡 Aviso</option>
-          <option value="ok">🟢 OK</option>
-        </select>
-        
-        <input type="text" id="filterSKU" placeholder="Buscar SKU ou produto..." 
-          style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:200px;font-family:'DM Sans',sans-serif">
-        
-        <button onclick="resetFilteresSugestao()" 
-          style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3);font-family:'DM Sans',sans-serif;transition:all .15s;user-select:none">↻ Limpar</button>
-      </div>
-      
-      <button onclick="exportarSugestaoExcel()" 
-        style="padding:8px 16px;background:#10b981;border:none;border-radius:6px;cursor:pointer;font-size:12px;color:white;font-family:'DM Sans',sans-serif;transition:all .15s;user-select:none;font-weight:500;white-space:nowrap">📊 Exportar Excel</button>
-    </div>
-
-    <!-- NOTAS EXPLICATIVAS -->
-    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:20px;font-size:11px;color:var(--text3);line-height:1.6">
-      <strong style="color:var(--text)">📌 Como Entender os Cálculos:</strong><br>
-      <strong>Média/mês:</strong> Máximo entre média de últimos 3 meses e 6 meses (evita distorção por falta de estoque)<br>
-      <strong>ROP:</strong> Ponto de recompra = (Média × 5 meses de lead time) + (Média × 0.5 de segurança)<br>
-      <strong>QTD Sugerida:</strong> Quantidade a pedir = (Média × 3 meses cobertura) + (Média × 0.5 de segurança)<br>
-      <strong>Prioridade:</strong> 🔴 Crítico (estoque < 50% ROP) | 🟡 Aviso (estoque < ROP) | 🟢 OK (estoque ≥ ROP)
-    </div>
-
-    <!-- TABELA -->
-    <div style="overflow-x:auto;margin-bottom:20px">
-      <table id="tabelaSugestao" style="width:100%;border-collapse:collapse;font-size:12px">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
-            <th style="text-align:left;padding:10px;color:var(--text3);font-weight:500">SKU</th>
-            <th style="text-align:left;padding:10px;color:var(--text3);font-weight:500">Produto</th>
-            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">Estoque</th>
-            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">Média/mês</th>
-            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">ROP</th>
-            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">QTD Sugerida</th>
-            <th style="text-align:right;padding:10px;color:var(--text3);font-weight:500">Custo Est.</th>
-            <th style="text-align:center;padding:10px;color:var(--text3);font-weight:500">Prioridade</th>
-            <th style="text-align:center;padding:10px;color:var(--text3);font-weight:500">Entrega Est.</th>
-          </tr>
-        </thead>
-        <tbody id="corpTabelaSugestao" style="background:var(--surface)">
-          <tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text3)">Carregando dados...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- STATS CARDS -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
-      <div class="kpi">
-        <div class="kpi-label">Produtos Críticos</div>
-        <div class="kpi-value" id="statsCritico">0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Em Aviso</div>
-        <div class="kpi-value" id="statsAviso">0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Total a Comprar</div>
-        <div class="kpi-value" id="statsTotal">0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Investimento Total</div>
-        <div class="kpi-value" id="statsInvestimento">R$ 0</div>
-      </div>
-    </div>
-  </div>
 </main>
 
 <script>
@@ -790,7 +700,6 @@ const FILTER = {
   cats:    [],   // [] = all
   subcats: [],   // [] = all
   marcas:  [],   // [] = all
-  skus:    [],   // [] = all
   // Range selection state for month picker
   _rangeStart: null,
 };
@@ -837,51 +746,7 @@ async function loadData(){
     APP.skuMap=skuMap;
     setProgress(15,`${Object.keys(skuMap).length} produtos classificados`);
 
-    // ── 2. Load ESTOQUE tab ────────────────────────────────────────
-    setProgress(15,'Carregando dados de estoque...');
-    const estoqueMap={};
-    let mensagemEstoque = '';
-    try {
-      const estoqueRows = await fetchSheet('estoque');
-      mensagemEstoque = `✅ Aba "estoque" carregada com ${estoqueRows.length} linhas`;
-      console.log(mensagemEstoque);
-      
-      estoqueRows.forEach((r, idx) => {
-        if (!r[0]) return;
-        const sku = String(r[0]).trim().replace('.0', '');
-        const skuInt = parseInt(sku);
-        if (isNaN(skuInt) || skuInt < 1000000) return;
-        
-        // Coluna C (índice 2): Quantidade em Estoque
-        const qtdEstoque = num(r[2]);
-        
-        if (qtdEstoque > 0) {
-          estoqueMap[sku] = {
-            estoque: qtdEstoque
-          };
-        }
-      });
-      
-      APP.estoque = estoqueMap;
-      mensagemEstoque += `\n✅ Total de ${Object.keys(estoqueMap).length} SKUs com estoque carregado`;
-      console.log(mensagemEstoque);
-      
-      // Mostrar na página também
-      document.getElementById('lastUpdate').textContent = mensagemEstoque;
-      
-      setProgress(16, `${Object.keys(estoqueMap).length} SKUs com estoque carregado`);
-    } catch (e) {
-      mensagemEstoque = `❌ Erro ao carregar aba "estoque": ${e.message}`;
-      console.error(mensagemEstoque);
-      
-      // Mostrar erro na página
-      document.getElementById('lastUpdate').textContent = mensagemEstoque;
-      
-      APP.estoque = {}; // Vazio se não conseguir carregar
-      setProgress(16, 'Estoque não disponível (usando estimativas)');
-    }
-
-    // ── 3. Load monthly sales tabs ──────────────────────────────────────
+    // ── 2. Load monthly sales tabs ──────────────────────────────────────
     const rawSales={};
     for(let i=0;i<MONTH_SHEETS.length;i++){
       const {sheet,label}=MONTH_SHEETS[i];
@@ -972,7 +837,6 @@ async function loadData(){
     document.getElementById('filterBar').style.display='block';
     document.getElementById('lastUpdate').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     initFilterBar();
-    setTimeout(() => renderSugestaoCompras(), 100);
   }catch(err){
     document.getElementById('loadingScreen').classList.add('hidden');
     const eb=document.getElementById('errorBox');eb.textContent='⚠ Erro: '+err.message;eb.classList.add('visible');
@@ -1024,7 +888,6 @@ function applyFilters(){
     if(FILTER.cats.length&&!FILTER.cats.includes(data.cat)) continue;
     if(FILTER.subcats.length&&!FILTER.subcats.includes(data.sub)) continue;
     if(FILTER.marcas.length&&!FILTER.marcas.includes(data.marca)) continue;
-    if(FILTER.skus.length&&!FILTER.skus.includes(parseInt(sku))) continue;
     let tv=0,tq=0;
     for(const label of months){
       const vals=data.meses[label];
@@ -1074,7 +937,7 @@ function initFilterBar(){
   const labels=MONTH_SHEETS.map(m=>m.label);
   document.getElementById('monthGrid').innerHTML=labels.map(l=>`
     <div class="fb-month-chip" data-month="${l}" onclick="toggleMonth('${l}')">${l}</div>`).join('');
-  renderCatOptions();renderMarcaOptions();renderSubcatOptions();renderSKUOptions();
+  renderCatOptions();renderMarcaOptions();renderSubcatOptions();
   renderActiveChips();
 }
 
@@ -1164,35 +1027,18 @@ function toggleMarca(marca){
   renderMarcaOptions();triggerFilterUpdate();
 }
 
-function renderSKUOptions(query=''){
-  const allSKUs=[...new Set(Object.keys(APP.rawSalesBySku).map(s=>({sku:parseInt(s),nome:APP.rawSalesBySku[s].nome})))].sort((a,b)=>a.sku-b.sku);
-  const filtered=query?allSKUs.filter(s=>s.sku.toString().includes(query)||s.nome.toLowerCase().includes(query.toLowerCase())):allSKUs;
-  document.getElementById('optsSKU').innerHTML=filtered.map(s=>`
-    <label class="fb-option ${FILTER.skus.includes(s.sku)?'selected':''}">
-      <input type="checkbox" ${FILTER.skus.includes(s.sku)?'checked':''} onchange="toggleSKU(${s.sku})"/>
-      ${s.sku} — ${s.nome}
-    </label>`).join('');
-}
-
-function toggleSKU(sku){
-  const idx=FILTER.skus.indexOf(sku);
-  if(idx>=0) FILTER.skus.splice(idx,1); else FILTER.skus.push(sku);
-  renderSKUOptions();triggerFilterUpdate();
-}
-
 function clearFilter(type){
   if(type==='periodo'){FILTER.meses=[];FILTER._rangeStart=null;renderMonthGrid();}
   else if(type==='cat'){FILTER.cats=[];FILTER.subcats=[];renderCatOptions();renderSubcatOptions();}
   else if(type==='subcat'){FILTER.subcats=[];renderSubcatOptions();}
   else if(type==='marca'){FILTER.marcas=[];renderMarcaOptions();}
-  else if(type==='sku'){FILTER.skus=[];renderSKUOptions();}
   triggerFilterUpdate();
 }
 
 function resetAllFilters(){
-  FILTER.meses=[];FILTER.cats=[];FILTER.subcats=[];FILTER.marcas=[];FILTER.skus=[];FILTER._rangeStart=null;
+  FILTER.meses=[];FILTER.cats=[];FILTER.subcats=[];FILTER.marcas=[];FILTER._rangeStart=null;
   activePeriod.v='all';
-  renderMonthGrid();renderCatOptions();renderSubcatOptions();renderMarcaOptions();renderSKUOptions();
+  renderMonthGrid();renderCatOptions();renderSubcatOptions();renderMarcaOptions();
   triggerFilterUpdate();
 }
 
@@ -1225,11 +1071,6 @@ function updateFilterBtnLabels(){
   const lblM=document.getElementById('lblMarca');
   if(FILTER.marcas.length){lblM.textContent=FILTER.marcas.length===1?FILTER.marcas[0]:`${FILTER.marcas.length} marcas`;btnM.classList.add('has-value');}
   else{btnM.classList.remove('has-value');lblM.textContent='Marca';}
-  // SKU
-  const btnK=document.getElementById('btnSKU');
-  const lblK=document.getElementById('lblSKU');
-  if(FILTER.skus.length){lblK.textContent=FILTER.skus.length===1?`SKU ${FILTER.skus[0]}`:`${FILTER.skus.length} SKUs`;btnK.classList.add('has-value');}
-  else{btnK.classList.remove('has-value');lblK.textContent='SKU';}
 }
 
 function renderActiveChips(){
@@ -1239,7 +1080,6 @@ function renderActiveChips(){
   FILTER.cats.forEach(c=>chips.push({label:c,clear:'_cat_'+c}));
   FILTER.subcats.forEach(s=>chips.push({label:s,clear:'_sub_'+s}));
   FILTER.marcas.forEach(m=>chips.push({label:m,clear:'_marca_'+m}));
-  FILTER.skus.forEach(k=>chips.push({label:`SKU ${k}`,clear:'_sku_'+k}));
   const container=document.getElementById('activeChips');
   const resetBtn=document.getElementById('btnResetAll');
   if(!chips.length){container.innerHTML='';resetBtn.style.display='none';return;}
@@ -1253,7 +1093,6 @@ function removeChip(key){
   else if(key.startsWith('_cat_')){const c=key.slice(5);FILTER.cats=FILTER.cats.filter(x=>x!==c);FILTER.subcats=[];renderCatOptions();renderSubcatOptions();}
   else if(key.startsWith('_sub_')){const s=key.slice(5);FILTER.subcats=FILTER.subcats.filter(x=>x!==s);renderSubcatOptions();}
   else if(key.startsWith('_marca_')){const m=key.slice(7);FILTER.marcas=FILTER.marcas.filter(x=>x!==m);renderMarcaOptions();}
-  else if(key.startsWith('_sku_')){const k=parseInt(key.slice(5));FILTER.skus=FILTER.skus.filter(x=>x!==k);renderSKUOptions();}
   triggerFilterUpdate();
 }
 
@@ -1279,7 +1118,7 @@ function buildKPIs(){
   const ticket=totalQ>0?totalV/totalQ:0;
   const skuAtivos=APP.allSkus.filter(s=>s.TotalValor>0).length;
   // Show filter context in subtitle
-  const filterCtx=FILTER.skus.length?`SKU: ${FILTER.skus.join(', ')}`:FILTER.cats.length?FILTER.cats.join(', '):FILTER.subcats.length?FILTER.subcats.join(', '):'';
+  const filterCtx=FILTER.cats.length?FILTER.cats.join(', '):FILTER.subcats.length?FILTER.subcats.join(', '):'';
   const periodCtx=FILTER.meses.length?`${FILTER.meses[0]}–${FILTER.meses[FILTER.meses.length-1]}`:`${m[0].label} — ${m[m.length-1].label}`;
   document.getElementById('kpis').innerHTML=`
     <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">${fmtK(totalV)}</div><div class="kpi-sub">${periodCtx}${filterCtx?' · '+filterCtx:''}</div></div>
@@ -1322,148 +1161,7 @@ function setPeriod(p){
 function ch(id){if(APP.charts[id]){try{APP.charts[id].destroy()}catch(e){}delete APP.charts[id]}}
 const TX='#A09C98',GC='rgba(0,0,0,.05)';
 
-function buildVisao(){
-  // Se tem SKU(s) filtrado(s), mostrar detalhes
-  if(FILTER.skus.length===1){
-    buildSkuDetailView();
-  } else if(FILTER.skus.length>1){
-    buildMultiSkuView();
-  } else {
-    rebuildVisaoCharts();buildCatDonut();
-  }
-}
-
-function buildMultiSkuView(){
-  // Múltiplos SKUs selecionados - mostrar resumo
-  const selectedSkus=APP.allSkus.filter(s=>FILTER.skus.includes(s.sku));
-  const monthLabels=MONTH_SHEETS.map(m=>m.label);
-  
-  const multiMonthlyData=monthLabels.map(label=>{
-    let totalV=0,totalQ=0;
-    selectedSkus.forEach(sku=>{
-      const raw=APP.rawSalesBySku?.[String(sku.sku)];
-      if(raw&&raw.meses&&raw.meses[label]){
-        totalV+=raw.meses[label].v||0;
-        totalQ+=raw.meses[label].q||0;
-      }
-    });
-    return {label,valor:totalV,qtd:totalQ};
-  }).filter(m=>m.valor>0||m.qtd>0);
-  
-  const data=multiMonthlyData.length?multiMonthlyData:[];
-  
-  ['cFat','cQtd','cTicket','cAbcVSmall'].forEach(ch);
-  
-  APP.charts.cFat=new Chart(document.getElementById('cFat'),{type:'bar',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.valor),backgroundColor:'#1A1917',borderRadius:4,hoverBackgroundColor:'#555'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:`${FILTER.skus.length} SKUs Selecionados`,font:{size:12,weight:'bold'},color:TX}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  
-  APP.charts.cQtd=new Chart(document.getElementById('cQtd'),{type:'bar',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.qtd),backgroundColor:'#166534',borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  
-  APP.charts.cTicket=new Chart(document.getElementById('cTicket'),{type:'line',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.qtd>0?Math.round(m.valor/m.qtd):0),borderColor:'#7C2D12',backgroundColor:'rgba(124,45,18,.06)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#7C2D12'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  
-  const totalV=selectedSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const gA=selectedSkus.filter(s=>s.abcV==='A').reduce((s,x)=>s+x.TotalValor,0);
-  const gB=selectedSkus.filter(s=>s.abcV==='B').reduce((s,x)=>s+x.TotalValor,0);
-  const gC=selectedSkus.filter(s=>s.abcV==='C').reduce((s,x)=>s+x.TotalValor,0);
-  
-  document.getElementById('legAbcVSmall').innerHTML=['A','B','C'].map((c,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${c} — ${Math.round([gA,gB,gC][i]/totalV*100)}%</span>`).join('');
-  
-  APP.charts.cAbcVSmall=new Chart(document.getElementById('cAbcVSmall'),{type:'doughnut',
-    data:{labels:['A','B','C'],datasets:[{data:[Math.round(gA),Math.round(gB),Math.round(gC)],backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
-  
-  // Mostrar resumo dos SKUs
-  document.getElementById('legCat').innerHTML=`
-    <div style="padding:12px;font-size:13px;max-height:200px;overflow-y:auto">
-      <div style="margin-bottom:10px;font-weight:bold;border-bottom:1px solid var(--border);padding-bottom:8px">SKUs Selecionados:</div>
-      ${selectedSkus.map(s=>`
-        <div style="margin-bottom:8px;padding:8px;background:var(--bg);border-radius:4px">
-          <div><strong>SKU ${s.sku}:</strong> ${s.nome}</div>
-          <div style="font-size:11px;color:var(--text3)">Cat: ${s.cat} • Marca: ${s.marca||'—'} • Classe: ${s.abcV}</div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-  
-  ch('cCat');
-  const catsByCount={};
-  selectedSkus.forEach(s=>{catsByCount[s.cat]=(catsByCount[s.cat]||0)+1});
-  const cats=Object.entries(catsByCount).sort((a,b)=>b[1]-a[1]);
-  const colors=cats.map(c=>CAT_COLOR[c[0]]||'#6B7280');
-  
-  APP.charts.cCat=new Chart(document.getElementById('cCat'),{type:'doughnut',
-    data:{labels:cats.map(c=>`${c[0]} (${c[1]} SKU${c[1]>1?'s':''})`),datasets:[{data:cats.map(c=>c[1]),backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}`}}}}});
-}
-
-function buildSkuDetailView(){
-  const skuId=FILTER.skus[0];
-  const skuData=APP.allSkus.find(s=>s.sku===skuId);
-  const rawData=APP.rawSalesBySku?.[String(skuId)];
-  
-  if(!skuData||!rawData){
-    rebuildVisaoCharts();buildCatDonut();
-    return;
-  }
-  
-  // Construir gráfico de vendas mensais do SKU
-  const monthLabels=MONTH_SHEETS.map(m=>m.label);
-  const skuMonthlyData=monthLabels.map(label=>({
-    label:label,
-    valor:rawData.meses?.[label]?.v||0,
-    qtd:rawData.meses?.[label]?.q||0
-  })).filter(m=>m.valor>0||m.qtd>0);
-  
-  const data=skuMonthlyData.length?skuMonthlyData:[];
-  
-  ['cFat','cQtd','cTicket','cAbcVSmall'].forEach(ch);
-  
-  // Gráfico de Faturamento do SKU
-  APP.charts.cFat=new Chart(document.getElementById('cFat'),{type:'bar',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.valor),backgroundColor:'#1A1917',borderRadius:4,hoverBackgroundColor:'#555'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:`SKU ${skuId} — ${skuData.nome}`,font:{size:12,weight:'bold'},color:TX}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  
-  // Gráfico de Quantidade do SKU
-  APP.charts.cQtd=new Chart(document.getElementById('cQtd'),{type:'bar',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.qtd),backgroundColor:'#166534',borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  
-  // Gráfico de Ticket Médio do SKU
-  APP.charts.cTicket=new Chart(document.getElementById('cTicket'),{type:'line',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.qtd>0?Math.round(m.valor/m.qtd):0),borderColor:'#7C2D12',backgroundColor:'rgba(124,45,18,.06)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#7C2D12'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  
-  // Mostrar ABC do SKU único
-  document.getElementById('legAbcVSmall').innerHTML=`<span class="leg-item"><span class="leg-dot" style="background:${skuData.abcV==='A'?'#166534':skuData.abcV==='B'?'#92400E':'#991B1B'}"></span>Classe ${skuData.abcV}</span>`;
-  
-  // Gráfico ABC (simples para um SKU)
-  APP.charts.cAbcVSmall=new Chart(document.getElementById('cAbcVSmall'),{type:'doughnut',
-    data:{labels:[`SKU ${skuId}`],datasets:[{data:[Math.round(skuData.TotalValor)],backgroundColor:[skuData.abcV==='A'?'#166534':skuData.abcV==='B'?'#92400E':'#991B1B'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
-  
-  // Mostrar informações do SKU em vez do gráfico de categorias
-  const catColor=CAT_COLOR[skuData.cat]||'#6B7280';
-  document.getElementById('legCat').innerHTML=`
-    <div style="padding:12px;font-size:13px">
-      <div style="margin-bottom:8px"><strong>Categoria:</strong> <span style="color:${catColor};font-weight:500">${skuData.cat}</span></div>
-      <div style="margin-bottom:8px"><strong>Subcategoria:</strong> ${skuData.sub||'—'}</div>
-      <div style="margin-bottom:8px"><strong>Marca:</strong> ${skuData.marca||'—'}</div>
-      <div style="margin-bottom:8px"><strong>Total Vendido:</strong> ${Math.round(skuData.TotalQtd).toLocaleString('pt-BR')} unidades</div>
-      <div style="margin-bottom:8px"><strong>Faturamento Total:</strong> ${fmtK(skuData.TotalValor)}</div>
-      <div><strong>Classe ABC (Valor):</strong> ${skuData.abcV}</div>
-    </div>
-  `;
-  
-  ch('cCat');
-  APP.charts.cCat=new Chart(document.getElementById('cCat'),{type:'doughnut',
-    data:{labels:[skuData.nome],datasets:[{data:[Math.round(skuData.TotalValor)],backgroundColor:[catColor],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
-}
+function buildVisao(){rebuildVisaoCharts();buildCatDonut()}
 function rebuildVisaoCharts(){
   const data=getMonthly();
   ['cFat','cQtd','cTicket','cAbcVSmall'].forEach(ch);
@@ -1882,13 +1580,11 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestao'];
+  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  const panel = document.getElementById(id);
-  if(panel) panel.classList.add('active');
+  document.getElementById(id).classList.add('active');
   if(id==='analise') initAnalise();
-  if(id==='sugestao') renderSugestaoCompras();
 }
 
 // ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
@@ -2336,715 +2032,6 @@ function renderAnaliseTabela(){
   `:'';
 }
 
-
-// ===== SUGESTÃO DE COMPRAS =====
-const SUPPLY_CHAIN_CONFIG = {
-  LEAD_TIME_MONTHS: 5,
-  ANALYSIS_MONTHS: 3,
-  SAFETY_BUFFER: 1.5,
-  COVERAGE_MONTHS: 3,
-};
-
-function calculateAverageMonthlySales(sku) {
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  if (!rawData.meses || Object.keys(rawData.meses).length === 0) return 0;
-  
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const monthsWithData = monthLabels.filter(label => rawData.meses[label] && (rawData.meses[label].q || 0) > 0);
-  
-  if (monthsWithData.length === 0) return 0;
-  
-  // ── Calcular média dos últimos 3 meses
-  const last3Months = monthsWithData.slice(-3);
-  let totalQty3 = 0;
-  last3Months.forEach(label => {
-    totalQty3 += rawData.meses[label]?.q || 0;
-  });
-  const avg3months = Math.round(totalQty3 / last3Months.length);
-  
-  // ── Calcular média dos últimos 6 meses
-  let avg6months = avg3months; // Default: mesmo valor de 3 meses
-  if (monthsWithData.length >= 6) {
-    const last6Months = monthsWithData.slice(-6);
-    let totalQty6 = 0;
-    last6Months.forEach(label => {
-      totalQty6 += rawData.meses[label]?.q || 0;
-    });
-    avg6months = Math.round(totalQty6 / last6Months.length);
-  }
-  
-  // ── Usar o MAIOR entre 3 e 6 meses (mais seguro!)
-  const avgFinal = Math.max(avg3months, avg6months);
-  
-  // DEBUG: mostrar o que está usando
-  console.log(`[DEBUG] SKU ${sku}: Cálculo de Média`);
-  console.log(`  Últimos 3 meses: ${last3Months.join(', ')}`);
-  last3Months.forEach(label => {
-    console.log(`    ${label}: ${rawData.meses[label]?.q || 0} unidades`);
-  });
-  console.log(`  Média 3 meses: ${totalQty3} ÷ 3 = ${avg3months} un/mês`);
-  
-  if (monthsWithData.length >= 6) {
-    console.log(`  Últimos 6 meses: ${monthsWithData.slice(-6).join(', ')}`);
-    monthsWithData.slice(-6).forEach(label => {
-      console.log(`    ${label}: ${rawData.meses[label]?.q || 0} unidades`);
-    });
-    console.log(`  Média 6 meses: ${totalQty6} ÷ 6 = ${avg6months} un/mês`);
-  }
-  
-  console.log(`  ✅ Usando MÁXIMO: ${avgFinal} un/mês (max entre ${avg3months} e ${avg6months})\n`);
-  
-  return avgFinal;
-}
-
-// Função de debug - mostra os cálculos para um SKU específico
-function debugCalculosSKU(sku) {
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  const skuInfo = APP.allSkus.find(s => s.sku === sku);
-  
-  if (!skuInfo) {
-    console.error(`SKU ${sku} não encontrado`);
-    return;
-  }
-  
-  console.log(`\n${'='.repeat(60)}`);
-  console.log(`🔍 DEBUG SKU ${sku}: ${skuInfo.nome}`);
-  console.log(`${'='.repeat(60)}\n`);
-  
-  // 1. Dados brutos
-  console.log('📊 DADOS BRUTOS DO SKU:');
-  console.log(`  Total Valor: R$ ${skuInfo.TotalValor.toLocaleString('pt-BR')}`);
-  console.log(`  Total Qtd: ${skuInfo.TotalQtd.toLocaleString('pt-BR')} unidades`);
-  console.log(`  Classe ABC: ${skuInfo.abcV}`);
-  
-  // 2. Vendas por mês
-  console.log('\n📅 VENDAS POR MÊS:');
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  monthLabels.forEach(label => {
-    const monthData = rawData.meses?.[label];
-    if (monthData && monthData.q > 0) {
-      console.log(`  ${label}: ${monthData.q.toLocaleString('pt-BR')} un | R$ ${monthData.v.toLocaleString('pt-BR')}`);
-    }
-  });
-  
-  // 3. Últimos 3 meses
-  const monthsWithData = monthLabels.filter(label => rawData.meses[label] && rawData.meses[label].q > 0);
-  const last3Months = monthsWithData.slice(-3);
-  
-  console.log(`\n📌 ÚLTIMOS 3 MESES COM VENDAS: [${last3Months.join(', ')}]`);
-  
-  let totalQty = 0;
-  last3Months.forEach(label => {
-    const qty = rawData.meses[label]?.q || 0;
-    totalQty += qty;
-    console.log(`  ${label}: ${qty.toLocaleString('pt-BR')} unidades`);
-  });
-  
-  const avgMonthly = Math.round(totalQty / last3Months.length);
-  console.log(`\n📈 CÁLCULO DA MÉDIA:`);
-  console.log(`  Total últimos 3 meses: ${totalQty.toLocaleString('pt-BR')} un`);
-  console.log(`  Meses contados: ${last3Months.length}`);
-  console.log(`  MÉDIA MENSAL: ${totalQty} ÷ ${last3Months.length} = ${avgMonthly} un/mês`);
-  
-  // 4. Cálculos de ROP
-  const demandLeadTime = avgMonthly * SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS;
-  const safetyStock = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
-  const rop = Math.round(demandLeadTime + safetyStock);
-  
-  console.log(`\n🎯 CÁLCULO DO ROP (Reorden Point):`);
-  console.log(`  Lead Time: ${SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS} meses`);
-  console.log(`  Demanda durante lead time: ${avgMonthly} × ${SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS} = ${demandLeadTime}`);
-  console.log(`  Buffer de segurança: ${avgMonthly} × 0.5 = ${safetyStock}`);
-  console.log(`  ROP = ${demandLeadTime} + ${safetyStock} = ${rop} unidades`);
-  
-  // 5. Estoque estimado
-  const estimatedStock = Math.round(skuInfo.TotalQtd * 0.3);
-  console.log(`\n📦 ESTOQUE ESTIMADO:`);
-  console.log(`  Total vendido: ${skuInfo.TotalQtd.toLocaleString('pt-BR')} un`);
-  console.log(`  Estoque estimado (30%): ${skuInfo.TotalQtd} × 0.3 = ${estimatedStock} unidades`);
-  
-  // 6. Prioridade
-  const priority = getPriority(estimatedStock, rop);
-  console.log(`\n🚨 PRIORIDADE: ${priority.label}`);
-  console.log(`  Estoque (${estimatedStock}) vs ROP (${rop})`);
-  if (estimatedStock < rop * 0.5) {
-    console.log(`  ${estimatedStock} < ${Math.round(rop * 0.5)} (50% de ROP) → CRÍTICO`);
-  } else if (estimatedStock < rop) {
-    console.log(`  ${estimatedStock} < ${rop} → AVISO`);
-  } else {
-    console.log(`  ${estimatedStock} ≥ ${rop} → OK`);
-  }
-  
-  // 7. Quantidade a pedir
-  const coverageDemand = avgMonthly * SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS;
-  const safetyForOrder = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
-  const orderQty = Math.round(coverageDemand + safetyForOrder);
-  
-  console.log(`\n📋 QUANTIDADE A PEDIR:`);
-  console.log(`  Cobertura: ${SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS} meses`);
-  console.log(`  Demanda de cobertura: ${avgMonthly} × ${SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS} = ${coverageDemand}`);
-  console.log(`  Buffer de segurança: ${avgMonthly} × 0.5 = ${safetyForOrder}`);
-  console.log(`  QTD A PEDIR = ${coverageDemand} + ${safetyForOrder} = ${orderQty} unidades`);
-  
-  // 8. Custo
-  const precoUnit = skuInfo.TotalValor > 0 && skuInfo.TotalQtd > 0 ? Math.round(skuInfo.TotalValor / skuInfo.TotalQtd) : 0;
-  const custoPedido = orderQty * precoUnit;
-  
-  console.log(`\n💰 CUSTO ESTIMADO:`);
-  console.log(`  Preço unitário: R$ ${precoUnit.toLocaleString('pt-BR')}`);
-  console.log(`  Quantidade: ${orderQty} unidades`);
-  console.log(`  CUSTO TOTAL = ${orderQty} × R$ ${precoUnit} = R$ ${custoPedido.toLocaleString('pt-BR')}`);
-  
-  console.log(`\n${'='.repeat(60)}\n`);
-  
-  return {
-    sku,
-    nome: skuInfo.nome,
-    avgMonthly,
-    rop,
-    estimatedStock,
-    priority,
-    orderQty,
-    precoUnit,
-    custoPedido
-  };
-}
-
-// Função para debugar TODOS os SKUs
-function debugTodosSKUs() {
-  console.clear();
-  console.log('🔍 DEBUGANDO TODOS OS SKUs...\n');
-  
-  const resultados = [];
-  APP.allSkus.forEach(skuInfo => {
-    const resultado = debugCalculosSKU(skuInfo.sku);
-    if (resultado && resultado.orderQty > 0) {
-      resultados.push(resultado);
-    }
-  });
-  
-  console.log('\n📊 RESUMO DOS PRODUTOS QUE PRECISAM COMPRA:');
-  console.log(`Total: ${resultados.length} produtos\n`);
-  
-  resultados.forEach(r => {
-    console.log(`✅ SKU ${r.sku}: ${r.nome}`);
-    console.log(`   Média: ${r.avgMonthly}/mês | ROP: ${r.rop} | Estoque: ${r.estimatedStock} | Pedir: ${r.orderQty} un | Custo: R$ ${r.custoPedido.toLocaleString('pt-BR')}`);
-  });
-}
-
-// Função para debugar duplicação de SKUs nos Sheets
-async function debugSKUDuplicados(sku) {
-  console.log(`\n${'='.repeat(70)}`);
-  console.log(`🔍 DEBUG DE DUPLICAÇÃO - SKU ${sku}`);
-  console.log(`${'='.repeat(70)}\n`);
-  
-  let totalEncontrado = 0;
-  
-  for (const {sheet, label} of MONTH_SHEETS) {
-    try {
-      const rows = await fetchSheet(sheet);
-      const ocorrencias = [];
-      
-      rows.forEach((row, idx) => {
-        if (!row[0]) return;
-        const rowSKU = String(row[0]).trim().replace('.0', '');
-        
-        if (rowSKU === String(sku)) {
-          const qtd = num(row[2]);
-          ocorrencias.push({
-            linha: idx + 1,
-            nome: String(row[1] || '').trim(),
-            qtd: qtd,
-            valor: num(row[3])
-          });
-          totalEncontrado += qtd;
-        }
-      });
-      
-      if (ocorrencias.length > 0) {
-        console.log(`📅 ${label}:`);
-        if (ocorrencias.length > 1) {
-          console.log(`  ⚠️ ENCONTRADO ${ocorrencias.length}× O MESMO SKU! (DUPLICADO!)`);
-        }
-        ocorrencias.forEach(o => {
-          console.log(`  Linha ${o.linha}: "${o.nome}" - ${o.qtd} un (R$ ${o.valor})`);
-        });
-        if (ocorrencias.length > 1) {
-          const soma = ocorrencias.reduce((s, o) => s + o.qtd, 0);
-          console.log(`  SOMA: ${ocorrencias.map(o => o.qtd).join(' + ')} = ${soma}`);
-        }
-      }
-    } catch (e) {
-      console.error(`  Erro ao ler ${label}:`, e.message);
-    }
-  }
-  
-  console.log(`\n📊 TOTAL GERAL ENCONTRADO: ${totalEncontrado} unidades`);
-  const htmlTotal = APP.rawSalesBySku[String(sku)]?.meses ? Object.values(APP.rawSalesBySku[String(sku)].meses).reduce((s, m) => s + (m.q || 0), 0) : 'N/A';
-  console.log(`📊 TOTAL NO HTML: ${htmlTotal}`);
-  console.log(`\n${'='.repeat(70)}\n`);
-}
-
-// Função para listar todos os SKUs duplicados
-async function debugTodosDuplicados() {
-  console.clear();
-  console.log('🔍 VERIFICANDO TODOS OS SKUs PARA DUPLICAÇÃO...\n');
-  
-  const duplicados = new Map();
-  
-  for (const {sheet, label} of MONTH_SHEETS) {
-    try {
-      const rows = await fetchSheet(sheet);
-      const skuCount = new Map();
-      
-      rows.forEach((row, idx) => {
-        if (!row[0]) return;
-        const sku = String(row[0]).trim().replace('.0', '');
-        if (!skuCount.has(sku)) skuCount.set(sku, []);
-        skuCount.get(sku).push({
-          linha: idx + 1,
-          qtd: num(row[2]),
-          nome: String(row[1] || '').trim()
-        });
-      });
-      
-      // Encontrar SKUs com mais de 1 ocorrência
-      skuCount.forEach((ocorrencias, sku) => {
-        if (ocorrencias.length > 1) {
-          if (!duplicados.has(sku)) duplicados.set(sku, []);
-          duplicados.get(sku).push({
-            mes: label,
-            ocorrencias: ocorrencias.length,
-            qtds: ocorrencias.map(o => o.qtd)
-          });
-        }
-      });
-    } catch (e) {
-      console.error(`Erro ao ler ${label}:`, e.message);
-    }
-  }
-  
-  if (duplicados.size === 0) {
-    console.log('✅ Nenhum SKU duplicado encontrado!\n');
-  } else {
-    console.log(`❌ ENCONTRADOS ${duplicados.size} SKUs COM DUPLICAÇÃO:\n`);
-    
-    duplicados.forEach((meses, sku) => {
-      console.log(`SKU ${sku}:`);
-      meses.forEach(m => {
-        const soma = m.qtds.reduce((s, q) => s + q, 0);
-        console.log(`  ${m.mes}: ${m.ocorrencias}× encontrado | Qtds: ${m.qtds.join(' + ')} = ${soma}`);
-      });
-    });
-  }
-}
-
-// Função de diagnóstico completo do carregamento de estoque
-// Função diagnosticoCompletoEstoque removida - causava erro ao tentar carregar "ESTOQUE DIAL ATUAL"
-
-function debugEstoqueCarregado() {
-  console.log('\n' + '='.repeat(70));
-  console.log('🔍 DEBUG - ESTOQUE CARREGADO');
-  console.log('='.repeat(70) + '\n');
-  
-  if (!APP.estoque || Object.keys(APP.estoque).length === 0) {
-    console.log('❌ NENHUM ESTOQUE CARREGADO!');
-    console.log('   A aba "ESTOQUE DIAL ATUAL" pode não existir ou estar vazia.');
-    console.log('   Usando estimativas (30% do volume vendido).\n');
-    return;
-  }
-  
-  console.log(`✅ ESTOQUE CARREGADO PARA ${Object.keys(APP.estoque).length} SKUs\n`);
-  
-  console.log('Primeiros 10 SKUs com estoque:');
-  Object.entries(APP.estoque).slice(0, 10).forEach(([sku, data]) => {
-    const skuInfo = APP.allSkus.find(s => s.sku === parseInt(sku));
-    console.log(`  SKU ${sku}: ${data.estoque.toLocaleString('pt-BR')} un | Preço: R$ ${data.precoUnit || 'N/A'} ${skuInfo ? `| ${skuInfo.nome}` : ''}`);
-  });
-  
-  console.log('\n' + '='.repeat(70) + '\n');
-}
-
-// Função para comparar estoque estimado vs real
-function debugEstoqueComparacao(sku) {
-  console.log('\n' + '='.repeat(70));
-  console.log(`🔍 COMPARAÇÃO DE ESTOQUE - SKU ${sku}`);
-  console.log('='.repeat(70) + '\n');
-  
-  const skuInfo = APP.allSkus.find(s => s.sku === sku);
-  if (!skuInfo) {
-    console.log(`❌ SKU ${sku} não encontrado\n`);
-    return;
-  }
-  
-  const estoqueReal = APP.estoque && APP.estoque[String(sku)] ? APP.estoque[String(sku)].estoque : null;
-  const estoqueEstimado = Math.round(skuInfo.TotalQtd * 0.3);
-  
-  console.log(`Produto: ${skuInfo.nome}`);
-  console.log(`Total vendido (histórico): ${skuInfo.TotalQtd.toLocaleString('pt-BR')} un\n`);
-  
-  console.log(`Estoque Estimado (30%): ${estoqueEstimado.toLocaleString('pt-BR')} un`);
-  
-  if (estoqueReal !== null) {
-    console.log(`Estoque Real (Sheets): ${estoqueReal.toLocaleString('pt-BR')} un`);
-    const diff = estoqueReal - estoqueEstimado;
-    console.log(`\nDiferença: ${diff > 0 ? '+' : ''}${diff.toLocaleString('pt-BR')} un (${((diff / estoqueEstimado) * 100).toFixed(1)}%)`);
-    console.log(`${diff > 0 ? '📈 Estoque REAL é maior que estimado' : '📉 Estoque REAL é menor que estimado'}`);
-  } else {
-    console.log(`⚠️ Estoque Real: NÃO DISPONÍVEL`);
-    console.log(`   Usando estimativa!`);
-  }
-  
-  console.log('\n' + '='.repeat(70) + '\n');
-}
-
-function calculateROP(avgMonthly) {
-  if (avgMonthly === 0) return 0;
-  const demandDuringLeadTime = avgMonthly * SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS;
-  const safetyStock = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
-  return Math.round(demandDuringLeadTime + safetyStock);
-}
-
-function calculateOrderQuantity(avgMonthly) {
-  if (avgMonthly === 0) return 0;
-  const coverageDemand = avgMonthly * SUPPLY_CHAIN_CONFIG.COVERAGE_MONTHS;
-  const safetyStock = avgMonthly * (SUPPLY_CHAIN_CONFIG.SAFETY_BUFFER - 1);
-  return Math.round(coverageDemand + safetyStock);
-}
-
-function getPriority(currentStock, rop) {
-  if (rop === 0) return { label: '🟢 OK', value: 3 };
-  if (currentStock < rop * 0.5) return { label: '🔴 Crítico', value: 1 };
-  if (currentStock < rop) return { label: '🟡 Aviso', value: 2 };
-  return { label: '🟢 OK', value: 3 };
-}
-
-// Função para validar e debugar cálculos
-function validarCalculosSKU(sku) {
-  console.log('\n' + '='.repeat(70));
-  console.log(`📊 VALIDAÇÃO DE CÁLCULOS - SKU ${sku}`);
-  console.log('='.repeat(70) + '\n');
-  
-  const skuInfo = APP.allSkus.find(s => s.sku === sku);
-  if (!skuInfo) {
-    console.log(`❌ SKU ${sku} não encontrado em APP.allSkus`);
-    return;
-  }
-  
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const monthsWithData = monthLabels.filter(label => rawData.meses[label] && (rawData.meses[label].q || 0) > 0);
-  
-  // Calcular média 3 meses
-  const last3Months = monthsWithData.slice(-3);
-  let totalQty3 = 0;
-  last3Months.forEach(label => {
-    totalQty3 += rawData.meses[label]?.q || 0;
-  });
-  const avg3months = Math.round(totalQty3 / last3Months.length);
-  
-  // Calcular média 6 meses
-  let avg6months = avg3months;
-  let totalQty6 = 0;
-  if (monthsWithData.length >= 6) {
-    const last6Months = monthsWithData.slice(-6);
-    last6Months.forEach(label => {
-      totalQty6 += rawData.meses[label]?.q || 0;
-    });
-    avg6months = Math.round(totalQty6 / last6Months.length);
-  }
-  
-  const avgFinal = Math.max(avg3months, avg6months);
-  
-  console.log(`1️⃣ MÉDIA MENSAL (OPÇÃO 3: MAX entre 3 e 6 meses):\n`);
-  console.log(`   Últimos 3 meses: ${last3Months.join(', ')}`);
-  last3Months.forEach(label => {
-    console.log(`     ${label}: ${rawData.meses[label]?.q || 0} un`);
-  });
-  console.log(`   Soma 3m: ${totalQty3} | Média 3m: ${avg3months} un/mês\n`);
-  
-  if (monthsWithData.length >= 6) {
-    const last6Months = monthsWithData.slice(-6);
-    console.log(`   Últimos 6 meses: ${last6Months.join(', ')}`);
-    last6Months.forEach(label => {
-      console.log(`     ${label}: ${rawData.meses[label]?.q || 0} un`);
-    });
-    console.log(`   Soma 6m: ${totalQty6} | Média 6m: ${avg6months} un/mês\n`);
-  }
-  
-  console.log(`   ✅ USANDO MÁXIMO: ${avgFinal} un/mês`);
-  console.log(`      (max entre ${avg3months} e ${avg6months})\n`);
-  
-  const avgMonthly = avgFinal;
-  const rop = calculateROP(avgMonthly);
-  console.log(`2️⃣ ROP (Reorder Point):`);
-  console.log(`   Fórmula: (Média × 5 meses) + (Média × 0.5 buffer)`);
-  console.log(`   Cálculo: (${avgMonthly} × 5) + (${avgMonthly} × 0.5)`);
-  console.log(`   ROP: ${rop} unidades\n`);
-  
-  const orderQty = calculateOrderQuantity(avgMonthly);
-  console.log(`3️⃣ QUANTIDADE A PEDIR:`);
-  console.log(`   Fórmula: (Média × 3 meses) + (Média × 0.5 buffer)`);
-  console.log(`   Cálculo: (${avgMonthly} × 3) + (${avgMonthly} × 0.5)`);
-  console.log(`   Qtd Sugerida: ${orderQty} unidades\n`);
-  
-  const currentStock = APP.estoque && APP.estoque[String(sku)] ? APP.estoque[String(sku)].estoque : Math.round(skuInfo.TotalQtd * 0.3);
-  const estoqueReal = APP.estoque && APP.estoque[String(sku)] ? true : false;
-  console.log(`4️⃣ ESTOQUE ATUAL:`);
-  console.log(`   Valor: ${currentStock} unidades`);
-  console.log(`   Tipo: ${estoqueReal ? '✅ REAL (do Sheets)' : '⚠️ ESTIMADO (30%)'}\n`);
-  
-  const priority = getPriority(currentStock, rop);
-  console.log(`5️⃣ PRIORIDADE:`);
-  console.log(`   Status: ${priority.label}`);
-  if (currentStock < rop) {
-    console.log(`   ⚠️ Estoque (${currentStock}) < ROP (${rop}) → COMPRAR!`);
-    console.log(`   Quantidade recomendada: ${orderQty} unidades`);
-  } else {
-    console.log(`   ✅ Estoque (${currentStock}) >= ROP (${rop}) → OK, não comprar`);
-  }
-  
-  console.log('\n' + '='.repeat(70) + '\n');
-}
-
-function calculateDeliveryDate() {
-  const d = new Date();
-  d.setMonth(d.getMonth() + SUPPLY_CHAIN_CONFIG.LEAD_TIME_MONTHS);
-  return d.toLocaleDateString('pt-BR');
-}
-
-function renderSugestaoCompras() {
-  if (!APP.allSkus || APP.allSkus.length === 0) {
-    console.log('Aguardando dados de APP.allSkus...');
-    setTimeout(() => renderSugestaoCompras(), 500);
-    return;
-  }
-
-  const sugestoes = [];
-  
-  APP.allSkus.forEach(item => {
-    const avgMonthly = calculateAverageMonthlySales(item.sku);
-    const rop = calculateROP(avgMonthly);
-    
-    // USAR ESTOQUE REAL se disponível, senão usar estimativa
-    let currentStock = 0;
-    let estoqueReal = false;
-    
-    if (APP.estoque && APP.estoque[String(item.sku)]) {
-      currentStock = APP.estoque[String(item.sku)].estoque;
-      estoqueReal = true;
-      console.log(`[REAL] SKU ${item.sku}: ${currentStock} un (do Sheets)`);
-    } else {
-      currentStock = avgMonthly > 0 ? Math.round(item.TotalQtd * 0.3) : 0;
-      console.log(`[EST] SKU ${item.sku}: ${currentStock} un (estimado 30%)`);
-    }
-    
-    const orderQty = avgMonthly > 0 && currentStock < rop ? calculateOrderQuantity(avgMonthly) : 0;
-    const priority = getPriority(currentStock, rop);
-    
-    sugestoes.push({
-      sku: item.sku,
-      produto: item.nome,
-      estoque: currentStock,
-      precoUnit: item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0,
-      avgMonthly: avgMonthly,
-      rop: rop,
-      orderQty: orderQty,
-      priority: priority,
-      deliveryDate: calculateDeliveryDate(),
-      custo: orderQty * (item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0),
-      totalValor: item.TotalValor,
-      totalQtd: item.TotalQtd,
-      sugerir: orderQty > 0,
-      estoqueReal: estoqueReal // Flag indicando se é estoque real
-    });
-  });
-  
-  sugestoes.sort((a, b) => {
-    if (a.sugerir !== b.sugerir) return b.sugerir - a.sugerir;
-    return a.priority.value - b.priority.value;
-  });
-  
-  window.allSugestoes = sugestoes;
-  applyFiltersAndRenderSugestao(sugestoes);
-}
-
-function applyFiltersAndRenderSugestao(allSugestoes) {
-  const priorityFilter = document.getElementById('filterPrioridade')?.value || '';
-  const skuSearch = document.getElementById('filterSKU')?.value?.toLowerCase() || '';
-  
-  // Filtrar APENAS os que precisam de compra
-  let filtered = allSugestoes.filter(s => {
-    if (s.orderQty === 0) return false; // Não mostrar os que não precisam comprar
-    
-    let matchPriority = true;
-    if (priorityFilter === 'critico') matchPriority = s.priority.value === 1;
-    else if (priorityFilter === 'aviso') matchPriority = s.priority.value === 2;
-    else if (priorityFilter === 'ok') matchPriority = s.priority.value === 3;
-    
-    let matchSearch = !skuSearch || 
-      s.sku.toString().includes(skuSearch) || 
-      s.produto.toLowerCase().includes(skuSearch);
-    
-    return matchPriority && matchSearch;
-  });
-  
-  const tbody = document.getElementById('corpTabelaSugestao');
-  if (!tbody) return;
-  
-  if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text3)">✅ Nenhum produto em falta — estoque em nível saudável!</td></tr>';
-  } else {
-    tbody.innerHTML = filtered.map(s => `
-      <tr style="border-bottom:1px solid var(--border);height:40px">
-        <td style="padding:8px"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
-        <td style="padding:8px">${s.produto}</td>
-        <td class="num">${s.estoque.toLocaleString('pt-BR')}</td>
-        <td class="num">${s.avgMonthly.toLocaleString('pt-BR')}</td>
-        <td class="num">${s.rop.toLocaleString('pt-BR')}</td>
-        <td class="num" style="font-weight:600;color:var(--red)">${s.orderQty.toLocaleString('pt-BR')}</td>
-        <td class="num">R$ ${(s.custo).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-        <td style="text-align:center">${s.priority.label}</td>
-        <td style="text-align:center;color:var(--text3);font-size:11px">${s.deliveryDate}</td>
-      </tr>
-    `).join('');
-  }
-  
-  const stats = {
-    critico: filtered.filter(s => s.priority.value === 1).length,
-    aviso: filtered.filter(s => s.priority.value === 2).length,
-    total: filtered.length,
-    investimento: filtered.reduce((sum, s) => sum + s.custo, 0)
-  };
-  
-  const criticoEl = document.getElementById('statsCritico');
-  const avisoEl = document.getElementById('statsAviso');
-  const totalEl = document.getElementById('statsTotal');
-  const investEl = document.getElementById('statsInvestimento');
-  
-  if (criticoEl) criticoEl.textContent = stats.critico;
-  if (avisoEl) avisoEl.textContent = stats.aviso;
-  if (totalEl) totalEl.textContent = stats.total;
-  if (investEl) investEl.textContent = `R$ ${(stats.investimento).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-}
-
-function resetFilteresSugestao() {
-  document.getElementById('filterPrioridade').value = '';
-  document.getElementById('filterSKU').value = '';
-  if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
-}
-
-// Função para exportar sugestão de compras para Excel
-function exportarSugestaoExcel() {
-  if (!window.allSugestoes || window.allSugestoes.length === 0) {
-    alert('Nenhuma sugestão para exportar!');
-    return;
-  }
-  
-  // Filtrar apenas sugestões que precisam comprar
-  const sugestoesCompra = window.allSugestoes.filter(s => s.sugerir);
-  
-  if (sugestoesCompra.length === 0) {
-    alert('Nenhum produto precisa ser comprado no momento!');
-    return;
-  }
-  
-  // Preparar dados para Excel
-  const dados = [
-    ['SUGESTÃO DE COMPRAS - JOLI', '', '', '', '', '', '', '', ''],
-    [`Gerado em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`, '', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '', ''],
-    [
-      'SKU',
-      'Produto',
-      'Estoque Atual',
-      'Média Mensal',
-      'ROP (Reorder Point)',
-      'Quantidade Sugerida',
-      'Preço Unitário',
-      'Custo Estimado',
-      'Prioridade',
-      'Data Entrega Est.'
-    ]
-  ];
-  
-  // Adicionar cada sugestão
-  sugestoesCompra.forEach(s => {
-    dados.push([
-      s.sku,
-      s.produto,
-      s.estoque,
-      s.avgMonthly,
-      s.rop,
-      s.orderQty,
-      `R$ ${s.precoUnit}`,
-      `R$ ${s.custo}`,
-      s.priority.label,
-      s.deliveryDate
-    ]);
-  });
-  
-  // Resumo final
-  dados.push(['', '', '', '', '', '', '', '', '']);
-  dados.push(['RESUMO']);
-  dados.push(['Total de Produtos para Comprar:', sugestoesCompra.length]);
-  dados.push(['Total de Unidades a Comprar:', sugestoesCompra.reduce((s, x) => s + x.orderQty, 0)]);
-  dados.push(['Investimento Total:', `R$ ${sugestoesCompra.reduce((s, x) => s + x.custo, 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`]);
-  
-  // Notas
-  dados.push(['', '', '', '', '', '', '', '', '']);
-  dados.push(['NOTAS METODOLÓGICAS']);
-  dados.push(['Média Mensal:', 'Máximo entre média de 3 meses e 6 meses de vendas (evita distorção por falta de estoque)']);
-  dados.push(['ROP:', '(Média × 5 meses lead time) + (Média × 0.5 buffer segurança)']);
-  dados.push(['QTD Sugerida:', '(Média × 3 meses cobertura) + (Média × 0.5 buffer segurança)']);
-  dados.push(['Prioridade:', '🔴 Crítico (est. < 50% ROP) | 🟡 Aviso (est. < ROP) | 🟢 OK (est. ≥ ROP)']);
-  
-  // Converter para CSV (mais compatível com Excel)
-  const csv = dados.map(linha => 
-    linha.map(celula => {
-      // Escapar aspas e envolver em aspas se contiver vírgula
-      const valor = String(celula).replace(/"/g, '""');
-      return valor.includes(',') ? `"${valor}"` : valor;
-    }).join(',')
-  ).join('\n');
-  
-  // Download
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', `Sugestao_Compras_${new Date().toISOString().split('T')[0]}.csv`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  alert(`✅ Relatório exportado com ${sugestoesCompra.length} produtos!`);
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  const filterPrio = document.getElementById('filterPrioridade');
-  const filterSKU = document.getElementById('filterSKU');
-  
-  if (filterPrio) {
-    filterPrio.addEventListener('change', function() {
-      if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
-    });
-  }
-  
-  if (filterSKU) {
-    filterSKU.addEventListener('input', function() {
-      if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
-    });
-  }
-});
-
-// Carregar sugestões após finishLoad
-setTimeout(() => {
-  if (window.APP && APP.estoque) {
-    renderSugestaoCompras();
-  }
-}, 1000);
 
 loadData();
 </script>
