@@ -1221,7 +1221,7 @@ function buildKPIs(){
   const ticket=totalQ>0?totalV/totalQ:0;
   const skuAtivos=APP.allSkus.filter(s=>s.TotalValor>0).length;
   // Show filter context in subtitle
-  const filterCtx=FILTER.cats.length?FILTER.cats.join(', '):FILTER.subcats.length?FILTER.subcats.join(', '):'';
+  const filterCtx=FILTER.skus.length?`SKU: ${FILTER.skus.join(', ')}`:FILTER.cats.length?FILTER.cats.join(', '):FILTER.subcats.length?FILTER.subcats.join(', '):'';
   const periodCtx=FILTER.meses.length?`${FILTER.meses[0]}–${FILTER.meses[FILTER.meses.length-1]}`:`${m[0].label} — ${m[m.length-1].label}`;
   document.getElementById('kpis').innerHTML=`
     <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">${fmtK(totalV)}</div><div class="kpi-sub">${periodCtx}${filterCtx?' · '+filterCtx:''}</div></div>
@@ -1264,7 +1264,148 @@ function setPeriod(p){
 function ch(id){if(APP.charts[id]){try{APP.charts[id].destroy()}catch(e){}delete APP.charts[id]}}
 const TX='#A09C98',GC='rgba(0,0,0,.05)';
 
-function buildVisao(){rebuildVisaoCharts();buildCatDonut()}
+function buildVisao(){
+  // Se tem SKU(s) filtrado(s), mostrar detalhes
+  if(FILTER.skus.length===1){
+    buildSkuDetailView();
+  } else if(FILTER.skus.length>1){
+    buildMultiSkuView();
+  } else {
+    rebuildVisaoCharts();buildCatDonut();
+  }
+}
+
+function buildMultiSkuView(){
+  // Múltiplos SKUs selecionados - mostrar resumo
+  const selectedSkus=APP.allSkus.filter(s=>FILTER.skus.includes(s.sku));
+  const monthLabels=MONTH_SHEETS.map(m=>m.label);
+  
+  const multiMonthlyData=monthLabels.map(label=>{
+    let totalV=0,totalQ=0;
+    selectedSkus.forEach(sku=>{
+      const raw=APP.rawSalesBySku?.[String(sku.sku)];
+      if(raw&&raw.meses&&raw.meses[label]){
+        totalV+=raw.meses[label].v||0;
+        totalQ+=raw.meses[label].q||0;
+      }
+    });
+    return {label,valor:totalV,qtd:totalQ};
+  }).filter(m=>m.valor>0||m.qtd>0);
+  
+  const data=multiMonthlyData.length?multiMonthlyData:[];
+  
+  ['cFat','cQtd','cTicket','cAbcVSmall'].forEach(ch);
+  
+  APP.charts.cFat=new Chart(document.getElementById('cFat'),{type:'bar',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.valor),backgroundColor:'#1A1917',borderRadius:4,hoverBackgroundColor:'#555'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:`${FILTER.skus.length} SKUs Selecionados`,font:{size:12,weight:'bold'},color:TX}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  
+  APP.charts.cQtd=new Chart(document.getElementById('cQtd'),{type:'bar',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.qtd),backgroundColor:'#166534',borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  
+  APP.charts.cTicket=new Chart(document.getElementById('cTicket'),{type:'line',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.qtd>0?Math.round(m.valor/m.qtd):0),borderColor:'#7C2D12',backgroundColor:'rgba(124,45,18,.06)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#7C2D12'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  
+  const totalV=selectedSkus.reduce((s,x)=>s+x.TotalValor,0);
+  const gA=selectedSkus.filter(s=>s.abcV==='A').reduce((s,x)=>s+x.TotalValor,0);
+  const gB=selectedSkus.filter(s=>s.abcV==='B').reduce((s,x)=>s+x.TotalValor,0);
+  const gC=selectedSkus.filter(s=>s.abcV==='C').reduce((s,x)=>s+x.TotalValor,0);
+  
+  document.getElementById('legAbcVSmall').innerHTML=['A','B','C'].map((c,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${c} — ${Math.round([gA,gB,gC][i]/totalV*100)}%</span>`).join('');
+  
+  APP.charts.cAbcVSmall=new Chart(document.getElementById('cAbcVSmall'),{type:'doughnut',
+    data:{labels:['A','B','C'],datasets:[{data:[Math.round(gA),Math.round(gB),Math.round(gC)],backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
+  
+  // Mostrar resumo dos SKUs
+  document.getElementById('legCat').innerHTML=`
+    <div style="padding:12px;font-size:13px;max-height:200px;overflow-y:auto">
+      <div style="margin-bottom:10px;font-weight:bold;border-bottom:1px solid var(--border);padding-bottom:8px">SKUs Selecionados:</div>
+      ${selectedSkus.map(s=>`
+        <div style="margin-bottom:8px;padding:8px;background:var(--bg);border-radius:4px">
+          <div><strong>SKU ${s.sku}:</strong> ${s.nome}</div>
+          <div style="font-size:11px;color:var(--text3)">Cat: ${s.cat} • Marca: ${s.marca||'—'} • Classe: ${s.abcV}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  
+  ch('cCat');
+  const catsByCount={};
+  selectedSkus.forEach(s=>{catsByCount[s.cat]=(catsByCount[s.cat]||0)+1});
+  const cats=Object.entries(catsByCount).sort((a,b)=>b[1]-a[1]);
+  const colors=cats.map(c=>CAT_COLOR[c[0]]||'#6B7280');
+  
+  APP.charts.cCat=new Chart(document.getElementById('cCat'),{type:'doughnut',
+    data:{labels:cats.map(c=>`${c[0]} (${c[1]} SKU${c[1]>1?'s':''})`),datasets:[{data:cats.map(c=>c[1]),backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}`}}}}});
+}
+
+function buildSkuDetailView(){
+  const skuId=FILTER.skus[0];
+  const skuData=APP.allSkus.find(s=>s.sku===skuId);
+  const rawData=APP.rawSalesBySku?.[String(skuId)];
+  
+  if(!skuData||!rawData){
+    rebuildVisaoCharts();buildCatDonut();
+    return;
+  }
+  
+  // Construir gráfico de vendas mensais do SKU
+  const monthLabels=MONTH_SHEETS.map(m=>m.label);
+  const skuMonthlyData=monthLabels.map(label=>({
+    label:label,
+    valor:rawData.meses?.[label]?.v||0,
+    qtd:rawData.meses?.[label]?.q||0
+  })).filter(m=>m.valor>0||m.qtd>0);
+  
+  const data=skuMonthlyData.length?skuMonthlyData:[];
+  
+  ['cFat','cQtd','cTicket','cAbcVSmall'].forEach(ch);
+  
+  // Gráfico de Faturamento do SKU
+  APP.charts.cFat=new Chart(document.getElementById('cFat'),{type:'bar',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.valor),backgroundColor:'#1A1917',borderRadius:4,hoverBackgroundColor:'#555'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:`SKU ${skuId} — ${skuData.nome}`,font:{size:12,weight:'bold'},color:TX}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  
+  // Gráfico de Quantidade do SKU
+  APP.charts.cQtd=new Chart(document.getElementById('cQtd'),{type:'bar',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.qtd),backgroundColor:'#166534',borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  
+  // Gráfico de Ticket Médio do SKU
+  APP.charts.cTicket=new Chart(document.getElementById('cTicket'),{type:'line',
+    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.qtd>0?Math.round(m.valor/m.qtd):0),borderColor:'#7C2D12',backgroundColor:'rgba(124,45,18,.06)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#7C2D12'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+  
+  // Mostrar ABC do SKU único
+  document.getElementById('legAbcVSmall').innerHTML=`<span class="leg-item"><span class="leg-dot" style="background:${skuData.abcV==='A'?'#166534':skuData.abcV==='B'?'#92400E':'#991B1B'}"></span>Classe ${skuData.abcV}</span>`;
+  
+  // Gráfico ABC (simples para um SKU)
+  APP.charts.cAbcVSmall=new Chart(document.getElementById('cAbcVSmall'),{type:'doughnut',
+    data:{labels:[`SKU ${skuId}`],datasets:[{data:[Math.round(skuData.TotalValor)],backgroundColor:[skuData.abcV==='A'?'#166534':skuData.abcV==='B'?'#92400E':'#991B1B'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
+  
+  // Mostrar informações do SKU em vez do gráfico de categorias
+  const catColor=CAT_COLOR[skuData.cat]||'#6B7280';
+  document.getElementById('legCat').innerHTML=`
+    <div style="padding:12px;font-size:13px">
+      <div style="margin-bottom:8px"><strong>Categoria:</strong> <span style="color:${catColor};font-weight:500">${skuData.cat}</span></div>
+      <div style="margin-bottom:8px"><strong>Subcategoria:</strong> ${skuData.sub||'—'}</div>
+      <div style="margin-bottom:8px"><strong>Marca:</strong> ${skuData.marca||'—'}</div>
+      <div style="margin-bottom:8px"><strong>Total Vendido:</strong> ${Math.round(skuData.TotalQtd).toLocaleString('pt-BR')} unidades</div>
+      <div style="margin-bottom:8px"><strong>Faturamento Total:</strong> ${fmtK(skuData.TotalValor)}</div>
+      <div><strong>Classe ABC (Valor):</strong> ${skuData.abcV}</div>
+    </div>
+  `;
+  
+  ch('cCat');
+  APP.charts.cCat=new Chart(document.getElementById('cCat'),{type:'doughnut',
+    data:{labels:[skuData.nome],datasets:[{data:[Math.round(skuData.TotalValor)],backgroundColor:[catColor],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
+}
 function rebuildVisaoCharts(){
   const data=getMonthly();
   ['cFat','cQtd','cTicket','cAbcVSmall'].forEach(ch);
