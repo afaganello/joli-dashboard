@@ -309,6 +309,7 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
   <div class="tab" onclick="showTab('sugestao')">Sugestão de Compras</div>
+  <div class="tab" onclick="showTab('tendencias')">Análise de Tendências</div>
 </nav>
 
 <!-- ── GLOBAL FILTER BAR ── -->
@@ -704,7 +705,74 @@ tbody tr:hover td{background:#FAFAF8}
       <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-value" id="statsTotal">0</div></div>
     </div>
   </div>
-</main>
+
+  <!-- ANÁLISE DE TENDÊNCIAS -->
+  <div class="panel" id="tendencias">
+    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Análise de Tendências de Vendas</h2>
+    
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+      <select id="filterTendencia" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
+        <option value="">Status: Todos</option>
+        <option value="critico">🔴 Queda Crítica (>30%)</option>
+        <option value="aviso">🟡 Queda Moderada (15-30%)</option>
+        <option value="leve">🟠 Queda Leve (5-15%)</option>
+        <option value="crescimento">🟢 Crescimento</option>
+      </select>
+      <input type="text" id="filterTendenciaSKU" placeholder="Buscar SKU..." style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:150px;font-family:'DM Sans',sans-serif">
+      <button onclick="resetFilteresTendencia()" style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3)">Limpar</button>
+    </div>
+
+    <!-- CARDS RESUMO -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px">
+      <div class="kpi">
+        <div class="kpi-label">Quedas Críticas (>30%)</div>
+        <div class="kpi-value" id="statsQuedaCritica">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Quedas Moderadas (15-30%)</div>
+        <div class="kpi-value" id="statsQuedaModera">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Em Crescimento</div>
+        <div class="kpi-value" id="statsEmCrescimento">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Queda Média</div>
+        <div class="kpi-value" id="statsQuedaMedia">0%</div>
+      </div>
+    </div>
+
+    <!-- TABELA TENDÊNCIAS -->
+    <div style="overflow-x:auto;margin-bottom:20px">
+      <table id="tabelaTendencias" style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
+            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">SKU</th>
+            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">Produto</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Mês Anterior</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Mês Atual</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Queda Mês</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Média 3m</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Tendência 3m</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Velocidade</th>
+            <th style="text-align:center;padding:8px;color:var(--text3);font-weight:500">Status</th>
+          </tr>
+        </thead>
+        <tbody id="corpTabelaTendencias" style="background:var(--surface)">
+          <tr><td colspan="9" style="padding:15px;text-align:center;color:var(--text3)">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- LEGENDA -->
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text3);line-height:1.6">
+      <strong style="color:var(--text)">📊 Como Ler:</strong><br>
+      <strong>Queda Mês:</strong> % de queda comparado ao mês anterior<br>
+      <strong>Tendência 3m:</strong> % de queda considerando média dos últimos 3 meses<br>
+      <strong>Velocidade:</strong> Se queda está acelerando (↗️) ou estabilizando (↘️)<br>
+      <strong>Status:</strong> 🔴 Crítico (>30%) | 🟡 Moderado (15-30%) | 🟠 Leve (5-15%) | 🟢 Crescimento
+    </div>
+  </div>
 
 <script>
 const SHEET_ID  = '1RE-ciKV3jbKbMIrfzX7tcuo8NBvKES6LzBXGsRCIOy4';
@@ -908,7 +976,7 @@ function buildDashboard(){
   buildKPIs();buildInsights();buildPeriodBtns();
   buildVisao();buildCategorias();buildDesenvolvimento();
   buildAbcValor();buildAbcQtd();buildTodos();
-  setTimeout(() => renderSugestaoCompras(), 100);
+  setTimeout(() => { renderSugestaoCompras(); renderTendencias(); }, 100);
   // Pre-populate analise sidebar so it's ready when user navigates there
   buildAnaliseCatList();
 }
@@ -1639,12 +1707,13 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestao'];
+  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestao','tendencias'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='analise') initAnalise();
   if(id==='sugestao') renderSugestaoCompras();
+  if(id==='tendencias') renderTendencias();
 }
 
 // ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
@@ -2180,7 +2249,157 @@ document.addEventListener('DOMContentLoaded', () => {
   const sku = document.getElementById('filterSKU');
   if (prio) prio.addEventListener('change', () => { if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes); });
   if (sku) sku.addEventListener('input', () => { if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes); });
+  
+  const filterTend = document.getElementById('filterTendencia');
+  const skuTend = document.getElementById('filterTendenciaSKU');
+  if (filterTend) filterTend.addEventListener('change', () => { if (window.allTendencias) applyFiltersTendencias(window.allTendencias); });
+  if (skuTend) skuTend.addEventListener('input', () => { if (window.allTendencias) applyFiltersTendencias(window.allTendencias); });
 });
+
+// ── FUNÇÕES DE ANÁLISE DE TENDÊNCIAS ────
+function calcularQuedaMesAnterior(sku) {
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  if (!rawData.meses) return { mesAnterior: 0, mesAtual: 0, queda: 0 };
+  
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const mesesComDados = monthLabels.filter(label => rawData.meses[label]?.q > 0).slice(-2);
+  
+  if (mesesComDados.length < 2) return { mesAnterior: 0, mesAtual: 0, queda: 0 };
+  
+  const mesAnterior = rawData.meses[mesesComDados[0]]?.q || 0;
+  const mesAtual = rawData.meses[mesesComDados[1]]?.q || 0;
+  const queda = mesAnterior > 0 ? ((mesAnterior - mesAtual) / mesAnterior) * 100 : 0;
+  
+  return { mesAnterior, mesAtual, queda: Math.round(queda * 10) / 10 };
+}
+
+function calcularTendencia3m(sku) {
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  if (!rawData.meses) return { media3m: 0, mesAtual: 0, tendencia: 0 };
+  
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const last3 = monthLabels.filter(label => rawData.meses[label]?.q > 0).slice(-3);
+  
+  if (last3.length < 2) return { media3m: 0, mesAtual: 0, tendencia: 0 };
+  
+  const mesAtual = rawData.meses[last3[last3.length - 1]]?.q || 0;
+  const mediaPrimeiros2 = (
+    (rawData.meses[last3[0]]?.q || 0) + 
+    (rawData.meses[last3[1]]?.q || 0)
+  ) / 2;
+  
+  const tendencia = mediaPrimeiros2 > 0 ? ((mediaPrimeiros2 - mesAtual) / mediaPrimeiros2) * 100 : 0;
+  
+  return { media3m: Math.round(mediaPrimeiros2), mesAtual: Math.round(mesAtual), tendencia: Math.round(tendencia * 10) / 10 };
+}
+
+function calcularVelocidade(sku) {
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  if (!rawData.meses) return { acelerando: false, valor: 0 };
+  
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const last3 = monthLabels.filter(label => rawData.meses[label]?.q > 0).slice(-3);
+  
+  if (last3.length < 3) return { acelerando: false, valor: 0 };
+  
+  const var1 = rawData.meses[last3[0]]?.q || 0;
+  const var2 = rawData.meses[last3[1]]?.q || 0;
+  const var3 = rawData.meses[last3[2]]?.q || 0;
+  
+  const quedaAnterior = var1 > 0 ? ((var1 - var2) / var1) * 100 : 0;
+  const quedaAtual = var2 > 0 ? ((var2 - var3) / var2) * 100 : 0;
+  
+  const acelerando = quedaAtual < quedaAnterior && quedaAtual < 0; // Queda piorando
+  
+  return { acelerando, valor: Math.round(quedaAtual * 10) / 10 };
+}
+
+function renderTendencias() {
+  if (!APP.allSkus || APP.allSkus.length === 0) return;
+  
+  const tendencias = [];
+  
+  APP.allSkus.forEach(item => {
+    const queda = calcularQuedaMesAnterior(String(item.sku));
+    const tendencia3m = calcularTendencia3m(String(item.sku));
+    const velocidade = calcularVelocidade(String(item.sku));
+    
+    if (queda.mesAnterior > 0 || queda.mesAtual > 0 || tendencia3m.media3m > 0) {
+      let status = '🟢 Crescimento';
+      if (queda.queda > 30) status = '🔴 Crítica';
+      else if (queda.queda > 15) status = '🟡 Moderada';
+      else if (queda.queda > 5) status = '🟠 Leve';
+      
+      tendencias.push({
+        sku: item.sku,
+        produto: item.nome,
+        mesAnterior: queda.mesAnterior,
+        mesAtual: queda.mesAtual,
+        quedaMes: queda.queda,
+        media3m: tendencia3m.media3m,
+        tendencia3m: tendencia3m.tendencia,
+        velocidade: velocidade.acelerando ? '↗️ Acelerando' : '↘️ Estabilizando',
+        status: status
+      });
+    }
+  });
+  
+  tendencias.sort((a, b) => Math.abs(b.quedaMes) - Math.abs(a.quedaMes));
+  window.allTendencias = tendencias;
+  applyFiltersTendencias(tendencias);
+}
+
+function applyFiltersTendencias(all) {
+  const filtro = document.getElementById('filterTendencia')?.value || '';
+  const sku = document.getElementById('filterTendenciaSKU')?.value?.toLowerCase() || '';
+  
+  let filtered = all;
+  
+  if (filtro) {
+    if (filtro === 'critico') filtered = filtered.filter(t => t.quedaMes > 30);
+    else if (filtro === 'aviso') filtered = filtered.filter(t => t.quedaMes > 15 && t.quedaMes <= 30);
+    else if (filtro === 'leve') filtered = filtered.filter(t => t.quedaMes > 5 && t.quedaMes <= 15);
+    else if (filtro === 'crescimento') filtered = filtered.filter(t => t.quedaMes <= 0);
+  }
+  
+  if (sku) filtered = filtered.filter(t => String(t.sku).includes(sku) || t.produto.toLowerCase().includes(sku));
+  
+  const tbody = document.getElementById('corpTabelaTendencias');
+  if (!tbody) return;
+  
+  tbody.innerHTML = filtered.map(t => `
+    <tr style="border-bottom:1px solid var(--border);background:var(--surface)">
+      <td style="text-align:left;padding:8px">${t.sku}</td>
+      <td style="text-align:left;padding:8px">${t.produto}</td>
+      <td style="text-align:right;padding:8px">${t.mesAnterior}</td>
+      <td style="text-align:right;padding:8px">${t.mesAtual}</td>
+      <td style="text-align:right;padding:8px;color:${t.quedaMes > 0 ? '#991B1B' : '#166534'};font-weight:600">${t.quedaMes > 0 ? '-' : '+'}${Math.abs(t.quedaMes).toFixed(1)}%</td>
+      <td style="text-align:right;padding:8px">${t.media3m}</td>
+      <td style="text-align:right;padding:8px;color:${t.tendencia3m > 0 ? '#991B1B' : '#166534'};font-weight:600">${t.tendencia3m > 0 ? '-' : '+'}${Math.abs(t.tendencia3m).toFixed(1)}%</td>
+      <td style="text-align:right;padding:8px">${t.velocidade}</td>
+      <td style="text-align:center;padding:8px">${t.status}</td>
+    </tr>
+  `).join('');
+  
+  // Calcular stats
+  const stats = {
+    critica: filtered.filter(t => t.quedaMes > 30).length,
+    moderada: filtered.filter(t => t.quedaMes > 15 && t.quedaMes <= 30).length,
+    crescimento: filtered.filter(t => t.quedaMes <= 0).length,
+    mediaQueda: Math.round(filtered.reduce((s, t) => s + (t.quedaMes > 0 ? t.quedaMes : 0), 0) / Math.max(filtered.length, 1) * 10) / 10
+  };
+  
+  document.getElementById('statsQuedaCritica').textContent = stats.critica;
+  document.getElementById('statsQuedaModera').textContent = stats.moderada;
+  document.getElementById('statsEmCrescimento').textContent = stats.crescimento;
+  document.getElementById('statsQuedaMedia').textContent = stats.mediaQueda + '%';
+}
+
+function resetFilteresTendencia() {
+  document.getElementById('filterTendencia').value = '';
+  document.getElementById('filterTendenciaSKU').value = '';
+  if (window.allTendencias) applyFiltersTendencias(window.allTendencias);
+}
 
 
 loadData();
