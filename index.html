@@ -310,6 +310,8 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
   <div class="tab" onclick="showTab('sugestao')">Sugestão de Compras</div>
   <div class="tab" onclick="showTab('tendencias')">Análise de Tendências</div>
+  <div class="tab" onclick="showTab('precos')">Análise de Preços</div>
+  <div class="tab" onclick="showTab('preco-otimo')">Preço Ótimo</div>
 </nav>
 
 <!-- ── GLOBAL FILTER BAR ── -->
@@ -774,8 +776,145 @@ tbody tr:hover td{background:#FAFAF8}
     </div>
   </div>
 
-<script>
-const SHEET_ID  = '1RE-ciKV3jbKbMIrfzX7tcuo8NBvKES6LzBXGsRCIOy4';
+  <!-- ANÁLISE DE PREÇOS -->
+  <div class="panel" id="precos">
+    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Análise de Impacto de Preços</h2>
+    
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+      <select id="filterImpacto" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
+        <option value="">Impacto: Todos</option>
+        <option value="negativo">🔴 Preço Subiu, Qtd Caiu</option>
+        <option value="positivo">🟢 Preço Subiu, Qtd Manteve</option>
+        <option value="crescimento">🟢 Preço Caiu, Qtd Subiu</option>
+      </select>
+      <input type="text" id="filterImpactoSKU" placeholder="Buscar SKU..." style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:150px;font-family:'DM Sans',sans-serif">
+      <button onclick="resetFiltrosImpacto()" style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3)">Limpar</button>
+    </div>
+
+    <!-- CARDS IMPACTO -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px">
+      <div class="kpi">
+        <div class="kpi-label">Preço ↑, Qtd ↓ (Ruim!)</div>
+        <div class="kpi-value" id="statsNegativo">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Perda Mensal</div>
+        <div class="kpi-value" id="statsPerdaTotal" style="font-size:14px">R$ 0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Perda Anual Estimada</div>
+        <div class="kpi-value" id="statsPerdaAnual" style="font-size:14px">R$ 0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Preço Médio Subiu</div>
+        <div class="kpi-value" id="statsMedioAumento">0%</div>
+      </div>
+    </div>
+
+    <!-- TABELA IMPACTO DE PREÇOS -->
+    <div style="overflow-x:auto;margin-bottom:20px">
+      <table id="tabelaPrecos" style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
+            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">SKU</th>
+            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">Produto</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Preço Mês Ant.</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Preço Mês Atual</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Aumento %</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Qtd Mês Ant.</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Qtd Mês Atual</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Queda Qtd %</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Fatur. Antes</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Fatur. Depois</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Impacto Mensal</th>
+            <th style="text-align:center;padding:8px;color:var(--text3);font-weight:500">Status</th>
+          </tr>
+        </thead>
+        <tbody id="corpTabelaPrecos" style="background:var(--surface)">
+          <tr><td colspan="12" style="padding:15px;text-align:center;color:var(--text3)">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- RECOMENDAÇÕES -->
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text3);line-height:1.6">
+      <strong style="color:var(--text)">💡 Como Usar:</strong><br>
+      <strong>Preço Médio:</strong> Valor total ÷ Quantidade = preço médio implícito<br>
+      <strong>Aumento %:</strong> Se preço subiu mas qtd caiu, pode ser problema de elasticidade<br>
+      <strong>Impacto Mensal:</strong> Faturamento antes - Faturamento depois (quanto perdeu)<br>
+      <strong>Status:</strong> 🔴 Ruim (preço ↑, qtd ↓) | 🟡 Neutro | 🟢 Bom (preço ↑, qtd = ou ↑)
+    </div>
+  </div>
+
+  <!-- PREÇO ÓTIMO -->
+  <div class="panel" id="preco-otimo">
+    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Análise de Preço Ótimo</h2>
+    
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+      <select id="filterOportunidade" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
+        <option value="">Oportunidade: Todas</option>
+        <option value="reducir">🔴 Reduzir (Elasticidade Alta)</option>
+        <option value="manter">🟡 Manter (Elasticidade Normal)</option>
+        <option value="aumentar">🟢 Aumentar (Elasticidade Baixa)</option>
+      </select>
+      <input type="text" id="filterOtimSKU" placeholder="Buscar SKU..." style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:150px;font-family:'DM Sans',sans-serif">
+      <button onclick="resetFiltrosOtim()" style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3)">Limpar</button>
+    </div>
+
+    <!-- CARDS OPORTUNIDADE -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px">
+      <div class="kpi">
+        <div class="kpi-label">Reduzir Preço (Ganhar Volume)</div>
+        <div class="kpi-value" id="statsReduzir">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Aumentar Preço (Ganhar Margem)</div>
+        <div class="kpi-value" id="statsAumentar">0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Potencial de Ganho Mensal</div>
+        <div class="kpi-value" id="statsGanhoMensal" style="font-size:14px">R$ 0</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Elasticidade Média</div>
+        <div class="kpi-value" id="statsElastMedia">0.0</div>
+      </div>
+    </div>
+
+    <!-- TABELA PREÇO ÓTIMO -->
+    <div style="overflow-x:auto;margin-bottom:20px">
+      <table id="tabelaPrecOtimo" style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
+            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">SKU</th>
+            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">Produto</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Preço Atual</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Preço Ótimo</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Mudança %</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Elasticidade</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Fatur. Atual</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Fatur. Ótimo</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Ganho Mensal</th>
+            <th style="text-align:center;padding:8px;color:var(--text3);font-weight:500">Estratégia</th>
+          </tr>
+        </thead>
+        <tbody id="corpTabelaPrecOtimo" style="background:var(--surface)">
+          <tr><td colspan="10" style="padding:15px;text-align:center;color:var(--text3)">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- EXPLICAÇÃO -->
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text3);line-height:1.6">
+      <strong style="color:var(--text)">📊 Como Entender:</strong><br>
+      <strong>Elasticidade:</strong> Se for -2.5, cada 1% de redução de preço aumenta vendas 2.5%<br>
+      <strong>Preço Ótimo:</strong> Melhor preço que maximiza faturamento (não volume)<br>
+      <strong>Estratégia:</strong> 🔴 Reduzir (elasticidade alta) | 🟡 Manter (normal) | 🟢 Aumentar (baixa)<br>
+      <strong>Ganho:</strong> Quanto ganharia se mudasse ao preço ótimo
+    </div>
+  </div>
+
+<script>  = '1RE-ciKV3jbKbMIrfzX7tcuo8NBvKES6LzBXGsRCIOy4';
 const API_KEY   = 'AIzaSyClrj-onYuonXygkBRQAVcKlfQ4SxxSdgY';
 const BASE_URL  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values`;
 const MONTH_SHEETS = [
@@ -976,7 +1115,7 @@ function buildDashboard(){
   buildKPIs();buildInsights();buildPeriodBtns();
   buildVisao();buildCategorias();buildDesenvolvimento();
   buildAbcValor();buildAbcQtd();buildTodos();
-  setTimeout(() => { renderSugestaoCompras(); renderTendencias(); }, 100);
+  setTimeout(() => { renderSugestaoCompras(); renderTendencias(); renderAnalisePrecos(); renderPrecoOtimo(); }, 100);
   // Pre-populate analise sidebar so it's ready when user navigates there
   buildAnaliseCatList();
 }
@@ -1707,13 +1846,15 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestao','tendencias'];
+  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestao','tendencias','precos','preco-otimo'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='analise') initAnalise();
   if(id==='sugestao') renderSugestaoCompras();
   if(id==='tendencias') renderTendencias();
+  if(id==='precos') renderAnalisePrecos();
+  if(id==='preco-otimo') renderPrecoOtimo();
 }
 
 // ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
@@ -2254,6 +2395,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const skuTend = document.getElementById('filterTendenciaSKU');
   if (filterTend) filterTend.addEventListener('change', () => { if (window.allTendencias) applyFiltersTendencias(window.allTendencias); });
   if (skuTend) skuTend.addEventListener('input', () => { if (window.allTendencias) applyFiltersTendencias(window.allTendencias); });
+  
+  const filterImp = document.getElementById('filterImpacto');
+  const skuImp = document.getElementById('filterImpactoSKU');
+  if (filterImp) filterImp.addEventListener('change', () => { if (window.allImpactos) applyFiltrosImpacto(window.allImpactos); });
+  if (skuImp) skuImp.addEventListener('input', () => { if (window.allImpactos) applyFiltrosImpacto(window.allImpactos); });
+  
+  const filterOtim = document.getElementById('filterOportunidade');
+  const skuOtim = document.getElementById('filterOtimSKU');
+  if (filterOtim) filterOtim.addEventListener('change', () => { if (window.allPrecosOtimos) applyFiltrosOtim(window.allPrecosOtimos); });
+  if (skuOtim) skuOtim.addEventListener('input', () => { if (window.allPrecosOtimos) applyFiltrosOtim(window.allPrecosOtimos); });
 });
 
 // ── FUNÇÕES DE ANÁLISE DE TENDÊNCIAS ────
@@ -2395,10 +2546,273 @@ function applyFiltersTendencias(all) {
   document.getElementById('statsQuedaMedia').textContent = stats.mediaQueda + '%';
 }
 
-function resetFilteresTendencia() {
-  document.getElementById('filterTendencia').value = '';
-  document.getElementById('filterTendenciaSKU').value = '';
-  if (window.allTendencias) applyFiltersTendencias(window.allTendencias);
+function resetFiltrosImpacto() {
+  document.getElementById('filterImpacto').value = '';
+  document.getElementById('filterImpactoSKU').value = '';
+  if (window.allImpactos) applyFiltrosImpacto(window.allImpactos);
+}
+
+// ── FUNÇÕES DE ANÁLISE DE PREÇO ────
+function calcularPrecoMedio(sku, mesLabel) {
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  const mesData = rawData.meses?.[mesLabel];
+  
+  if (!mesData || mesData.q === 0) return 0;
+  
+  const precoMedio = mesData.v / mesData.q;
+  return Math.round(precoMedio * 100) / 100;
+}
+
+function renderAnalisePrecos() {
+  if (!APP.allSkus || APP.allSkus.length === 0) return;
+  
+  const impactos = [];
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const mesesComDados = monthLabels.filter(label => {
+    let temDado = false;
+    APP.allSkus.forEach(item => {
+      const rawData = APP.rawSalesBySku?.[String(item.sku)];
+      if (rawData?.meses?.[label]?.q > 0) temDado = true;
+    });
+    return temDado;
+  });
+  
+  if (mesesComDados.length < 2) return;
+  
+  const mesAnterior = mesesComDados[mesesComDados.length - 2];
+  const mesAtual = mesesComDados[mesesComDados.length - 1];
+  
+  APP.allSkus.forEach(item => {
+    const precoAnt = calcularPrecoMedio(String(item.sku), mesAnterior);
+    const precoAtual = calcularPrecoMedio(String(item.sku), mesAtual);
+    
+    const rawDataAnt = APP.rawSalesBySku?.[String(item.sku)]?.meses?.[mesAnterior];
+    const rawDataAtual = APP.rawSalesBySku?.[String(item.sku)]?.meses?.[mesAtual];
+    
+    const qtdAnt = rawDataAnt?.q || 0;
+    const qtdAtual = rawDataAtual?.q || 0;
+    
+    if (precoAnt > 0 && precoAtual > 0) {
+      const aumentoPreco = ((precoAtual - precoAnt) / precoAnt) * 100;
+      const quedaQtd = qtdAnt > 0 ? ((qtdAnt - qtdAtual) / qtdAnt) * 100 : 0;
+      
+      const faturAnt = precoAnt * qtdAnt;
+      const faturAtual = precoAtual * qtdAtual;
+      const impactoMensal = faturAnt - faturAtual;
+      
+      let status = '🟢 Positivo';
+      if (aumentoPreco > 0 && quedaQtd > 5) status = '🔴 Negativo';
+      else if (aumentoPreco > 0 && quedaQtd <= 5) status = '🟡 Neutro';
+      
+      impactos.push({
+        sku: item.sku,
+        produto: item.nome,
+        precoAnt: Math.round(precoAnt * 100) / 100,
+        precoAtual: Math.round(precoAtual * 100) / 100,
+        aumentoPreco: Math.round(aumentoPreco * 10) / 10,
+        qtdAnt: Math.round(qtdAnt),
+        qtdAtual: Math.round(qtdAtual),
+        quedaQtd: Math.round(quedaQtd * 10) / 10,
+        faturAnt: Math.round(faturAnt),
+        faturAtual: Math.round(faturAtual),
+        impactoMensal: Math.round(impactoMensal),
+        status: status
+      });
+    }
+  });
+  
+  impactos.sort((a, b) => b.impactoMensal - a.impactoMensal);
+  window.allImpactos = impactos;
+  applyFiltrosImpacto(impactos);
+}
+
+function applyFiltrosImpacto(all) {
+  const filtro = document.getElementById('filterImpacto')?.value || '';
+  const sku = document.getElementById('filterImpactoSKU')?.value?.toLowerCase() || '';
+  
+  let filtered = all;
+  
+  if (filtro) {
+    if (filtro === 'negativo') filtered = filtered.filter(i => i.aumentoPreco > 0 && i.quedaQtd > 5);
+    else if (filtro === 'positivo') filtered = filtered.filter(i => i.aumentoPreco > 0 && i.quedaQtd <= 5);
+    else if (filtro === 'crescimento') filtered = filtered.filter(i => i.aumentoPreco < 0 && i.quedaQtd < 0);
+  }
+  
+  if (sku) filtered = filtered.filter(i => String(i.sku).includes(sku) || i.produto.toLowerCase().includes(sku));
+  
+  const tbody = document.getElementById('corpTabelaPrecos');
+  if (!tbody) return;
+  
+  tbody.innerHTML = filtered.map(i => `
+    <tr style="border-bottom:1px solid var(--border);background:var(--surface)">
+      <td style="text-align:left;padding:8px">${i.sku}</td>
+      <td style="text-align:left;padding:8px">${i.produto}</td>
+      <td style="text-align:right;padding:8px">R$ ${i.precoAnt.toFixed(2).replace('.', ',')}</td>
+      <td style="text-align:right;padding:8px">R$ ${i.precoAtual.toFixed(2).replace('.', ',')}</td>
+      <td style="text-align:right;padding:8px;color:${i.aumentoPreco > 0 ? '#992424' : '#166534'};font-weight:600">${i.aumentoPreco > 0 ? '+' : ''}${i.aumentoPreco.toFixed(1)}%</td>
+      <td style="text-align:right;padding:8px">${i.qtdAnt}</td>
+      <td style="text-align:right;padding:8px">${i.qtdAtual}</td>
+      <td style="text-align:right;padding:8px;color:${i.quedaQtd > 0 ? '#991B1B' : '#166534'};font-weight:600">${i.quedaQtd > 0 ? '-' : '+'}${Math.abs(i.quedaQtd).toFixed(1)}%</td>
+      <td style="text-align:right;padding:8px">R$ ${i.faturAnt.toLocaleString('pt-BR')}</td>
+      <td style="text-align:right;padding:8px">R$ ${i.faturAtual.toLocaleString('pt-BR')}</td>
+      <td style="text-align:right;padding:8px;color:#991B1B;font-weight:600">-R$ ${Math.abs(i.impactoMensal).toLocaleString('pt-BR')}</td>
+      <td style="text-align:center;padding:8px">${i.status}</td>
+    </tr>
+  `).join('');
+  
+  const stats = {
+    negativo: filtered.filter(i => i.aumentoPreco > 0 && i.quedaQtd > 5).length,
+    perdaTotal: Math.round(filtered.reduce((s, i) => s + Math.max(0, i.impactoMensal), 0)),
+    perdaAnual: Math.round(filtered.reduce((s, i) => s + Math.max(0, i.impactoMensal), 0) * 12),
+    mediaAumento: filtered.length > 0 ? Math.round(filtered.reduce((s, i) => s + i.aumentoPreco, 0) / filtered.length * 10) / 10 : 0
+  };
+  
+  document.getElementById('statsNegativo').textContent = stats.negativo;
+  document.getElementById('statsPerdaTotal').textContent = 'R$ ' + stats.perdaTotal.toLocaleString('pt-BR');
+  document.getElementById('statsPerdaAnual').textContent = 'R$ ' + stats.perdaAnual.toLocaleString('pt-BR');
+  document.getElementById('statsMedioAumento').textContent = stats.mediaAumento + '%';
+}
+
+function resetFiltrosOtim() {
+  document.getElementById('filterOportunidade').value = '';
+  document.getElementById('filterOtimSKU').value = '';
+  if (window.allPrecosOtimos) applyFiltrosOtim(window.allPrecosOtimos);
+}
+
+// ── FUNÇÕES DE PREÇO ÓTIMO ────
+function calcularElasticidade(sku) {
+  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
+  if (!rawData.meses) return 0;
+  
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const mesesComDados = monthLabels.filter(label => rawData.meses[label]?.q > 0).slice(-3);
+  
+  if (mesesComDados.length < 2) return 0;
+  
+  const precoAnterior = calcularPrecoMedio(String(sku), mesesComDados[mesesComDados.length - 2]);
+  const precoAtual = calcularPrecoMedio(String(sku), mesesComDados[mesesComDados.length - 1]);
+  
+  const qtdAnterior = rawData.meses[mesesComDados[mesesComDados.length - 2]]?.q || 0;
+  const qtdAtual = rawData.meses[mesesComDados[mesesComDados.length - 1]]?.q || 0;
+  
+  if (precoAnterior === 0 || qtdAnterior === 0) return 0;
+  
+  const mudancaPreco = ((precoAtual - precoAnterior) / precoAnterior) * 100;
+  const mudancaQtd = ((qtdAtual - qtdAnterior) / qtdAnterior) * 100;
+  
+  if (mudancaPreco === 0) return 0;
+  
+  const elasticidade = mudancaQtd / mudancaPreco;
+  return Math.round(elasticidade * 100) / 100;
+}
+
+function calcularPrecoOtimo(sku) {
+  const elasticidade = calcularElasticidade(String(sku));
+  const precoAtual = calcularPrecoMedio(String(sku), MONTH_SHEETS[MONTH_SHEETS.length - 1].label);
+  
+  if (precoAtual === 0 || elasticidade === 0) return precoAtual;
+  
+  if (elasticidade > -1.5) {
+    return Math.round(precoAtual * 1.08 * 100) / 100;
+  } else if (elasticidade < -2.5) {
+    return Math.round(precoAtual * 0.92 * 100) / 100;
+  } else {
+    return precoAtual;
+  }
+}
+
+function renderPrecoOtimo() {
+  if (!APP.allSkus || APP.allSkus.length === 0) return;
+  
+  const precosOtimos = [];
+  const monthLabels = MONTH_SHEETS.map(m => m.label);
+  const ultimoMes = monthLabels[monthLabels.length - 1];
+  
+  APP.allSkus.forEach(item => {
+    const sku = String(item.sku);
+    const precoAtual = calcularPrecoMedio(sku, ultimoMes);
+    const elasticidade = calcularElasticidade(sku);
+    const precoOtimo = calcularPrecoOtimo(sku);
+    
+    if (precoAtual > 0) {
+      const rawData = APP.rawSalesBySku?.[sku];
+      const qtdAtual = rawData?.meses?.[ultimoMes]?.q || 0;
+      const faturAtual = precoAtual * qtdAtual;
+      
+      const mudancaPreco = ((precoOtimo - precoAtual) / precoAtual) * 100;
+      const mudancaQtdEstimada = elasticidade > 0 ? mudancaPreco * elasticidade / 100 : mudancaPreco * elasticidade / 100;
+      const qtdOtima = Math.max(1, Math.round(qtdAtual * (1 + mudancaQtdEstimada / 100)));
+      const faturOtimo = precoOtimo * qtdOtima;
+      
+      const ganho = faturOtimo - faturAtual;
+      
+      let estrategia = '🟡 Manter';
+      if (precoOtimo > precoAtual * 1.02) estrategia = '🟢 Aumentar';
+      else if (precoOtimo < precoAtual * 0.98) estrategia = '🔴 Reduzir';
+      
+      precosOtimos.push({
+        sku: item.sku,
+        produto: item.nome,
+        precoAtual: Math.round(precoAtual * 100) / 100,
+        precoOtimo: Math.round(precoOtimo * 100) / 100,
+        mudancaPercent: Math.round(((precoOtimo - precoAtual) / precoAtual) * 1000) / 10,
+        elasticidade: elasticidade,
+        faturAtual: Math.round(faturAtual),
+        faturOtimo: Math.round(faturOtimo),
+        ganhoMensal: Math.round(ganho),
+        estrategia: estrategia
+      });
+    }
+  });
+  
+  precosOtimos.sort((a, b) => Math.abs(b.ganhoMensal) - Math.abs(a.ganhoMensal));
+  window.allPrecosOtimos = precosOtimos;
+  applyFiltrosOtim(precosOtimos);
+}
+
+function applyFiltrosOtim(all) {
+  const filtro = document.getElementById('filterOportunidade')?.value || '';
+  const sku = document.getElementById('filterOtimSKU')?.value?.toLowerCase() || '';
+  
+  let filtered = all;
+  
+  if (filtro) {
+    if (filtro === 'reducir') filtered = filtered.filter(p => p.estrategia.includes('Reduzir'));
+    else if (filtro === 'aumentar') filtered = filtered.filter(p => p.estrategia.includes('Aumentar'));
+    else if (filtro === 'manter') filtered = filtered.filter(p => p.estrategia.includes('Manter'));
+  }
+  
+  if (sku) filtered = filtered.filter(p => String(p.sku).includes(sku) || p.produto.toLowerCase().includes(sku));
+  
+  const tbody = document.getElementById('corpTabelaPrecOtimo');
+  if (!tbody) return;
+  
+  tbody.innerHTML = filtered.map(p => `
+    <tr style="border-bottom:1px solid var(--border);background:var(--surface)">
+      <td style="text-align:left;padding:8px">${p.sku}</td>
+      <td style="text-align:left;padding:8px">${p.produto}</td>
+      <td style="text-align:right;padding:8px">R$ ${p.precoAtual.toFixed(2).replace('.', ',')}</td>
+      <td style="text-align:right;padding:8px;font-weight:600;color:#166534">R$ ${p.precoOtimo.toFixed(2).replace('.', ',')}</td>
+      <td style="text-align:right;padding:8px;color:${p.mudancaPercent > 0 ? '#166534' : '#991B1B'};font-weight:600">${p.mudancaPercent > 0 ? '+' : ''}${p.mudancaPercent.toFixed(1)}%</td>
+      <td style="text-align:right;padding:8px">${p.elasticidade.toFixed(2)}</td>
+      <td style="text-align:right;padding:8px">R$ ${p.faturAtual.toLocaleString('pt-BR')}</td>
+      <td style="text-align:right;padding:8px;font-weight:600;color:#166534">R$ ${p.faturOtimo.toLocaleString('pt-BR')}</td>
+      <td style="text-align:right;padding:8px;font-weight:600;color:#166534">+R$ ${p.ganhoMensal.toLocaleString('pt-BR')}</td>
+      <td style="text-align:center;padding:8px">${p.estrategia}</td>
+    </tr>
+  `).join('');
+  
+  const stats = {
+    reduzir: filtered.filter(p => p.estrategia.includes('Reduzir')).length,
+    aumentar: filtered.filter(p => p.estrategia.includes('Aumentar')).length,
+    ganhoTotal: filtered.reduce((s, p) => s + p.ganhoMensal, 0),
+    elastMedia: filtered.length > 0 ? Math.round(filtered.reduce((s, p) => s + p.elasticidade, 0) / filtered.length * 100) / 100 : 0
+  };
+  
+  document.getElementById('statsReduzir').textContent = stats.reduzir;
+  document.getElementById('statsAumentar').textContent = stats.aumentar;
+  document.getElementById('statsGanhoMensal').textContent = 'R$ ' + stats.ganhoTotal.toLocaleString('pt-BR');
+  document.getElementById('statsElastMedia').textContent = stats.elastMedia;
 }
 
 
