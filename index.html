@@ -308,6 +308,7 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
   <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
+  <div class="tab" onclick="showTab('sugestao')">Sugestão de Compras</div>
 </nav>
 
 <!-- ── GLOBAL FILTER BAR ── -->
@@ -662,6 +663,47 @@ tbody tr:hover td{background:#FAFAF8}
     <div id="tblTodos"></div>
     <div class="pag" id="pag"></div>
   </div>
+
+  <!-- SUGESTÃO DE COMPRAS -->
+  <div class="panel" id="sugestao">
+    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Sugestão de Novas Compras</h2>
+    
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+      <select id="filterPrioridade" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
+        <option value="">Prioridade: Todas</option>
+        <option value="critico">🔴 Crítico</option>
+        <option value="aviso">🟡 Aviso</option>
+        <option value="ok">🟢 OK</option>
+      </select>
+      <input type="text" id="filterSKU" placeholder="Buscar SKU..." style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:150px;font-family:'DM Sans',sans-serif">
+      <button onclick="resetFilteresSugestao()" style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3)">Limpar</button>
+    </div>
+
+    <div style="overflow-x:auto;margin-bottom:20px">
+      <table id="tabelaSugestao" style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
+            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">SKU</th>
+            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">Produto</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Estoque</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Média/mês</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">QTD</th>
+            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Custo</th>
+            <th style="text-align:center;padding:8px;color:var(--text3);font-weight:500">Status</th>
+          </tr>
+        </thead>
+        <tbody id="corpTabelaSugestao" style="background:var(--surface)">
+          <tr><td colspan="7" style="padding:15px;text-align:center;color:var(--text3)">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+      <div class="kpi"><div class="kpi-label">Críticos</div><div class="kpi-value" id="statsCritico">0</div></div>
+      <div class="kpi"><div class="kpi-label">Avisos</div><div class="kpi-value" id="statsAviso">0</div></div>
+      <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-value" id="statsTotal">0</div></div>
+    </div>
+  </div>
 </main>
 
 <script>
@@ -866,6 +908,7 @@ function buildDashboard(){
   buildKPIs();buildInsights();buildPeriodBtns();
   buildVisao();buildCategorias();buildDesenvolvimento();
   buildAbcValor();buildAbcQtd();buildTodos();
+  setTimeout(() => renderSugestaoCompras(), 100);
   // Pre-populate analise sidebar so it's ready when user navigates there
   buildAnaliseCatList();
 }
@@ -1596,11 +1639,12 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
+  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestao'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='analise') initAnalise();
+  if(id==='sugestao') renderSugestaoCompras();
 }
 
 // ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
@@ -2047,6 +2091,96 @@ function renderAnaliseTabela(){
     <button class="pag-btn" onclick="analisePage++;renderAnaliseTabela()" ${start+PAGE_A>=skus.length?'disabled':''}>Próximo →</button>
   `:'';
 }
+
+// ── FUNÇÕES SUGESTÃO DE COMPRAS ────
+function renderSugestaoCompras() {
+  if (!APP.allSkus || APP.allSkus.length === 0) return;
+  
+  const sugestoes = [];
+  APP.allSkus.forEach(item => {
+    const avgMonthly = Math.max(
+      Math.round((item.TotalQtd || 0) / 12),  // Simples: total / 12 meses
+      1
+    );
+    const currentStock = APP.estoque && APP.estoque[String(item.sku)] 
+      ? APP.estoque[String(item.sku)] 
+      : Math.round((item.TotalQtd || 0) * 0.3);
+    
+    const rop = Math.round(avgMonthly * 5.5); // (5 meses + 0.5 buffer)
+    const sugerir = currentStock < rop;
+    const orderQty = sugerir ? Math.round(avgMonthly * 3.5) : 0; // (3 meses + 0.5)
+    
+    if (sugerir) {
+      sugestoes.push({
+        sku: item.sku,
+        produto: item.nome,
+        estoque: currentStock,
+        avgMonthly: avgMonthly,
+        rop: rop,
+        orderQty: orderQty,
+        precoUnit: item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0,
+        custo: orderQty * (item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0),
+        priority: currentStock < rop * 0.5 ? '🔴 Crítico' : '🟡 Aviso'
+      });
+    }
+  });
+  
+  sugestoes.sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority === '🔴 Crítico' ? -1 : 1;
+    return b.orderQty - a.orderQty;
+  });
+  
+  window.allSugestoes = sugestoes;
+  applyFiltersAndRenderSugestao(sugestoes);
+}
+
+function applyFiltersAndRenderSugestao(all) {
+  const prio = document.getElementById('filterPrioridade')?.value || '';
+  const sku = document.getElementById('filterSKU')?.value?.toLowerCase() || '';
+  
+  let filtered = all;
+  if (prio) filtered = filtered.filter(s => s.priority.includes(prio === 'critico' ? '🔴' : prio === 'aviso' ? '🟡' : '🟢'));
+  if (sku) filtered = filtered.filter(s => String(s.sku).includes(sku) || s.produto.toLowerCase().includes(sku));
+  
+  const tbody = document.getElementById('corpTabelaSugestao');
+  if (!tbody) return;
+  
+  tbody.innerHTML = filtered.map(s => `
+    <tr style="border-bottom:1px solid var(--border);background:var(--surface)">
+      <td style="text-align:left;padding:8px">${s.sku}</td>
+      <td style="text-align:left;padding:8px">${s.produto}</td>
+      <td style="text-align:right;padding:8px">${s.estoque}</td>
+      <td style="text-align:right;padding:8px">${s.avgMonthly}</td>
+      <td style="text-align:right;padding:8px">${s.orderQty}</td>
+      <td style="text-align:right;padding:8px">R$ ${s.custo.toLocaleString('pt-BR')}</td>
+      <td style="text-align:center;padding:8px">${s.priority}</td>
+    </tr>
+  `).join('');
+  
+  const stats = { critico: 0, aviso: 0, total: filtered.length };
+  filtered.forEach(s => {
+    if (s.priority.includes('🔴')) stats.critico++;
+    else stats.aviso++;
+  });
+  
+  document.getElementById('statsCritico').textContent = stats.critico;
+  document.getElementById('statsAviso').textContent = stats.aviso;
+  document.getElementById('statsTotal').textContent = stats.total;
+}
+
+function resetFilteresSugestao() {
+  document.getElementById('filterPrioridade').value = '';
+  document.getElementById('filterSKU').value = '';
+  if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
+}
+
+// Setup listeners para filtros de sugestão
+document.addEventListener('DOMContentLoaded', () => {
+  const prio = document.getElementById('filterPrioridade');
+  const sku = document.getElementById('filterSKU');
+  if (prio) prio.addEventListener('change', () => { if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes); });
+  if (sku) sku.addEventListener('input', () => { if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes); });
+});
 
 
 loadData();
