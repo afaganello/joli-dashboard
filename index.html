@@ -252,6 +252,42 @@ tbody tr:hover td{background:#FAFAF8}
 .analise-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px}
 .analise-empty-icon{font-size:32px;margin-bottom:12px}
 @media(max-width:900px){.analise-layout{grid-template-columns:1fr}.analise-sidebar{position:static}}
+/* ── RENTABILIDADE ── */
+.rent-kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.rent-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.rent-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.rent-kpi.green::before{background:var(--green)}.rent-kpi.amber::before{background:#D97706}.rent-kpi.blue::before{background:var(--blue)}.rent-kpi.purple::before{background:var(--purple)}.rent-kpi.red::before{background:var(--red)}
+.rent-kpi-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.rent-kpi-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1;color:var(--text)}
+.rent-kpi-sub{font-size:11px;color:var(--text3);margin-top:5px}
+/* Elasticidade scatter */
+.elast-table{width:100%}
+.elast-table th{background:#F7F5F0;padding:9px 12px;text-align:left;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);white-space:nowrap}
+.elast-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);vertical-align:middle}
+.elast-table tr:last-child td{border-bottom:none}
+.elast-table tr:hover td{background:#FAFAF8}
+.elast-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace}
+.elast-pill.elastic{background:#DCFCE7;color:var(--green)}
+.elast-pill.inelastic{background:#FEE2E2;color:var(--red)}
+.elast-pill.neutral{background:#F3F4F6;color:#6B7280}
+.elast-pill.good{background:#DBEAFE;color:var(--blue)}
+/* Margin bar */
+.margin-bar{display:inline-flex;width:80px;height:8px;background:var(--border);border-radius:4px;overflow:hidden;vertical-align:middle}
+.margin-bar-fill{height:100%;border-radius:4px}
+/* Filter row rentabilidade */
+.rent-filter-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.rent-filter-row select,.rent-filter-row input{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.rent-filter-row select:focus,.rent-filter-row input:focus{border-color:var(--text)}
+/* Insight cards */
+.insight-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:20px}
+.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;border-left:3px solid}
+.insight-card.winner{border-left-color:var(--green)}.insight-card.loser{border-left-color:var(--red)}.insight-card.watch{border-left-color:#D97706}.insight-card.info{border-left-color:var(--blue)}
+.insight-card-tag{font-size:10px;font-family:'DM Mono',monospace;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.insight-card.winner .insight-card-tag{color:var(--green)}.insight-card.loser .insight-card-tag{color:var(--red)}.insight-card.watch .insight-card-tag{color:#D97706}.insight-card.info .insight-card-tag{color:var(--blue)}
+.insight-card-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px}
+.insight-card-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.insight-card-stats{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.insight-card-stat{font-size:10px;font-family:'DM Mono',monospace;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--text3)}
 /* ── PRODUCT SEARCH ── */
 .prod-search-wrap{position:relative}
 .prod-search-input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;transition:border-color .15s}
@@ -303,15 +339,12 @@ tbody tr:hover td{background:#FAFAF8}
 <nav class="nav-tabs">
   <div class="tab active"  onclick="showTab('visao')">Visão Geral</div>
   <div class="tab" onclick="showTab('analise')">Análise por Categoria</div>
+  <div class="tab" onclick="showTab('rentabilidade')">Rentabilidade</div>
   <div class="tab" onclick="showTab('categorias')">Categorias & Mix</div>
   <div class="tab" onclick="showTab('desenvolvimento')">Desenvolvimento</div>
   <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
   <div class="tab" onclick="showTab('abc-qtd')">Curva ABC — Qtd</div>
   <div class="tab" onclick="showTab('todos')">Todos os SKUs</div>
-  <div class="tab" onclick="showTab('sugestao')">Sugestão de Compras</div>
-  <div class="tab" onclick="showTab('tendencias')">Análise de Tendências</div>
-  <div class="tab" onclick="showTab('precos')">Análise de Preços</div>
-  <div class="tab" onclick="showTab('preco-otimo')">Preço Ótimo</div>
 </nav>
 
 <!-- ── GLOBAL FILTER BAR ── -->
@@ -665,254 +698,80 @@ tbody tr:hover td{background:#FAFAF8}
     </div>
     <div id="tblTodos"></div>
     <div class="pag" id="pag"></div>
-  </div>
+  <!-- ── RENTABILIDADE ── -->
+  <div class="panel" id="rentabilidade">
+    <div class="section-hdr">
+      <h2>Rentabilidade & Elasticidade</h2>
+      <p>Margem por produto · impacto de variação de preço em volume e receita · custo via aba Estoque</p>
+    </div>
 
-  <!-- SUGESTÃO DE COMPRAS -->
-  <div class="panel" id="sugestao">
-    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Sugestão de Novas Compras</h2>
-    
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
-      <select id="filterPrioridade" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
-        <option value="">Prioridade: Todas</option>
-        <option value="critico">🔴 Crítico</option>
-        <option value="aviso">🟡 Aviso</option>
-        <option value="ok">🟢 OK</option>
+    <!-- KPIs gerais -->
+    <div class="rent-kpi-grid" id="rentKpis"></div>
+
+    <!-- Filtros -->
+    <div class="rent-filter-row">
+      <select id="rentFiltCat" onchange="buildRentabilidade()"><option value="">Todas as categorias</option></select>
+      <select id="rentFiltSubcat" onchange="buildRentabilidade()"><option value="">Todas as subcategorias</option></select>
+      <select id="rentFiltMarca" onchange="buildRentabilidade()"><option value="">Todas as marcas</option></select>
+      <select id="rentFiltAbc" onchange="buildRentabilidade()">
+        <option value="">Todos ABC</option>
+        <option value="A">Classe A</option>
+        <option value="B">Classe B</option>
+        <option value="C">Classe C</option>
       </select>
-      <input type="text" id="filterSKU" placeholder="Buscar SKU..." style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:150px;font-family:'DM Sans',sans-serif">
-      <button onclick="resetFilteresSugestao()" style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3)">Limpar</button>
-    </div>
-
-    <div style="overflow-x:auto;margin-bottom:20px">
-      <table id="tabelaSugestao" style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
-            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">SKU</th>
-            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">Produto</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Estoque</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Média/mês</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">QTD</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Custo</th>
-            <th style="text-align:center;padding:8px;color:var(--text3);font-weight:500">Status</th>
-          </tr>
-        </thead>
-        <tbody id="corpTabelaSugestao" style="background:var(--surface)">
-          <tr><td colspan="7" style="padding:15px;text-align:center;color:var(--text3)">Carregando...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
-      <div class="kpi"><div class="kpi-label">Críticos</div><div class="kpi-value" id="statsCritico">0</div></div>
-      <div class="kpi"><div class="kpi-label">Avisos</div><div class="kpi-value" id="statsAviso">0</div></div>
-      <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-value" id="statsTotal">0</div></div>
-    </div>
-  </div>
-
-  <!-- ANÁLISE DE TENDÊNCIAS -->
-  <div class="panel" id="tendencias">
-    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Análise de Tendências de Vendas</h2>
-    
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
-      <select id="filterTendencia" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
-        <option value="">Status: Todos</option>
-        <option value="critico">🔴 Queda Crítica (>30%)</option>
-        <option value="aviso">🟡 Queda Moderada (15-30%)</option>
-        <option value="leve">🟠 Queda Leve (5-15%)</option>
-        <option value="crescimento">🟢 Crescimento</option>
+      <select id="rentFiltPeriodo" onchange="buildRentabilidade()">
+        <option value="all">Todos os meses</option>
+        <option value="6">Últimos 6 meses</option>
+        <option value="3">Últimos 3 meses</option>
       </select>
-      <input type="text" id="filterTendenciaSKU" placeholder="Buscar SKU..." style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:150px;font-family:'DM Sans',sans-serif">
-      <button onclick="resetFilteresTendencia()" style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3)">Limpar</button>
     </div>
 
-    <!-- CARDS RESUMO -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px">
-      <div class="kpi">
-        <div class="kpi-label">Quedas Críticas (>30%)</div>
-        <div class="kpi-value" id="statsQuedaCritica">0</div>
+    <!-- Insights automáticos -->
+    <div class="dev-section">
+      <div class="dev-section-title">Insights de rentabilidade</div>
+      <div class="dev-section-sub">Detectados automaticamente com base em variação de preço e resposta de volume</div>
+      <div class="insight-cards-grid" id="rentInsights"></div>
+    </div>
+
+    <!-- Gráfico margem por categoria -->
+    <div class="chart-2col" style="margin-bottom:16px">
+      <div class="chart-box">
+        <div class="chart-title">Margem bruta por categoria</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">% margem média ponderada pelo faturamento</div>
+        <div class="chart-wrap tall"><canvas id="cMargemCat"></canvas></div>
       </div>
-      <div class="kpi">
-        <div class="kpi-label">Quedas Moderadas (15-30%)</div>
-        <div class="kpi-value" id="statsQuedaModera">0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Em Crescimento</div>
-        <div class="kpi-value" id="statsEmCrescimento">0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Queda Média</div>
-        <div class="kpi-value" id="statsQuedaMedia">0%</div>
+      <div class="chart-box">
+        <div class="chart-title">Receita vs Lucro Bruto</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">Comparação receita total e margem gerada por categoria</div>
+        <div class="chart-wrap tall"><canvas id="cReceitaVsLucro"></canvas></div>
       </div>
     </div>
 
-    <!-- TABELA TENDÊNCIAS -->
-    <div style="overflow-x:auto;margin-bottom:20px">
-      <table id="tabelaTendencias" style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
-            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">SKU</th>
-            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">Produto</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Mês Anterior</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Mês Atual</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Queda Mês</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Média 3m</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Tendência 3m</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Velocidade</th>
-            <th style="text-align:center;padding:8px;color:var(--text3);font-weight:500">Status</th>
-          </tr>
-        </thead>
-        <tbody id="corpTabelaTendencias" style="background:var(--surface)">
-          <tr><td colspan="9" style="padding:15px;text-align:center;color:var(--text3)">Carregando...</td></tr>
-        </tbody>
-      </table>
+    <!-- Evolução de preço e volume mês a mês -->
+    <div class="chart-box" style="margin-bottom:16px">
+      <div class="chart-title">Elasticidade preço-volume</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="chart-subtitle" style="margin-bottom:0">Variação % do preço médio vs variação % do volume — por mês</div>
+        <select id="rentElastCat" onchange="buildElastChart()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+          <option value="">Portfólio total</option>
+        </select>
+      </div>
+      <div class="chart-wrap tall"><canvas id="cElast"></canvas></div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:'DM Mono',monospace">
+        Elasticidade = % variação volume ÷ % variação preço · Valor negativo = comportamento esperado (preço sobe, volume cai)
+      </div>
     </div>
 
-    <!-- LEGENDA -->
-    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text3);line-height:1.6">
-      <strong style="color:var(--text)">📊 Como Ler:</strong><br>
-      <strong>Queda Mês:</strong> % de queda comparado ao mês anterior<br>
-      <strong>Tendência 3m:</strong> % de queda considerando média dos últimos 3 meses<br>
-      <strong>Velocidade:</strong> Se queda está acelerando (↗️) ou estabilizando (↘️)<br>
-      <strong>Status:</strong> 🔴 Crítico (>30%) | 🟡 Moderado (15-30%) | 🟠 Leve (5-15%) | 🟢 Crescimento
+    <!-- Tabela detalhada -->
+    <div class="chart-box">
+      <div class="chart-title">Tabela de rentabilidade por produto</div>
+      <div class="chart-subtitle" style="margin-bottom:16px">Custo unitário · preço médio de venda · margem · elasticidade estimada</div>
+      <div id="rentTable"></div>
+      <div class="pag" id="rentPag"></div>
     </div>
   </div>
 
-  <!-- ANÁLISE DE PREÇOS -->
-  <div class="panel" id="precos">
-    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Análise de Impacto de Preços</h2>
-    
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
-      <select id="filterImpacto" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
-        <option value="">Impacto: Todos</option>
-        <option value="negativo">🔴 Preço Subiu, Qtd Caiu</option>
-        <option value="positivo">🟢 Preço Subiu, Qtd Manteve</option>
-        <option value="crescimento">🟢 Preço Caiu, Qtd Subiu</option>
-      </select>
-      <input type="text" id="filterImpactoSKU" placeholder="Buscar SKU..." style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:150px;font-family:'DM Sans',sans-serif">
-      <button onclick="resetFiltrosImpacto()" style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3)">Limpar</button>
-    </div>
-
-    <!-- CARDS IMPACTO -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px">
-      <div class="kpi">
-        <div class="kpi-label">Preço ↑, Qtd ↓ (Ruim!)</div>
-        <div class="kpi-value" id="statsNegativo">0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Perda Mensal</div>
-        <div class="kpi-value" id="statsPerdaTotal" style="font-size:14px">R$ 0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Perda Anual Estimada</div>
-        <div class="kpi-value" id="statsPerdaAnual" style="font-size:14px">R$ 0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Preço Médio Subiu</div>
-        <div class="kpi-value" id="statsMedioAumento">0%</div>
-      </div>
-    </div>
-
-    <!-- TABELA IMPACTO DE PREÇOS -->
-    <div style="overflow-x:auto;margin-bottom:20px">
-      <table id="tabelaPrecos" style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
-            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">SKU</th>
-            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">Produto</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Preço Mês Ant.</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Preço Mês Atual</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Aumento %</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Qtd Mês Ant.</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Qtd Mês Atual</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Queda Qtd %</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Fatur. Antes</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Fatur. Depois</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Impacto Mensal</th>
-            <th style="text-align:center;padding:8px;color:var(--text3);font-weight:500">Status</th>
-          </tr>
-        </thead>
-        <tbody id="corpTabelaPrecos" style="background:var(--surface)">
-          <tr><td colspan="12" style="padding:15px;text-align:center;color:var(--text3)">Carregando...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- RECOMENDAÇÕES -->
-    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text3);line-height:1.6">
-      <strong style="color:var(--text)">💡 Como Usar:</strong><br>
-      <strong>Preço Médio:</strong> Valor total ÷ Quantidade = preço médio implícito<br>
-      <strong>Aumento %:</strong> Se preço subiu mas qtd caiu, pode ser problema de elasticidade<br>
-      <strong>Impacto Mensal:</strong> Faturamento antes - Faturamento depois (quanto perdeu)<br>
-      <strong>Status:</strong> 🔴 Ruim (preço ↑, qtd ↓) | 🟡 Neutro | 🟢 Bom (preço ↑, qtd = ou ↑)
-    </div>
-  </div>
-
-  <!-- PREÇO ÓTIMO -->
-  <div class="panel" id="preco-otimo">
-    <h2 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:600;margin-bottom:20px">Análise de Preço Ótimo</h2>
-    
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
-      <select id="filterOportunidade" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif">
-        <option value="">Oportunidade: Todas</option>
-        <option value="reducir">🔴 Reduzir (Elasticidade Alta)</option>
-        <option value="manter">🟡 Manter (Elasticidade Normal)</option>
-        <option value="aumentar">🟢 Aumentar (Elasticidade Baixa)</option>
-      </select>
-      <input type="text" id="filterOtimSKU" placeholder="Buscar SKU..." style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface);color:var(--text);flex:1;min-width:150px;font-family:'DM Sans',sans-serif">
-      <button onclick="resetFiltrosOtim()" style="padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3)">Limpar</button>
-    </div>
-
-    <!-- CARDS OPORTUNIDADE -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px">
-      <div class="kpi">
-        <div class="kpi-label">Reduzir Preço (Ganhar Volume)</div>
-        <div class="kpi-value" id="statsReduzir">0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Aumentar Preço (Ganhar Margem)</div>
-        <div class="kpi-value" id="statsAumentar">0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Potencial de Ganho Mensal</div>
-        <div class="kpi-value" id="statsGanhoMensal" style="font-size:14px">R$ 0</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Elasticidade Média</div>
-        <div class="kpi-value" id="statsElastMedia">0.0</div>
-      </div>
-    </div>
-
-    <!-- TABELA PREÇO ÓTIMO -->
-    <div style="overflow-x:auto;margin-bottom:20px">
-      <table id="tabelaPrecOtimo" style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border);background:var(--bg)">
-            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">SKU</th>
-            <th style="text-align:left;padding:8px;color:var(--text3);font-weight:500">Produto</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Preço Atual</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Preço Ótimo</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Mudança %</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Elasticidade</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Fatur. Atual</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Fatur. Ótimo</th>
-            <th style="text-align:right;padding:8px;color:var(--text3);font-weight:500">Ganho Mensal</th>
-            <th style="text-align:center;padding:8px;color:var(--text3);font-weight:500">Estratégia</th>
-          </tr>
-        </thead>
-        <tbody id="corpTabelaPrecOtimo" style="background:var(--surface)">
-          <tr><td colspan="10" style="padding:15px;text-align:center;color:var(--text3)">Carregando...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- EXPLICAÇÃO -->
-    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text3);line-height:1.6">
-      <strong style="color:var(--text)">📊 Como Entender:</strong><br>
-      <strong>Elasticidade:</strong> Se for -2.5, cada 1% de redução de preço aumenta vendas 2.5%<br>
-      <strong>Preço Ótimo:</strong> Melhor preço que maximiza faturamento (não volume)<br>
-      <strong>Estratégia:</strong> 🔴 Reduzir (elasticidade alta) | 🟡 Manter (normal) | 🟢 Aumentar (baixa)<br>
-      <strong>Ganho:</strong> Quanto ganharia se mudasse ao preço ótimo
-    </div>
-  </div>
+</main>
 
 <script>
 const SHEET_ID  = '1RE-ciKV3jbKbMIrfzX7tcuo8NBvKES6LzBXGsRCIOy4';
@@ -922,8 +781,10 @@ const MONTH_SHEETS = [
   {sheet:'mar25',label:'Mar/25'},{sheet:'Abr25',label:'Abr/25'},{sheet:'mai25',label:'Mai/25'},
   {sheet:'jun25',label:'Jun/25'},{sheet:'jul25',label:'Jul/25'},{sheet:'ago25',label:'Ago/25'},
   {sheet:'set25',label:'Set/25'},{sheet:'out25',label:'Out/25'},{sheet:'Nov25',label:'Nov/25'},
-  {sheet:'dez25',label:'Dez/25'},{sheet:'jan26',label:'Jan/26'},{sheet:'Fev26',label:'Fev/26'},{sheet:'Mar26',label:'Mar/26'},
+  {sheet:'dez25',label:'Dez/25'},{sheet:'jan26',label:'Jan/26'},{sheet:'Fev26',label:'Fev/26'},
+  {sheet:'Mar26',label:'Mar/26'},
 ];
+const ESTOQUE_SHEET = 'Estoque';  // aba com custo unitário
 // Category color map — matches CSS variables
 const CAT_COLOR = {
   'Ferramentas':           '#374151',
@@ -978,12 +839,12 @@ async function loadData(){
   document.getElementById('mainContent').style.display='none';
   document.getElementById('errorBox').classList.remove('visible');
   Object.values(APP.charts).forEach(c=>{try{c.destroy()}catch(e){}});
-  APP={monthly:[],allSkus:[],skuMap:{},categories:[],subcatMap:{},catByMonth:{},charts:{}};
+  APP={monthly:[],allSkus:[],skuMap:{},custoMap:{},categories:[],subcatMap:{},catByMonth:{},charts:{}};
   selectedCat=null;
 
   try{
     // ── 1. Load PRODUTOS tab → SKU→{cat,sub,marca} map ──────────────────
-    setProgress(5,'Carregando tabela de produtos...');
+    setProgress(4,'Carregando tabela de produtos...');
     const prodRows=await fetchSheet('PRODUTOS');
     const skuMap={};
     prodRows.forEach(r=>{
@@ -994,23 +855,21 @@ async function loadData(){
       }
     });
     APP.skuMap=skuMap;
-    setProgress(15,`${Object.keys(skuMap).length} produtos classificados`);
 
-    // ── 1.5. Load ESTOQUE tab (simples, sem quebrar) ──────────────
-    APP.estoque = {};
-    try {
-      const estoqueRows = await fetchSheet('estoque');
-      estoqueRows.forEach(r => {
-        if (r[0]) {
-          const sku = String(r[0]).trim().replace('.0', '');
-          const qtd = num(r[2]); // Coluna C
-          if (qtd > 0) APP.estoque[sku] = qtd;
-        }
-      });
-      console.log(`✅ Estoque: ${Object.keys(APP.estoque).length} SKUs`);
-    } catch(e) {
-      console.log(`⚠️ Estoque não disponível`);
-    }
+    // ── 1b. Load Estoque tab → SKU→{custo, estoque} map ─────────────────
+    setProgress(8,'Carregando custos unitários...');
+    const estoqueRows=await fetchSheet(ESTOQUE_SHEET);
+    const custoMap={};
+    estoqueRows.forEach(r=>{
+      const sku=String(r[0]||'').trim().replace('.0','');
+      if(!sku||isNaN(parseInt(sku)))return;
+      const estoque=num(r[2]);
+      const custo=num(String(r[3]||'').replace(',','.'));
+      const marca=String(r[4]||'').trim();
+      custoMap[sku]={custo, estoque, marca};
+    });
+    APP.custoMap=custoMap;
+    setProgress(12,`${Object.keys(custoMap).length} custos carregados`);
 
     // ── 2. Load monthly sales tabs ──────────────────────────────────────
     const rawSales={};
@@ -1049,7 +908,10 @@ async function loadData(){
         if(!catByMonthMap[cat][label])catByMonthMap[cat][label]={v:0,q:0};
         catByMonthMap[cat][label].v+=vals.v;catByMonthMap[cat][label].q+=vals.q;
       }
-      skuTotals.push({sku:parseInt(sku),nome:info.nome||data.nome,cat,sub,marca,TotalValor:tv,TotalQtd:tq});
+      skuTotals.push({sku:parseInt(sku),nome:info.nome||data.nome,cat,sub,marca,TotalValor:tv,TotalQtd:tq,
+        custo: custoMap[sku]?.custo||0,
+        estoque: custoMap[sku]?.estoque||0
+      });
     }
 
     APP.monthly=Object.values(monthlyMap);
@@ -1058,7 +920,8 @@ async function loadData(){
     APP.rawSalesBySku={};
     for(const [sku,data] of Object.entries(rawSales)){
       const info=skuMap[sku]||{cat:'Sem Categoria',sub:'—',marca:'—',nome:data.nome};
-      APP.rawSalesBySku[sku]={nome:info.nome||data.nome,cat:info.cat,sub:info.sub,marca:info.marca,meses:data.meses};
+      APP.rawSalesBySku[sku]={nome:info.nome||data.nome,cat:info.cat,sub:info.sub,marca:info.marca,
+        meses:data.meses, custo:custoMap[sku]?.custo||0};
     }
     skuTotals.sort((a,b)=>b.TotalValor-a.TotalValor);
 
@@ -1116,9 +979,8 @@ function buildDashboard(){
   buildKPIs();buildInsights();buildPeriodBtns();
   buildVisao();buildCategorias();buildDesenvolvimento();
   buildAbcValor();buildAbcQtd();buildTodos();
-  setTimeout(() => { renderSugestaoCompras(); renderTendencias(); renderAnalisePrecos(); renderPrecoOtimo(); }, 100);
-  // Pre-populate analise sidebar so it's ready when user navigates there
   buildAnaliseCatList();
+  initRentFiltros();
 }
 
 // ── FILTER ENGINE ─────────────────────────────────────────────────────────────
@@ -1847,15 +1709,12 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','analise','categorias','desenvolvimento','abc-valor','abc-qtd','todos','sugestao','tendencias','precos','preco-otimo'];
+  const tabs=['visao','analise','rentabilidade','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='analise') initAnalise();
-  if(id==='sugestao') renderSugestaoCompras();
-  if(id==='tendencias') renderTendencias();
-  if(id==='precos') renderAnalisePrecos();
-  if(id==='preco-otimo') renderPrecoOtimo();
+  if(id==='rentabilidade') buildRentabilidade();
 }
 
 // ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
@@ -2303,517 +2162,454 @@ function renderAnaliseTabela(){
   `:'';
 }
 
-// ── FUNÇÕES SUGESTÃO DE COMPRAS ────
-function renderSugestaoCompras() {
-  if (!APP.allSkus || APP.allSkus.length === 0) return;
-  
-  const sugestoes = [];
-  APP.allSkus.forEach(item => {
-    const avgMonthly = Math.max(
-      Math.round((item.TotalQtd || 0) / 12),  // Simples: total / 12 meses
-      1
-    );
-    const currentStock = APP.estoque && APP.estoque[String(item.sku)] 
-      ? APP.estoque[String(item.sku)] 
-      : Math.round((item.TotalQtd || 0) * 0.3);
-    
-    const rop = Math.round(avgMonthly * 5.5); // (5 meses + 0.5 buffer)
-    const sugerir = currentStock < rop;
-    const orderQty = sugerir ? Math.round(avgMonthly * 3.5) : 0; // (3 meses + 0.5)
-    
-    if (sugerir) {
-      sugestoes.push({
-        sku: item.sku,
-        produto: item.nome,
-        estoque: currentStock,
-        avgMonthly: avgMonthly,
-        rop: rop,
-        orderQty: orderQty,
-        precoUnit: item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0,
-        custo: orderQty * (item.TotalValor > 0 && item.TotalQtd > 0 ? Math.round(item.TotalValor / item.TotalQtd) : 0),
-        priority: currentStock < rop * 0.5 ? '🔴 Crítico' : '🟡 Aviso'
-      });
-    }
-  });
-  
-  sugestoes.sort((a, b) => {
-    if (a.priority !== b.priority) return a.priority === '🔴 Crítico' ? -1 : 1;
-    return b.orderQty - a.orderQty;
-  });
-  
-  window.allSugestoes = sugestoes;
-  applyFiltersAndRenderSugestao(sugestoes);
-}
 
-function applyFiltersAndRenderSugestao(all) {
-  const prio = document.getElementById('filterPrioridade')?.value || '';
-  const sku = document.getElementById('filterSKU')?.value?.toLowerCase() || '';
-  
-  let filtered = all;
-  if (prio) filtered = filtered.filter(s => s.priority.includes(prio === 'critico' ? '🔴' : prio === 'aviso' ? '🟡' : '🟢'));
-  if (sku) filtered = filtered.filter(s => String(s.sku).includes(sku) || s.produto.toLowerCase().includes(sku));
-  
-  const tbody = document.getElementById('corpTabelaSugestao');
-  if (!tbody) return;
-  
-  tbody.innerHTML = filtered.map(s => `
-    <tr style="border-bottom:1px solid var(--border);background:var(--surface)">
-      <td style="text-align:left;padding:8px">${s.sku}</td>
-      <td style="text-align:left;padding:8px">${s.produto}</td>
-      <td style="text-align:right;padding:8px">${s.estoque}</td>
-      <td style="text-align:right;padding:8px">${s.avgMonthly}</td>
-      <td style="text-align:right;padding:8px">${s.orderQty}</td>
-      <td style="text-align:right;padding:8px">R$ ${s.custo.toLocaleString('pt-BR')}</td>
-      <td style="text-align:center;padding:8px">${s.priority}</td>
-    </tr>
-  `).join('');
-  
-  const stats = { critico: 0, aviso: 0, total: filtered.length };
-  filtered.forEach(s => {
-    if (s.priority.includes('🔴')) stats.critico++;
-    else stats.aviso++;
-  });
-  
-  document.getElementById('statsCritico').textContent = stats.critico;
-  document.getElementById('statsAviso').textContent = stats.aviso;
-  document.getElementById('statsTotal').textContent = stats.total;
-}
+// ══════════════════════════════════════════════════════════════════════════════
+// RENTABILIDADE & ELASTICIDADE
+// ══════════════════════════════════════════════════════════════════════════════
 
-function resetFilteresSugestao() {
-  document.getElementById('filterPrioridade').value = '';
-  document.getElementById('filterSKU').value = '';
-  if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes);
-}
+let rentPage=0;
+const RENT_PAGE=25;
 
-// Setup listeners para filtros de sugestão
-document.addEventListener('DOMContentLoaded', () => {
-  const prio = document.getElementById('filterPrioridade');
-  const sku = document.getElementById('filterSKU');
-  if (prio) prio.addEventListener('change', () => { if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes); });
-  if (sku) sku.addEventListener('input', () => { if (window.allSugestoes) applyFiltersAndRenderSugestao(window.allSugestoes); });
-  
-  const filterTend = document.getElementById('filterTendencia');
-  const skuTend = document.getElementById('filterTendenciaSKU');
-  if (filterTend) filterTend.addEventListener('change', () => { if (window.allTendencias) applyFiltersTendencias(window.allTendencias); });
-  if (skuTend) skuTend.addEventListener('input', () => { if (window.allTendencias) applyFiltersTendencias(window.allTendencias); });
-  
-  const filterImp = document.getElementById('filterImpacto');
-  const skuImp = document.getElementById('filterImpactoSKU');
-  if (filterImp) filterImp.addEventListener('change', () => { if (window.allImpactos) applyFiltrosImpacto(window.allImpactos); });
-  if (skuImp) skuImp.addEventListener('input', () => { if (window.allImpactos) applyFiltrosImpacto(window.allImpactos); });
-  
-  const filterOtim = document.getElementById('filterOportunidade');
-  const skuOtim = document.getElementById('filterOtimSKU');
-  if (filterOtim) filterOtim.addEventListener('change', () => { if (window.allPrecosOtimos) applyFiltrosOtim(window.allPrecosOtimos); });
-  if (skuOtim) skuOtim.addEventListener('input', () => { if (window.allPrecosOtimos) applyFiltrosOtim(window.allPrecosOtimos); });
-});
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-// ── FUNÇÕES DE ANÁLISE DE TENDÊNCIAS ────
-function calcularQuedaMesAnterior(sku) {
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  if (!rawData.meses) return { mesAnterior: 0, mesAtual: 0, queda: 0 };
-  
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const mesesComDados = monthLabels.filter(label => rawData.meses[label]?.q > 0).slice(-2);
-  
-  if (mesesComDados.length < 2) return { mesAnterior: 0, mesAtual: 0, queda: 0 };
-  
-  const mesAnterior = rawData.meses[mesesComDados[0]]?.q || 0;
-  const mesAtual = rawData.meses[mesesComDados[1]]?.q || 0;
-  const queda = mesAnterior > 0 ? ((mesAnterior - mesAtual) / mesAnterior) * 100 : 0;
-  
-  return { mesAnterior, mesAtual, queda: Math.round(queda * 10) / 10 };
-}
-
-function calcularTendencia3m(sku) {
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  if (!rawData.meses) return { media3m: 0, mesAtual: 0, tendencia: 0 };
-  
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const last3 = monthLabels.filter(label => rawData.meses[label]?.q > 0).slice(-3);
-  
-  if (last3.length < 2) return { media3m: 0, mesAtual: 0, tendencia: 0 };
-  
-  const mesAtual = rawData.meses[last3[last3.length - 1]]?.q || 0;
-  const mediaPrimeiros2 = (
-    (rawData.meses[last3[0]]?.q || 0) + 
-    (rawData.meses[last3[1]]?.q || 0)
-  ) / 2;
-  
-  const tendencia = mediaPrimeiros2 > 0 ? ((mediaPrimeiros2 - mesAtual) / mediaPrimeiros2) * 100 : 0;
-  
-  return { media3m: Math.round(mediaPrimeiros2), mesAtual: Math.round(mesAtual), tendencia: Math.round(tendencia * 10) / 10 };
-}
-
-function calcularVelocidade(sku) {
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  if (!rawData.meses) return { acelerando: false, valor: 0 };
-  
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const last3 = monthLabels.filter(label => rawData.meses[label]?.q > 0).slice(-3);
-  
-  if (last3.length < 3) return { acelerando: false, valor: 0 };
-  
-  const var1 = rawData.meses[last3[0]]?.q || 0;
-  const var2 = rawData.meses[last3[1]]?.q || 0;
-  const var3 = rawData.meses[last3[2]]?.q || 0;
-  
-  const quedaAnterior = var1 > 0 ? ((var1 - var2) / var1) * 100 : 0;
-  const quedaAtual = var2 > 0 ? ((var2 - var3) / var2) * 100 : 0;
-  
-  const acelerando = quedaAtual < quedaAnterior && quedaAtual < 0; // Queda piorando
-  
-  return { acelerando, valor: Math.round(quedaAtual * 10) / 10 };
-}
-
-function renderTendencias() {
-  if (!APP.allSkus || APP.allSkus.length === 0) return;
-  
-  const tendencias = [];
-  
-  APP.allSkus.forEach(item => {
-    const queda = calcularQuedaMesAnterior(String(item.sku));
-    const tendencia3m = calcularTendencia3m(String(item.sku));
-    const velocidade = calcularVelocidade(String(item.sku));
-    
-    if (queda.mesAnterior > 0 || queda.mesAtual > 0 || tendencia3m.media3m > 0) {
-      let status = '🟢 Crescimento';
-      if (queda.queda > 30) status = '🔴 Crítica';
-      else if (queda.queda > 15) status = '🟡 Moderada';
-      else if (queda.queda > 5) status = '🟠 Leve';
-      
-      tendencias.push({
-        sku: item.sku,
-        produto: item.nome,
-        mesAnterior: queda.mesAnterior,
-        mesAtual: queda.mesAtual,
-        quedaMes: queda.queda,
-        media3m: tendencia3m.media3m,
-        tendencia3m: tendencia3m.tendencia,
-        velocidade: velocidade.acelerando ? '↗️ Acelerando' : '↘️ Estabilizando',
-        status: status
-      });
-    }
-  });
-  
-  tendencias.sort((a, b) => Math.abs(b.quedaMes) - Math.abs(a.quedaMes));
-  window.allTendencias = tendencias;
-  applyFiltersTendencias(tendencias);
-}
-
-function applyFiltersTendencias(all) {
-  const filtro = document.getElementById('filterTendencia')?.value || '';
-  const sku = document.getElementById('filterTendenciaSKU')?.value?.toLowerCase() || '';
-  
-  let filtered = all;
-  
-  if (filtro) {
-    if (filtro === 'critico') filtered = filtered.filter(t => t.quedaMes > 30);
-    else if (filtro === 'aviso') filtered = filtered.filter(t => t.quedaMes > 15 && t.quedaMes <= 30);
-    else if (filtro === 'leve') filtered = filtered.filter(t => t.quedaMes > 5 && t.quedaMes <= 15);
-    else if (filtro === 'crescimento') filtered = filtered.filter(t => t.quedaMes <= 0);
+// Para cada SKU: preço médio por mês = receita / qtd
+function getPriceByMonth(skuStr){
+  const meses=APP.rawSalesBySku?.[skuStr]?.meses||{};
+  const result={};
+  for(const [label,vals] of Object.entries(meses)){
+    result[label]=vals.q>0?vals.v/vals.q:null;
   }
-  
-  if (sku) filtered = filtered.filter(t => String(t.sku).includes(sku) || t.produto.toLowerCase().includes(sku));
-  
-  const tbody = document.getElementById('corpTabelaTendencias');
-  if (!tbody) return;
-  
-  tbody.innerHTML = filtered.map(t => `
-    <tr style="border-bottom:1px solid var(--border);background:var(--surface)">
-      <td style="text-align:left;padding:8px">${t.sku}</td>
-      <td style="text-align:left;padding:8px">${t.produto}</td>
-      <td style="text-align:right;padding:8px">${t.mesAnterior}</td>
-      <td style="text-align:right;padding:8px">${t.mesAtual}</td>
-      <td style="text-align:right;padding:8px;color:${t.quedaMes > 0 ? '#991B1B' : '#166534'};font-weight:600">${t.quedaMes > 0 ? '-' : '+'}${Math.abs(t.quedaMes).toFixed(1)}%</td>
-      <td style="text-align:right;padding:8px">${t.media3m}</td>
-      <td style="text-align:right;padding:8px;color:${t.tendencia3m > 0 ? '#991B1B' : '#166534'};font-weight:600">${t.tendencia3m > 0 ? '-' : '+'}${Math.abs(t.tendencia3m).toFixed(1)}%</td>
-      <td style="text-align:right;padding:8px">${t.velocidade}</td>
-      <td style="text-align:center;padding:8px">${t.status}</td>
-    </tr>
-  `).join('');
-  
-  // Calcular stats
-  const stats = {
-    critica: filtered.filter(t => t.quedaMes > 30).length,
-    moderada: filtered.filter(t => t.quedaMes > 15 && t.quedaMes <= 30).length,
-    crescimento: filtered.filter(t => t.quedaMes <= 0).length,
-    mediaQueda: Math.round(filtered.reduce((s, t) => s + (t.quedaMes > 0 ? t.quedaMes : 0), 0) / Math.max(filtered.length, 1) * 10) / 10
-  };
-  
-  document.getElementById('statsQuedaCritica').textContent = stats.critica;
-  document.getElementById('statsQuedaModera').textContent = stats.moderada;
-  document.getElementById('statsEmCrescimento').textContent = stats.crescimento;
-  document.getElementById('statsQuedaMedia').textContent = stats.mediaQueda + '%';
+  return result;
 }
 
-function resetFiltrosImpacto() {
-  document.getElementById('filterImpacto').value = '';
-  document.getElementById('filterImpactoSKU').value = '';
-  if (window.allImpactos) applyFiltrosImpacto(window.allImpactos);
+// Elasticidade entre dois meses consecutivos para um SKU
+// e = (ΔQ/Q) / (ΔP/P)
+function calcElasticidade(priceMap, qMap){
+  const labels=MONTH_SHEETS.map(m=>m.label);
+  const points=[];
+  for(let i=1;i<labels.length;i++){
+    const l=labels[i], lp=labels[i-1];
+    const p1=priceMap[lp],p2=priceMap[l];
+    const q1=qMap[lp],q2=qMap[l];
+    if(!p1||!p2||!q1||!q2) continue;
+    const dp=(p2-p1)/p1, dq=(q2-q1)/q1;
+    if(Math.abs(dp)<0.005) continue; // preço sem variação significativa
+    points.push({label:l, dp, dq, e:dq/dp, prc_var:dp*100, vol_var:dq*100});
+  }
+  return points;
 }
 
-// ── FUNÇÕES DE ANÁLISE DE PREÇO ────
-function calcularPrecoMedio(sku, mesLabel) {
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  const mesData = rawData.meses?.[mesLabel];
-  
-  if (!mesData || mesData.q === 0) return 0;
-  
-  const precoMedio = mesData.v / mesData.q;
-  return Math.round(precoMedio * 100) / 100;
+// Média das elasticidades de um SKU
+function avgElasticidade(points){
+  if(!points.length) return null;
+  const sum=points.reduce((s,p)=>s+p.e,0);
+  return sum/points.length;
 }
 
-function renderAnalisePrecos() {
-  if (!APP.allSkus || APP.allSkus.length === 0) return;
-  
-  const impactos = [];
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const mesesComDados = monthLabels.filter(label => {
-    let temDado = false;
-    APP.allSkus.forEach(item => {
-      const rawData = APP.rawSalesBySku?.[String(item.sku)];
-      if (rawData?.meses?.[label]?.q > 0) temDado = true;
+// Classifica elasticidade
+function classifyElast(e){
+  if(e===null) return {label:'Sem dados',cls:'neutral'};
+  if(e>0)  return {label:'Anômalo ↑',cls:'neutral',tip:'Volume e preço subiram juntos'};
+  if(e>=-0.5) return {label:'Inelástico',cls:'inelastic',tip:'Preço sobe, volume cai pouco — boa margem'};
+  if(e>=-1.5) return {label:'Normal',cls:'good',tip:'Elasticidade unitária'};
+  return {label:'Elástico',cls:'elastic',tip:'Preço sobe, volume cai muito — cuidado'};
+}
+
+// Pega meses ativos conforme filtro de período
+function getRentMonths(){
+  const p=document.getElementById('rentFiltPeriodo')?.value||'all';
+  const all=MONTH_SHEETS.map(m=>m.label);
+  if(p==='all') return all;
+  return all.slice(-parseInt(p));
+}
+
+// Filtra SKUs conforme dropdowns de rentabilidade
+function getRentSkus(){
+  const cat=document.getElementById('rentFiltCat')?.value||'';
+  const sub=document.getElementById('rentFiltSubcat')?.value||'';
+  const marca=document.getElementById('rentFiltMarca')?.value||'';
+  const abc=document.getElementById('rentFiltAbc')?.value||'';
+  return APP.allSkus.filter(s=>{
+    if(!(APP.custoMap?.[String(s.sku)]?.custo>0)) return false; // sem custo = excluir
+    if(cat&&s.cat!==cat) return false;
+    if(sub&&s.sub!==sub) return false;
+    if(marca&&s.marca!==marca) return false;
+    if(abc&&s.abcV!==abc) return false;
+    return true;
+  });
+}
+
+// Para um SKU, calcula métricas no período selecionado
+function calcSkuMetrics(s){
+  const months=getRentMonths();
+  const raw=APP.rawSalesBySku?.[String(s.sku)]?.meses||{};
+  const custo=APP.custoMap?.[String(s.sku)]?.custo||0;
+
+  let totalV=0,totalQ=0;
+  const priceMap={},qMap={};
+  for(const l of months){
+    const m=raw[l]||{v:0,q:0};
+    totalV+=m.v; totalQ+=m.q;
+    if(m.q>0){priceMap[l]=m.v/m.q; qMap[l]=m.q;}
+  }
+
+  const precoMedio=totalQ>0?totalV/totalQ:0;
+  const margemUn=precoMedio-custo;
+  const margemPct=precoMedio>0?margemUn/precoMedio*100:0;
+  const lucro=margemUn*totalQ;
+
+  const elastPoints=calcElasticidade(priceMap,qMap);
+  const elastMedia=avgElasticidade(elastPoints);
+  const elastClass=classifyElast(elastMedia);
+
+  // Tendência de preço: último mês vs primeiro mês com dado
+  const labelsWithData=months.filter(l=>priceMap[l]);
+  const precoInicio=labelsWithData.length?priceMap[labelsWithData[0]]:null;
+  const precoFim=labelsWithData.length?priceMap[labelsWithData[labelsWithData.length-1]]:null;
+  const varPreco=precoInicio&&precoFim?((precoFim-precoInicio)/precoInicio*100):0;
+
+  // Tendência de volume
+  const qInicio=labelsWithData.length?qMap[labelsWithData[0]]:null;
+  const qFim=labelsWithData.length?qMap[labelsWithData[labelsWithData.length-1]]:null;
+  const varVol=qInicio&&qFim?((qFim-qInicio)/qInicio*100):0;
+
+  return {custo,precoMedio,margemUn,margemPct,lucro,elastMedia,elastClass,
+          elastPoints,totalV,totalQ,varPreco,varVol,priceMap,qMap};
+}
+
+// ── Init filtros ──────────────────────────────────────────────────────────────
+function initRentFiltros(){
+  const cats=[...new Set(APP.allSkus.map(s=>s.cat))].sort();
+  const marcas=[...new Set(APP.allSkus.map(s=>s.marca).filter(Boolean))].sort();
+  document.getElementById('rentFiltCat').innerHTML=
+    '<option value="">Todas as categorias</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  document.getElementById('rentFiltMarca').innerHTML=
+    '<option value="">Todas as marcas</option>'+marcas.map(m=>`<option value="${m}">${m}</option>`).join('');
+  // Populate elasticidade category selector too
+  const sel=document.getElementById('rentElastCat');
+  if(sel) sel.innerHTML='<option value="">Portfólio total</option>'+
+    cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+
+// ── Build principal ───────────────────────────────────────────────────────────
+function buildRentabilidade(){
+  // Update subcat filter
+  const cat=document.getElementById('rentFiltCat')?.value||'';
+  const subcats=cat?[...new Set(APP.allSkus.filter(s=>s.cat===cat).map(s=>s.sub).filter(Boolean))].sort():[];
+  document.getElementById('rentFiltSubcat').innerHTML=
+    '<option value="">Todas as subcategorias</option>'+subcats.map(s=>`<option value="${s}">${s}</option>`).join('');
+
+  const skus=getRentSkus();
+  if(!skus.length){
+    document.getElementById('rentKpis').innerHTML=`<div style="color:var(--text3);font-size:13px;grid-column:1/-1">Nenhum produto com custo cadastrado encontrado. Verifique a aba Estoque no Google Sheets.</div>`;
+    return;
+  }
+
+  // Compute metrics for all filtered SKUs
+  const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
+
+  buildRentKpis(metrics);
+  buildRentInsights(metrics);
+  buildMargemCatChart(metrics);
+  buildReceitaVsLucroChart(metrics);
+  buildElastChart();
+  rentPage=0;
+  renderRentTable(metrics);
+}
+
+// ── KPIs ─────────────────────────────────────────────────────────────────────
+function buildRentKpis(metrics){
+  const totalFat=metrics.reduce((s,x)=>s+x.m.totalV,0);
+  const totalLucro=metrics.reduce((s,x)=>s+x.m.lucro,0);
+  const margemMedia=totalFat>0?totalLucro/totalFat*100:0;
+  const skuComMargPos=metrics.filter(x=>x.m.margemPct>0).length;
+  const skuElast=metrics.filter(x=>x.m.elastMedia!==null);
+  const elastMedia=skuElast.length?skuElast.reduce((s,x)=>s+x.m.elastMedia,0)/skuElast.length:null;
+  const topMargem=[...metrics].sort((a,b)=>b.m.margemPct-a.m.margemPct)[0];
+
+  document.getElementById('rentKpis').innerHTML=`
+    <div class="rent-kpi green">
+      <div class="rent-kpi-label">Receita total</div>
+      <div class="rent-kpi-value">${fmtK(totalFat)}</div>
+      <div class="rent-kpi-sub">${metrics.length} SKUs com custo</div>
+    </div>
+    <div class="rent-kpi blue">
+      <div class="rent-kpi-label">Lucro bruto estimado</div>
+      <div class="rent-kpi-value">${fmtK(totalLucro)}</div>
+      <div class="rent-kpi-sub">Receita − (custo × qtd vendida)</div>
+    </div>
+    <div class="rent-kpi ${margemMedia>=30?'green':margemMedia>=15?'amber':'red'}">
+      <div class="rent-kpi-label">Margem bruta média</div>
+      <div class="rent-kpi-value">${margemMedia.toFixed(1)}%</div>
+      <div class="rent-kpi-sub">${skuComMargPos} SKUs com margem positiva</div>
+    </div>
+    <div class="rent-kpi purple">
+      <div class="rent-kpi-label">Elasticidade média</div>
+      <div class="rent-kpi-value">${elastMedia!==null?elastMedia.toFixed(2):'—'}</div>
+      <div class="rent-kpi-sub">${skuElast.length} SKUs com dados suficientes</div>
+    </div>
+    <div class="rent-kpi amber">
+      <div class="rent-kpi-label">Maior margem</div>
+      <div class="rent-kpi-value">${topMargem?topMargem.m.margemPct.toFixed(1)+'%':'—'}</div>
+      <div class="rent-kpi-sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${topMargem?.s.nome?.slice(0,28)||'—'}</div>
+    </div>`;
+}
+
+// ── Insights ─────────────────────────────────────────────────────────────────
+function buildRentInsights(metrics){
+  const insights=[];
+
+  // Produtos com preço subiu e volume NÃO caiu (elasticidade positiva — pricing power)
+  const winners=metrics.filter(x=>x.m.varPreco>5&&x.m.varVol>-5&&x.m.totalQ>10);
+  if(winners.length){
+    const w=winners.sort((a,b)=>b.m.lucro-a.m.lucro)[0];
+    insights.push({type:'winner',
+      tag:'↑ Pricing Power',
+      title:`${winners.length} produto${winners.length>1?'s':''} subiram preço sem perder volume`,
+      desc:`Esses produtos têm forte poder de precificação. ${w.s.nome} subiu ${w.m.varPreco.toFixed(1)}% no preço e volume variou apenas ${w.m.varVol.toFixed(1)}%.`,
+      stats:[`+${w.m.varPreco.toFixed(1)}% preço`,`${w.m.varVol.toFixed(1)}% volume`,fmtK(w.m.lucro)+' lucro']
     });
-    return temDado;
+  }
+
+  // Produtos com margem negativa (preço abaixo do custo)
+  const underwater=metrics.filter(x=>x.m.margemPct<0&&x.m.totalQ>5);
+  if(underwater.length){
+    insights.push({type:'loser',
+      tag:'⚠ Margem Negativa',
+      title:`${underwater.length} produto${underwater.length>1?'s':''} vendendo abaixo do custo`,
+      desc:`Preço de venda médio está abaixo do custo unitário. Ação imediata necessária: revisar precificação ou descontinuar.`,
+      stats:[`${underwater.length} SKUs`,`Pior: ${[...underwater].sort((a,b)=>a.m.margemPct-b.m.margemPct)[0]?.s.nome?.slice(0,20)}`]
+    });
+  }
+
+  // Produtos elásticos com preço subindo — risco
+  const risco=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia<-1.5&&x.m.varPreco>3);
+  if(risco.length){
+    insights.push({type:'loser',
+      tag:'⚠ Elástico com Alta de Preço',
+      title:`${risco.length} produto${risco.length>1?'s com':'com'} elasticidade alta e preço subindo`,
+      desc:`Volume respondeu mais do que proporcional à alta de preço. Risco de perda de receita se preço continuar subindo.`,
+      stats:[...risco.slice(0,2).map(x=>`${x.s.nome.slice(0,20)} (e=${x.m.elastMedia.toFixed(1)})`)]
+    });
+  }
+
+  // Categoria com melhor margem
+  const byCat={};
+  metrics.forEach(({s,m})=>{
+    if(!byCat[s.cat]) byCat[s.cat]={lucro:0,fat:0};
+    byCat[s.cat].lucro+=m.lucro; byCat[s.cat].fat+=m.totalV;
   });
-  
-  if (mesesComDados.length < 2) return;
-  
-  const mesAnterior = mesesComDados[mesesComDados.length - 2];
-  const mesAtual = mesesComDados[mesesComDados.length - 1];
-  
-  APP.allSkus.forEach(item => {
-    const precoAnt = calcularPrecoMedio(String(item.sku), mesAnterior);
-    const precoAtual = calcularPrecoMedio(String(item.sku), mesAtual);
-    
-    const rawDataAnt = APP.rawSalesBySku?.[String(item.sku)]?.meses?.[mesAnterior];
-    const rawDataAtual = APP.rawSalesBySku?.[String(item.sku)]?.meses?.[mesAtual];
-    
-    const qtdAnt = rawDataAnt?.q || 0;
-    const qtdAtual = rawDataAtual?.q || 0;
-    
-    if (precoAnt > 0 && precoAtual > 0) {
-      const aumentoPreco = ((precoAtual - precoAnt) / precoAnt) * 100;
-      const quedaQtd = qtdAnt > 0 ? ((qtdAnt - qtdAtual) / qtdAnt) * 100 : 0;
-      
-      const faturAnt = precoAnt * qtdAnt;
-      const faturAtual = precoAtual * qtdAtual;
-      const impactoMensal = faturAnt - faturAtual;
-      
-      let status = '🟢 Positivo';
-      if (aumentoPreco > 0 && quedaQtd > 5) status = '🔴 Negativo';
-      else if (aumentoPreco > 0 && quedaQtd <= 5) status = '🟡 Neutro';
-      
-      impactos.push({
-        sku: item.sku,
-        produto: item.nome,
-        precoAnt: Math.round(precoAnt * 100) / 100,
-        precoAtual: Math.round(precoAtual * 100) / 100,
-        aumentoPreco: Math.round(aumentoPreco * 10) / 10,
-        qtdAnt: Math.round(qtdAnt),
-        qtdAtual: Math.round(qtdAtual),
-        quedaQtd: Math.round(quedaQtd * 10) / 10,
-        faturAnt: Math.round(faturAnt),
-        faturAtual: Math.round(faturAtual),
-        impactoMensal: Math.round(impactoMensal),
-        status: status
-      });
+  const catsSorted=Object.entries(byCat).map(([c,d])=>({c,mg:d.fat>0?d.lucro/d.fat*100:0,fat:d.fat})).sort((a,b)=>b.mg-a.mg);
+  if(catsSorted.length){
+    const best=catsSorted[0];
+    insights.push({type:'winner',
+      tag:'✦ Melhor Margem',
+      title:`${best.c} é a categoria mais rentável`,
+      desc:`Margem bruta de ${best.mg.toFixed(1)}% sobre ${fmtK(best.fat)} em faturamento. Bom candidato para ampliar profundidade de mix.`,
+      stats:[`${best.mg.toFixed(1)}% margem`,fmtK(best.fat)+' faturamento']
+    });
+  }
+
+  // Produto com maior potencial de margem (alta qtd, baixa margem atual)
+  const potencial=metrics.filter(x=>x.m.margemPct>0&&x.m.margemPct<20&&x.m.totalQ>50)
+    .sort((a,b)=>b.m.totalQ-a.m.totalQ);
+  if(potencial.length){
+    const p=potencial[0];
+    insights.push({type:'watch',
+      tag:'→ Oportunidade de Margem',
+      title:`${p.s.nome.slice(0,30)} — alto volume, margem baixa`,
+      desc:`${Math.round(p.m.totalQ).toLocaleString('pt-BR')} unidades vendidas com apenas ${p.m.margemPct.toFixed(1)}% de margem. Um reajuste de 5% no preço pode gerar R$ ${fmtK(p.m.totalQ*p.m.precoMedio*0.05)} adicional.`,
+      stats:[`${p.m.margemPct.toFixed(1)}% margem atual`,`${Math.round(p.m.totalQ).toLocaleString('pt-BR')} un.`]
+    });
+  }
+
+  // Inelásticos com margem baixa — podem subir preço sem perder volume
+  const inelast=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia>-0.5&&x.m.elastMedia<0&&x.m.margemPct<25&&x.m.totalQ>20);
+  if(inelast.length){
+    insights.push({type:'info',
+      tag:'↑ Subir Preço com Segurança',
+      title:`${inelast.length} produto${inelast.length>1?'s com':'com'} demanda inelástica e margem a melhorar`,
+      desc:`Histórico mostra que variação de preço não afeta significativamente o volume. Oportunidade de reajuste com baixo risco.`,
+      stats:[...inelast.slice(0,3).map(x=>x.s.nome.slice(0,22))]
+    });
+  }
+
+  document.getElementById('rentInsights').innerHTML=insights.slice(0,6).map(i=>`
+    <div class="insight-card ${i.type}">
+      <div class="insight-card-tag">${i.tag}</div>
+      <div class="insight-card-title">${i.title}</div>
+      <div class="insight-card-desc">${i.desc}</div>
+      <div class="insight-card-stats">${(i.stats||[]).map(s=>`<span class="insight-card-stat">${s}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ── Gráfico margem por categoria ──────────────────────────────────────────────
+function buildMargemCatChart(metrics){
+  ch('cMargemCat');
+  const byCat={};
+  metrics.forEach(({s,m})=>{
+    if(!byCat[s.cat]) byCat[s.cat]={lucro:0,fat:0};
+    byCat[s.cat].lucro+=m.lucro; byCat[s.cat].fat+=m.totalV;
+  });
+  const cats=Object.entries(byCat).map(([c,d])=>({c,mg:d.fat>0?d.lucro/d.fat*100:0}))
+    .sort((a,b)=>b.mg-a.mg);
+  const colors=cats.map(x=>x.mg>=30?'#166534':x.mg>=15?'#D97706':x.mg>=0?'#1D4ED8':'#991B1B');
+  APP.charts.cMargemCat=new Chart(document.getElementById('cMargemCat'),{
+    type:'bar', indexAxis:'y',
+    data:{labels:cats.map(x=>x.c),datasets:[{data:cats.map(x=>parseFloat(x.mg.toFixed(1))),backgroundColor:colors,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>`Margem: ${ctx.raw.toFixed(1)}%`}}},
+      scales:{x:{ticks:{callback:v=>v+'%',font:{size:10},color:TX},grid:{color:GC},min:0},
+              y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}
+  });
+}
+
+// ── Gráfico receita vs lucro ───────────────────────────────────────────────────
+function buildReceitaVsLucroChart(metrics){
+  ch('cReceitaVsLucro');
+  const byCat={};
+  metrics.forEach(({s,m})=>{
+    if(!byCat[s.cat]) byCat[s.cat]={fat:0,lucro:0};
+    byCat[s.cat].fat+=m.totalV; byCat[s.cat].lucro+=m.lucro;
+  });
+  const cats=Object.entries(byCat).sort((a,b)=>b[1].fat-a[1].fat).slice(0,8);
+  APP.charts.cReceitaVsLucro=new Chart(document.getElementById('cReceitaVsLucro'),{
+    type:'bar',
+    data:{
+      labels:cats.map(([c])=>c),
+      datasets:[
+        {label:'Receita',data:cats.map(([,d])=>Math.round(d.fat)),backgroundColor:'#CBD5E1',borderRadius:3,stack:'s'},
+        {label:'Lucro Bruto',data:cats.map(([,d])=>Math.round(Math.max(d.lucro,0))),backgroundColor:'#166534',borderRadius:3,stack:'s'}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtK(ctx.raw)}`}}},
+      scales:{x:{ticks:{font:{size:10},color:TX},grid:{display:false}},
+              y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}}}}
+  });
+}
+
+// ── Gráfico elasticidade mês a mês ────────────────────────────────────────────
+function buildElastChart(){
+  ch('cElast');
+  const catFilter=document.getElementById('rentElastCat')?.value||'';
+  const months=MONTH_SHEETS.map(m=>m.label);
+
+  // Aggregate price and volume per month for selected scope
+  const priceMap={}, qMap={};
+  months.forEach(l=>{priceMap[l]=null; qMap[l]=0;});
+
+  const raw=APP.rawSalesBySku||{};
+  for(const [skuStr,data] of Object.entries(raw)){
+    if(!APP.custoMap?.[skuStr]?.custo) continue; // só com custo
+    if(catFilter&&data.cat!==catFilter) continue;
+    for(const l of months){
+      const m=data.meses[l]||{v:0,q:0};
+      if(m.q>0){
+        priceMap[l]=(priceMap[l]||0)+m.v;
+        qMap[l]=(qMap[l]||0)+m.q;
+      }
     }
+  }
+  // Convert summed values to average price
+  const avgPriceMap={};
+  months.forEach(l=>{ avgPriceMap[l]=qMap[l]>0?priceMap[l]/qMap[l]:null; });
+
+  const elastPoints=calcElasticidade(avgPriceMap,qMap);
+
+  // Build dual-axis: % price change and % volume change
+  const labels=elastPoints.map(p=>p.label);
+  const dpData=elastPoints.map(p=>parseFloat((p.dp*100).toFixed(1)));
+  const dqData=elastPoints.map(p=>parseFloat((p.dq*100).toFixed(1)));
+  const eData=elastPoints.map(p=>parseFloat(Math.max(Math.min(p.e,3),-3).toFixed(2)));
+
+  APP.charts.cElast=new Chart(document.getElementById('cElast'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Δ Preço médio (%)',data:dpData,backgroundColor:'#1D4ED8CC',borderRadius:4,yAxisID:'y'},
+        {label:'Δ Volume (%)',data:dqData,backgroundColor:'#166534CC',borderRadius:4,yAxisID:'y'},
+        {label:'Elasticidade',data:eData,type:'line',borderColor:'#D97706',backgroundColor:'transparent',
+          borderWidth:2,pointRadius:5,pointBackgroundColor:'#D97706',yAxisID:'y2',tension:.3}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
+        tooltip:{callbacks:{label:ctx=>{
+          if(ctx.datasetIndex===2) return `Elasticidade: ${ctx.raw}`;
+          return `${ctx.dataset.label}: ${ctx.raw>0?'+':''}${ctx.raw}%`;
+        }}}},
+      scales:{
+        y:{position:'left',ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX},grid:{color:GC}},
+        y2:{position:'right',ticks:{callback:v=>v,font:{size:10},color:'#D97706'},grid:{display:false}},
+        x:{ticks:{font:{size:10},color:TX},grid:{display:false}}
+      }}
   });
-  
-  impactos.sort((a, b) => b.impactoMensal - a.impactoMensal);
-  window.allImpactos = impactos;
-  applyFiltrosImpacto(impactos);
 }
 
-function applyFiltrosImpacto(all) {
-  const filtro = document.getElementById('filterImpacto')?.value || '';
-  const sku = document.getElementById('filterImpactoSKU')?.value?.toLowerCase() || '';
-  
-  let filtered = all;
-  
-  if (filtro) {
-    if (filtro === 'negativo') filtered = filtered.filter(i => i.aumentoPreco > 0 && i.quedaQtd > 5);
-    else if (filtro === 'positivo') filtered = filtered.filter(i => i.aumentoPreco > 0 && i.quedaQtd <= 5);
-    else if (filtro === 'crescimento') filtered = filtered.filter(i => i.aumentoPreco < 0 && i.quedaQtd < 0);
-  }
-  
-  if (sku) filtered = filtered.filter(i => String(i.sku).includes(sku) || i.produto.toLowerCase().includes(sku));
-  
-  const tbody = document.getElementById('corpTabelaPrecos');
-  if (!tbody) return;
-  
-  tbody.innerHTML = filtered.map(i => `
-    <tr style="border-bottom:1px solid var(--border);background:var(--surface)">
-      <td style="text-align:left;padding:8px">${i.sku}</td>
-      <td style="text-align:left;padding:8px">${i.produto}</td>
-      <td style="text-align:right;padding:8px">R$ ${i.precoAnt.toFixed(2).replace('.', ',')}</td>
-      <td style="text-align:right;padding:8px">R$ ${i.precoAtual.toFixed(2).replace('.', ',')}</td>
-      <td style="text-align:right;padding:8px;color:${i.aumentoPreco > 0 ? '#992424' : '#166534'};font-weight:600">${i.aumentoPreco > 0 ? '+' : ''}${i.aumentoPreco.toFixed(1)}%</td>
-      <td style="text-align:right;padding:8px">${i.qtdAnt}</td>
-      <td style="text-align:right;padding:8px">${i.qtdAtual}</td>
-      <td style="text-align:right;padding:8px;color:${i.quedaQtd > 0 ? '#991B1B' : '#166534'};font-weight:600">${i.quedaQtd > 0 ? '-' : '+'}${Math.abs(i.quedaQtd).toFixed(1)}%</td>
-      <td style="text-align:right;padding:8px">R$ ${i.faturAnt.toLocaleString('pt-BR')}</td>
-      <td style="text-align:right;padding:8px">R$ ${i.faturAtual.toLocaleString('pt-BR')}</td>
-      <td style="text-align:right;padding:8px;color:#991B1B;font-weight:600">-R$ ${Math.abs(i.impactoMensal).toLocaleString('pt-BR')}</td>
-      <td style="text-align:center;padding:8px">${i.status}</td>
-    </tr>
-  `).join('');
-  
-  const stats = {
-    negativo: filtered.filter(i => i.aumentoPreco > 0 && i.quedaQtd > 5).length,
-    perdaTotal: Math.round(filtered.reduce((s, i) => s + Math.max(0, i.impactoMensal), 0)),
-    perdaAnual: Math.round(filtered.reduce((s, i) => s + Math.max(0, i.impactoMensal), 0) * 12),
-    mediaAumento: filtered.length > 0 ? Math.round(filtered.reduce((s, i) => s + i.aumentoPreco, 0) / filtered.length * 10) / 10 : 0
-  };
-  
-  document.getElementById('statsNegativo').textContent = stats.negativo;
-  document.getElementById('statsPerdaTotal').textContent = 'R$ ' + stats.perdaTotal.toLocaleString('pt-BR');
-  document.getElementById('statsPerdaAnual').textContent = 'R$ ' + stats.perdaAnual.toLocaleString('pt-BR');
-  document.getElementById('statsMedioAumento').textContent = stats.mediaAumento + '%';
-}
+// ── Tabela rentabilidade ──────────────────────────────────────────────────────
+function renderRentTable(metricsIn){
+  const metrics=metricsIn||(() => {
+    const skus=getRentSkus();
+    return skus.map(s=>({s,m:calcSkuMetrics(s)}));
+  })();
 
-function resetFiltrosOtim() {
-  document.getElementById('filterOportunidade').value = '';
-  document.getElementById('filterOtimSKU').value = '';
-  if (window.allPrecosOtimos) applyFiltrosOtim(window.allPrecosOtimos);
-}
+  const sorted=[...metrics].sort((a,b)=>b.m.lucro-a.m.lucro);
+  const start=rentPage*RENT_PAGE;
+  const slice=sorted.slice(start,start+RENT_PAGE);
+  const maxLucro=sorted[0]?.m.lucro||1;
 
-// ── FUNÇÕES DE PREÇO ÓTIMO ────
-function calcularElasticidade(sku) {
-  const rawData = APP.rawSalesBySku?.[String(sku)] || {};
-  if (!rawData.meses) return 0;
-  
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const mesesComDados = monthLabels.filter(label => rawData.meses[label]?.q > 0).slice(-3);
-  
-  if (mesesComDados.length < 2) return 0;
-  
-  const precoAnterior = calcularPrecoMedio(String(sku), mesesComDados[mesesComDados.length - 2]);
-  const precoAtual = calcularPrecoMedio(String(sku), mesesComDados[mesesComDados.length - 1]);
-  
-  const qtdAnterior = rawData.meses[mesesComDados[mesesComDados.length - 2]]?.q || 0;
-  const qtdAtual = rawData.meses[mesesComDados[mesesComDados.length - 1]]?.q || 0;
-  
-  if (precoAnterior === 0 || qtdAnterior === 0) return 0;
-  
-  const mudancaPreco = ((precoAtual - precoAnterior) / precoAnterior) * 100;
-  const mudancaQtd = ((qtdAtual - qtdAnterior) / qtdAnterior) * 100;
-  
-  if (mudancaPreco === 0) return 0;
-  
-  const elasticidade = mudancaQtd / mudancaPreco;
-  return Math.round(elasticidade * 100) / 100;
-}
+  const rows=slice.map(({s,m},i)=>{
+    const barW=Math.max(0,Math.round(Math.max(m.lucro,0)/maxLucro*100));
+    const margemColor=m.margemPct>=30?'#166534':m.margemPct>=15?'#D97706':m.margemPct>=0?'#1D4ED8':'#991B1B';
+    const ec=m.elastClass;
+    const varPrecoSign=m.varPreco>0?'+':'';
+    const varVolSign=m.varVol>0?'+':'';
+    return `<tr>
+      <td>${start+i+1}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
+      <td class="prod-name" title="${s.nome}">${s.nome}</td>
+      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500">${s.cat}</td>
+      <td class="num">R$ ${m.custo.toFixed(2)}</td>
+      <td class="num">R$ ${m.precoMedio.toFixed(2)}</td>
+      <td class="num" style="color:${margemColor};font-weight:500">${m.margemPct.toFixed(1)}%</td>
+      <td class="num">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="margin-bar"><div class="margin-bar-fill" style="width:${barW}%;background:${margemColor}"></div></div>
+          ${fmtK(m.lucro)}
+        </div>
+      </td>
+      <td class="num" style="color:${m.varPreco>2?'#991B1B':m.varPreco<-2?'#166534':'var(--text3)'}">${varPrecoSign}${m.varPreco.toFixed(1)}%</td>
+      <td class="num" style="color:${m.varVol>2?'#166534':m.varVol<-10?'#991B1B':'var(--text3)'}">${varVolSign}${m.varVol.toFixed(1)}%</td>
+      <td>
+        ${m.elastMedia!==null
+          ? `<span class="elast-pill ${ec.cls}" title="${ec.tip||''}">${m.elastMedia.toFixed(2)} ${ec.label}</span>`
+          : `<span style="color:var(--text3);font-size:11px">—</span>`}
+      </td>
+    </tr>`;
+  }).join('');
 
-function calcularPrecoOtimo(sku) {
-  const elasticidade = calcularElasticidade(String(sku));
-  const precoAtual = calcularPrecoMedio(String(sku), MONTH_SHEETS[MONTH_SHEETS.length - 1].label);
-  
-  if (precoAtual === 0 || elasticidade === 0) return precoAtual;
-  
-  if (elasticidade > -1.5) {
-    return Math.round(precoAtual * 1.08 * 100) / 100;
-  } else if (elasticidade < -2.5) {
-    return Math.round(precoAtual * 0.92 * 100) / 100;
-  } else {
-    return precoAtual;
-  }
-}
+  document.getElementById('rentTable').innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th>
+      <th style="text-align:right">Custo unit.</th>
+      <th style="text-align:right">Preço médio</th>
+      <th style="text-align:right">Margem %</th>
+      <th style="text-align:right">Lucro bruto</th>
+      <th style="text-align:right">Δ Preço</th>
+      <th style="text-align:right">Δ Volume</th>
+      <th>Elasticidade</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
 
-function renderPrecoOtimo() {
-  if (!APP.allSkus || APP.allSkus.length === 0) return;
-  
-  const precosOtimos = [];
-  const monthLabels = MONTH_SHEETS.map(m => m.label);
-  const ultimoMes = monthLabels[monthLabels.length - 1];
-  
-  APP.allSkus.forEach(item => {
-    const sku = String(item.sku);
-    const precoAtual = calcularPrecoMedio(sku, ultimoMes);
-    const elasticidade = calcularElasticidade(sku);
-    const precoOtimo = calcularPrecoOtimo(sku);
-    
-    if (precoAtual > 0) {
-      const rawData = APP.rawSalesBySku?.[sku];
-      const qtdAtual = rawData?.meses?.[ultimoMes]?.q || 0;
-      const faturAtual = precoAtual * qtdAtual;
-      
-      const mudancaPreco = ((precoOtimo - precoAtual) / precoAtual) * 100;
-      const mudancaQtdEstimada = elasticidade > 0 ? mudancaPreco * elasticidade / 100 : mudancaPreco * elasticidade / 100;
-      const qtdOtima = Math.max(1, Math.round(qtdAtual * (1 + mudancaQtdEstimada / 100)));
-      const faturOtimo = precoOtimo * qtdOtima;
-      
-      const ganho = faturOtimo - faturAtual;
-      
-      let estrategia = '🟡 Manter';
-      if (precoOtimo > precoAtual * 1.02) estrategia = '🟢 Aumentar';
-      else if (precoOtimo < precoAtual * 0.98) estrategia = '🔴 Reduzir';
-      
-      precosOtimos.push({
-        sku: item.sku,
-        produto: item.nome,
-        precoAtual: Math.round(precoAtual * 100) / 100,
-        precoOtimo: Math.round(precoOtimo * 100) / 100,
-        mudancaPercent: Math.round(((precoOtimo - precoAtual) / precoAtual) * 1000) / 10,
-        elasticidade: elasticidade,
-        faturAtual: Math.round(faturAtual),
-        faturOtimo: Math.round(faturOtimo),
-        ganhoMensal: Math.round(ganho),
-        estrategia: estrategia
-      });
-    }
-  });
-  
-  precosOtimos.sort((a, b) => Math.abs(b.ganhoMensal) - Math.abs(a.ganhoMensal));
-  window.allPrecosOtimos = precosOtimos;
-  applyFiltrosOtim(precosOtimos);
-}
-
-function applyFiltrosOtim(all) {
-  const filtro = document.getElementById('filterOportunidade')?.value || '';
-  const sku = document.getElementById('filterOtimSKU')?.value?.toLowerCase() || '';
-  
-  let filtered = all;
-  
-  if (filtro) {
-    if (filtro === 'reducir') filtered = filtered.filter(p => p.estrategia.includes('Reduzir'));
-    else if (filtro === 'aumentar') filtered = filtered.filter(p => p.estrategia.includes('Aumentar'));
-    else if (filtro === 'manter') filtered = filtered.filter(p => p.estrategia.includes('Manter'));
-  }
-  
-  if (sku) filtered = filtered.filter(p => String(p.sku).includes(sku) || p.produto.toLowerCase().includes(sku));
-  
-  const tbody = document.getElementById('corpTabelaPrecOtimo');
-  if (!tbody) return;
-  
-  tbody.innerHTML = filtered.map(p => `
-    <tr style="border-bottom:1px solid var(--border);background:var(--surface)">
-      <td style="text-align:left;padding:8px">${p.sku}</td>
-      <td style="text-align:left;padding:8px">${p.produto}</td>
-      <td style="text-align:right;padding:8px">R$ ${p.precoAtual.toFixed(2).replace('.', ',')}</td>
-      <td style="text-align:right;padding:8px;font-weight:600;color:#166534">R$ ${p.precoOtimo.toFixed(2).replace('.', ',')}</td>
-      <td style="text-align:right;padding:8px;color:${p.mudancaPercent > 0 ? '#166534' : '#991B1B'};font-weight:600">${p.mudancaPercent > 0 ? '+' : ''}${p.mudancaPercent.toFixed(1)}%</td>
-      <td style="text-align:right;padding:8px">${p.elasticidade.toFixed(2)}</td>
-      <td style="text-align:right;padding:8px">R$ ${p.faturAtual.toLocaleString('pt-BR')}</td>
-      <td style="text-align:right;padding:8px;font-weight:600;color:#166534">R$ ${p.faturOtimo.toLocaleString('pt-BR')}</td>
-      <td style="text-align:right;padding:8px;font-weight:600;color:#166534">+R$ ${p.ganhoMensal.toLocaleString('pt-BR')}</td>
-      <td style="text-align:center;padding:8px">${p.estrategia}</td>
-    </tr>
-  `).join('');
-  
-  const stats = {
-    reduzir: filtered.filter(p => p.estrategia.includes('Reduzir')).length,
-    aumentar: filtered.filter(p => p.estrategia.includes('Aumentar')).length,
-    ganhoTotal: filtered.reduce((s, p) => s + p.ganhoMensal, 0),
-    elastMedia: filtered.length > 0 ? Math.round(filtered.reduce((s, p) => s + p.elasticidade, 0) / filtered.length * 100) / 100 : 0
-  };
-  
-  document.getElementById('statsReduzir').textContent = stats.reduzir;
-  document.getElementById('statsAumentar').textContent = stats.aumentar;
-  document.getElementById('statsGanhoMensal').textContent = 'R$ ' + stats.ganhoTotal.toLocaleString('pt-BR');
-  document.getElementById('statsElastMedia').textContent = stats.elastMedia;
+  document.getElementById('rentPag').innerHTML=sorted.length>RENT_PAGE?`
+    <button class="pag-btn" onclick="rentPage--;buildRentabilidade()" ${rentPage===0?'disabled':''}>← Anterior</button>
+    <span class="pag-info">${start+1}–${Math.min(start+RENT_PAGE,sorted.length)} de ${sorted.length}</span>
+    <button class="pag-btn" onclick="rentPage++;buildRentabilidade()" ${start+RENT_PAGE>=sorted.length?'disabled':''}>Próximo →</button>
+  `:'';
 }
 
 
