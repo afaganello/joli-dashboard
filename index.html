@@ -251,6 +251,34 @@ tbody tr:hover td{background:#FAFAF8}
 .analise-kpi-trend{font-size:11px;font-weight:500;margin-top:4px}
 .analise-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px}
 .analise-empty-icon{font-size:32px;margin-bottom:12px}
+/* ── RENT CAT CARDS ── */
+.rent-cat-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:4px}
+.rent-cat-table thead th{background:#F7F5F0;padding:9px 14px;text-align:left;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);white-space:nowrap}
+.rent-cat-table thead th.r{text-align:right}
+.rent-cat-table tbody td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.rent-cat-table tbody tr:last-child td{border-bottom:none}
+.rent-cat-table tbody tr{cursor:pointer;transition:background .1s}
+.rent-cat-table tbody tr:hover td{background:#FAFAF8}
+.rent-cat-table tbody tr.cat-selected td{background:#F0FDF4}
+.rcat-name{font-weight:500;color:var(--text);font-size:13px}
+.rcat-sub{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+.rbar{display:flex;align-items:center;gap:8px}
+.rbar-track{width:120px;height:8px;background:var(--border);border-radius:4px;overflow:hidden;flex-shrink:0}
+.rbar-fill{height:100%;border-radius:4px}
+.rbar-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);white-space:nowrap}
+.rent-pct-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap}
+.rent-pct-badge.hi{background:#DCFCE7;color:#166534}
+.rent-pct-badge.md{background:#DBEAFE;color:#1E40AF}
+.rent-pct-badge.lo{background:#FEF3C7;color:#92400E}
+.rent-pct-badge.ng{background:#FEE2E2;color:#991B1B}
+.elast-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace}
+.elast-pill.elastic{background:#DCFCE7;color:var(--green)}
+.elast-pill.inelastic{background:#FEE2E2;color:var(--red)}
+.elast-pill.neutral{background:#F3F4F6;color:#6B7280}
+.elast-pill.good{background:#DBEAFE;color:var(--blue)}
+.margin-bar{display:inline-flex;width:80px;height:8px;background:var(--border);border-radius:4px;overflow:hidden;vertical-align:middle}
+.margin-bar-fill{height:100%;border-radius:4px}
+@media(max-width:768px){.rbar-track{width:60px}}
 @media(max-width:900px){.analise-layout{grid-template-columns:1fr}.analise-sidebar{position:static}}
 /* ── RENTABILIDADE ── */
 .rent-kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px}
@@ -700,72 +728,91 @@ tbody tr:hover td{background:#FAFAF8}
     <div class="pag" id="pag"></div>
   <!-- ── RENTABILIDADE ── -->
   <div class="panel" id="rentabilidade">
-    <div class="section-hdr">
-      <h2>Rentabilidade & Elasticidade</h2>
-      <p>Margem por produto · impacto de variação de preço em volume e receita · custo via aba Estoque</p>
-    </div>
 
-    <!-- KPIs gerais -->
-    <div class="rent-kpi-grid" id="rentKpis"></div>
-
-    <!-- Filtros -->
-    <div class="rent-filter-row">
-      <select id="rentFiltCat" onchange="buildRentabilidade()"><option value="">Todas as categorias</option></select>
-      <select id="rentFiltSubcat" onchange="buildRentabilidade()"><option value="">Todas as subcategorias</option></select>
-      <select id="rentFiltMarca" onchange="buildRentabilidade()"><option value="">Todas as marcas</option></select>
-      <select id="rentFiltAbc" onchange="buildRentabilidade()">
+    <!-- Filtros no topo -->
+    <div class="rent-filter-row" style="margin-bottom:20px">
+      <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap">Filtrar:</span>
+      <select id="rentFiltCat"     onchange="onRentFilter()"><option value="">Todas as categorias</option></select>
+      <select id="rentFiltSubcat"  onchange="onRentFilter()"><option value="">Todas as subcategorias</option></select>
+      <select id="rentFiltMarca"   onchange="onRentFilter()"><option value="">Todas as marcas</option></select>
+      <select id="rentFiltAbc"     onchange="onRentFilter()">
         <option value="">Todos ABC</option>
         <option value="A">Classe A</option>
         <option value="B">Classe B</option>
         <option value="C">Classe C</option>
       </select>
-      <select id="rentFiltPeriodo" onchange="buildRentabilidade()">
-        <option value="all">Todos os meses</option>
+      <select id="rentFiltPeriodo" onchange="onRentFilter()">
+        <option value="all">13 meses</option>
         <option value="6">Últimos 6 meses</option>
         <option value="3">Últimos 3 meses</option>
       </select>
     </div>
 
-    <!-- Insights automáticos -->
-    <div class="dev-section">
-      <div class="dev-section-title">Insights de rentabilidade</div>
-      <div class="dev-section-sub">Detectados automaticamente com base em variação de preço e resposta de volume</div>
-      <div class="insight-cards-grid" id="rentInsights"></div>
+    <!-- KPIs -->
+    <div class="rent-kpi-grid" id="rentKpis"></div>
+
+    <!-- Resumo por categoria (cards clicáveis) -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Rentabilidade por categoria</div>
+      <div id="rentCatCards"></div>
     </div>
 
-    <!-- Gráfico margem por categoria -->
+    <!-- Detalhamento subcategoria (aparece ao clicar em categoria) -->
+    <div id="rentSubcatSection" style="display:none;margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em" id="rentSubcatLabel">Subcategorias</div>
+        <span style="font-size:11px;color:var(--text3);cursor:pointer;text-decoration:underline" onclick="closeRentCat()">← Voltar</span>
+      </div>
+      <div id="rentSubcatCards"></div>
+    </div>
+
+    <!-- Gráficos (Canvas — init com timeout) -->
     <div class="chart-2col" style="margin-bottom:16px">
       <div class="chart-box">
         <div class="chart-title">Margem bruta por categoria</div>
-        <div class="chart-subtitle" style="margin-bottom:16px">% margem média ponderada pelo faturamento</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">% margem ponderada pelo faturamento</div>
         <div class="chart-wrap tall"><canvas id="cMargemCat"></canvas></div>
       </div>
       <div class="chart-box">
         <div class="chart-title">Receita vs Lucro Bruto</div>
-        <div class="chart-subtitle" style="margin-bottom:16px">Comparação receita total e margem gerada por categoria</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">Por categoria — R$</div>
         <div class="chart-wrap tall"><canvas id="cReceitaVsLucro"></canvas></div>
       </div>
     </div>
 
-    <!-- Evolução de preço e volume mês a mês -->
+    <!-- Elasticidade -->
     <div class="chart-box" style="margin-bottom:16px">
-      <div class="chart-title">Elasticidade preço-volume</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <div class="chart-subtitle" style="margin-bottom:0">Variação % do preço médio vs variação % do volume — por mês</div>
-        <select id="rentElastCat" onchange="buildElastChart()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div>
+          <div class="chart-title">Elasticidade preço-volume</div>
+          <div class="chart-subtitle" style="margin-bottom:0">Δ% preço médio e Δ% volume mês a mês — linha = elasticidade calculada</div>
+        </div>
+        <select id="rentElastCat" onchange="buildElastChart()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;flex-shrink:0">
           <option value="">Portfólio total</option>
         </select>
       </div>
-      <div class="chart-wrap tall"><canvas id="cElast"></canvas></div>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:'DM Mono',monospace">
-        Elasticidade = % variação volume ÷ % variação preço · Valor negativo = comportamento esperado (preço sobe, volume cai)
+      <div style="font-size:11px;color:var(--text3);margin:8px 0 12px;font-family:'DM Mono',monospace">
+        e = ΔVol% ÷ ΔPreço% · negativo = comportamento normal · abaixo de -1,5 = produto elástico (sensível a preço)
       </div>
+      <div class="chart-wrap xtall"><canvas id="cElast"></canvas></div>
     </div>
 
-    <!-- Tabela detalhada -->
+    <!-- Insights -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Insights detectados</div>
+      <div class="insight-cards-grid" id="rentInsights"></div>
+    </div>
+
+    <!-- Tabela de produtos -->
     <div class="chart-box">
-      <div class="chart-title">Tabela de rentabilidade por produto</div>
-      <div class="chart-subtitle" style="margin-bottom:16px">Custo unitário · preço médio de venda · margem · elasticidade estimada</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div class="chart-title">Rentabilidade por produto</div>
+          <div class="chart-subtitle" style="margin-bottom:0" id="rentTableTitle">—</div>
+        </div>
+        <input type="text" id="rentSearch" placeholder="Buscar produto..." oninput="rentPage=0;renderRentTable()"
+          style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;width:200px"/>
+      </div>
       <div id="rentTable"></div>
       <div class="pag" id="rentPag"></div>
     </div>
@@ -2164,73 +2211,25 @@ function renderAnaliseTabela(){
 
 
 // ══════════════════════════════════════════════════════════════════════════════
-// RENTABILIDADE & ELASTICIDADE
+// RENTABILIDADE & ELASTICIDADE — v2 (corrigido: charts com timeout)
 // ══════════════════════════════════════════════════════════════════════════════
 
-let rentPage=0;
+let rentPage=0, rentCatDrill=null;
 const RENT_PAGE=25;
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-// Para cada SKU: preço médio por mês = receita / qtd
-function getPriceByMonth(skuStr){
-  const meses=APP.rawSalesBySku?.[skuStr]?.meses||{};
-  const result={};
-  for(const [label,vals] of Object.entries(meses)){
-    result[label]=vals.q>0?vals.v/vals.q:null;
-  }
-  return result;
-}
-
-// Elasticidade entre dois meses consecutivos para um SKU
-// e = (ΔQ/Q) / (ΔP/P)
-function calcElasticidade(priceMap, qMap){
-  const labels=MONTH_SHEETS.map(m=>m.label);
-  const points=[];
-  for(let i=1;i<labels.length;i++){
-    const l=labels[i], lp=labels[i-1];
-    const p1=priceMap[lp],p2=priceMap[l];
-    const q1=qMap[lp],q2=qMap[l];
-    if(!p1||!p2||!q1||!q2) continue;
-    const dp=(p2-p1)/p1, dq=(q2-q1)/q1;
-    if(Math.abs(dp)<0.005) continue; // preço sem variação significativa
-    points.push({label:l, dp, dq, e:dq/dp, prc_var:dp*100, vol_var:dq*100});
-  }
-  return points;
-}
-
-// Média das elasticidades de um SKU
-function avgElasticidade(points){
-  if(!points.length) return null;
-  const sum=points.reduce((s,p)=>s+p.e,0);
-  return sum/points.length;
-}
-
-// Classifica elasticidade
-function classifyElast(e){
-  if(e===null) return {label:'Sem dados',cls:'neutral'};
-  if(e>0)  return {label:'Anômalo ↑',cls:'neutral',tip:'Volume e preço subiram juntos'};
-  if(e>=-0.5) return {label:'Inelástico',cls:'inelastic',tip:'Preço sobe, volume cai pouco — boa margem'};
-  if(e>=-1.5) return {label:'Normal',cls:'good',tip:'Elasticidade unitária'};
-  return {label:'Elástico',cls:'elastic',tip:'Preço sobe, volume cai muito — cuidado'};
-}
-
-// Pega meses ativos conforme filtro de período
+// ── helpers ──────────────────────────────────────────────────────────────────
 function getRentMonths(){
   const p=document.getElementById('rentFiltPeriodo')?.value||'all';
   const all=MONTH_SHEETS.map(m=>m.label);
-  if(p==='all') return all;
-  return all.slice(-parseInt(p));
+  return p==='all'?all:all.slice(-parseInt(p));
 }
-
-// Filtra SKUs conforme dropdowns de rentabilidade
 function getRentSkus(){
   const cat=document.getElementById('rentFiltCat')?.value||'';
   const sub=document.getElementById('rentFiltSubcat')?.value||'';
   const marca=document.getElementById('rentFiltMarca')?.value||'';
   const abc=document.getElementById('rentFiltAbc')?.value||'';
   return APP.allSkus.filter(s=>{
-    if(!(APP.custoMap?.[String(s.sku)]?.custo>0)) return false; // sem custo = excluir
+    if(!(APP.custoMap?.[String(s.sku)]?.custo>0)) return false;
     if(cat&&s.cat!==cat) return false;
     if(sub&&s.sub!==sub) return false;
     if(marca&&s.marca!==marca) return false;
@@ -2238,203 +2237,291 @@ function getRentSkus(){
     return true;
   });
 }
-
-// Para um SKU, calcula métricas no período selecionado
+function calcElasticidade(priceMap,qMap){
+  const labels=MONTH_SHEETS.map(m=>m.label);
+  const points=[];
+  for(let i=1;i<labels.length;i++){
+    const l=labels[i],lp=labels[i-1];
+    const p1=priceMap[lp],p2=priceMap[l],q1=qMap[lp],q2=qMap[l];
+    if(!p1||!p2||!q1||!q2) continue;
+    const dp=(p2-p1)/p1,dq=(q2-q1)/q1;
+    if(Math.abs(dp)<0.005) continue;
+    points.push({label:l,dp,dq,e:dq/dp,prc_var:dp*100,vol_var:dq*100});
+  }
+  return points;
+}
+function avgElasticidade(pts){ return pts.length?pts.reduce((s,p)=>s+p.e,0)/pts.length:null; }
+function classifyElast(e){
+  if(e===null) return {label:'Sem dados',cls:'neutral'};
+  if(e>0)      return {label:'Anômalo',cls:'neutral',tip:'Preço e volume subiram juntos'};
+  if(e>=-0.5)  return {label:'Inelástico',cls:'inelastic',tip:'Volume pouco sensível ao preço'};
+  if(e>=-1.5)  return {label:'Normal',cls:'good',tip:'Elasticidade unitária'};
+  return       {label:'Elástico',cls:'elastic',tip:'Volume cai muito com alta de preço'};
+}
 function calcSkuMetrics(s){
   const months=getRentMonths();
   const raw=APP.rawSalesBySku?.[String(s.sku)]?.meses||{};
   const custo=APP.custoMap?.[String(s.sku)]?.custo||0;
-
   let totalV=0,totalQ=0;
   const priceMap={},qMap={};
   for(const l of months){
     const m=raw[l]||{v:0,q:0};
-    totalV+=m.v; totalQ+=m.q;
-    if(m.q>0){priceMap[l]=m.v/m.q; qMap[l]=m.q;}
+    totalV+=m.v;totalQ+=m.q;
+    if(m.q>0){priceMap[l]=m.v/m.q;qMap[l]=m.q;}
   }
-
   const precoMedio=totalQ>0?totalV/totalQ:0;
   const margemUn=precoMedio-custo;
   const margemPct=precoMedio>0?margemUn/precoMedio*100:0;
   const lucro=margemUn*totalQ;
-
-  const elastPoints=calcElasticidade(priceMap,qMap);
-  const elastMedia=avgElasticidade(elastPoints);
+  const pts=calcElasticidade(priceMap,qMap);
+  const elastMedia=avgElasticidade(pts);
   const elastClass=classifyElast(elastMedia);
-
-  // Tendência de preço: último mês vs primeiro mês com dado
-  const labelsWithData=months.filter(l=>priceMap[l]);
-  const precoInicio=labelsWithData.length?priceMap[labelsWithData[0]]:null;
-  const precoFim=labelsWithData.length?priceMap[labelsWithData[labelsWithData.length-1]]:null;
-  const varPreco=precoInicio&&precoFim?((precoFim-precoInicio)/precoInicio*100):0;
-
-  // Tendência de volume
-  const qInicio=labelsWithData.length?qMap[labelsWithData[0]]:null;
-  const qFim=labelsWithData.length?qMap[labelsWithData[labelsWithData.length-1]]:null;
-  const varVol=qInicio&&qFim?((qFim-qInicio)/qInicio*100):0;
-
+  const labs=months.filter(l=>priceMap[l]);
+  const varPreco=labs.length>=2?((priceMap[labs[labs.length-1]]-priceMap[labs[0]])/priceMap[labs[0]]*100):0;
+  const varVol=labs.length>=2&&qMap[labs[0]]?((qMap[labs[labs.length-1]]-qMap[labs[0]])/qMap[labs[0]]*100):0;
   return {custo,precoMedio,margemUn,margemPct,lucro,elastMedia,elastClass,
-          elastPoints,totalV,totalQ,varPreco,varVol,priceMap,qMap};
+    elastPoints:pts,totalV,totalQ,varPreco,varVol,priceMap,qMap};
 }
+function pctBadge(p){
+  const cls=p>=40?'hi':p>=20?'md':p>=0?'lo':'ng';
+  return `<span class="rent-pct-badge ${cls}">${p.toFixed(1)}%</span>`;
+}
+function rentColor(p){ return p>=40?'#166534':p>=20?'#1D4ED8':p>=0?'#D97706':'#991B1B'; }
 
-// ── Init filtros ──────────────────────────────────────────────────────────────
+// ── init filtros ──────────────────────────────────────────────────────────────
 function initRentFiltros(){
   const cats=[...new Set(APP.allSkus.map(s=>s.cat))].sort();
   const marcas=[...new Set(APP.allSkus.map(s=>s.marca).filter(Boolean))].sort();
   document.getElementById('rentFiltCat').innerHTML=
-    '<option value="">Todas as categorias</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+    '<option value="">Todas as categorias</option>'+cats.map(c=>`<option>${c}</option>`).join('');
   document.getElementById('rentFiltMarca').innerHTML=
-    '<option value="">Todas as marcas</option>'+marcas.map(m=>`<option value="${m}">${m}</option>`).join('');
-  // Populate elasticidade category selector too
+    '<option value="">Todas as marcas</option>'+marcas.map(m=>`<option>${m}</option>`).join('');
   const sel=document.getElementById('rentElastCat');
-  if(sel) sel.innerHTML='<option value="">Portfólio total</option>'+
-    cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  if(sel) sel.innerHTML='<option value="">Portfólio total</option>'+cats.map(c=>`<option>${c}</option>`).join('');
 }
-
-// ── Build principal ───────────────────────────────────────────────────────────
-function buildRentabilidade(){
-  // Update subcat filter
+function onRentFilter(){
   const cat=document.getElementById('rentFiltCat')?.value||'';
   const subcats=cat?[...new Set(APP.allSkus.filter(s=>s.cat===cat).map(s=>s.sub).filter(Boolean))].sort():[];
   document.getElementById('rentFiltSubcat').innerHTML=
-    '<option value="">Todas as subcategorias</option>'+subcats.map(s=>`<option value="${s}">${s}</option>`).join('');
-
-  const skus=getRentSkus();
-  if(!skus.length){
-    document.getElementById('rentKpis').innerHTML=`<div style="color:var(--text3);font-size:13px;grid-column:1/-1">Nenhum produto com custo cadastrado encontrado. Verifique a aba Estoque no Google Sheets.</div>`;
-    return;
-  }
-
-  // Compute metrics for all filtered SKUs
-  const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
-
-  buildRentKpis(metrics);
-  buildRentInsights(metrics);
-  buildMargemCatChart(metrics);
-  buildReceitaVsLucroChart(metrics);
-  buildElastChart();
-  rentPage=0;
-  renderRentTable(metrics);
+    '<option value="">Todas as subcategorias</option>'+subcats.map(s=>`<option>${s}</option>`).join('');
+  rentPage=0; rentCatDrill=null;
+  buildRentabilidade();
 }
 
-// ── KPIs ─────────────────────────────────────────────────────────────────────
+// ── build principal ───────────────────────────────────────────────────────────
+function buildRentabilidade(){
+  const skus=getRentSkus();
+  if(!skus.length){
+    document.getElementById('rentKpis').innerHTML=
+      `<div style="grid-column:1/-1;color:var(--text3);font-size:13px;padding:20px 0">
+        Nenhum produto com custo cadastrado. Verifique a aba <strong>Estoque</strong> no Google Sheets.
+       </div>`;
+    return;
+  }
+  const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
+  buildRentKpis(metrics);
+  buildRentCatCards(metrics);
+  buildRentInsights(metrics);
+  rentPage=0;
+  renderRentTable(metrics);
+  // Charts need timeout so canvas has dimensions after panel becomes visible
+  setTimeout(()=>{ buildMargemCatChart(metrics); buildReceitaVsLucroChart(metrics); buildElastChart(); },50);
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────────────
 function buildRentKpis(metrics){
   const totalFat=metrics.reduce((s,x)=>s+x.m.totalV,0);
   const totalLucro=metrics.reduce((s,x)=>s+x.m.lucro,0);
-  const margemMedia=totalFat>0?totalLucro/totalFat*100:0;
-  const skuComMargPos=metrics.filter(x=>x.m.margemPct>0).length;
-  const skuElast=metrics.filter(x=>x.m.elastMedia!==null);
-  const elastMedia=skuElast.length?skuElast.reduce((s,x)=>s+x.m.elastMedia,0)/skuElast.length:null;
-  const topMargem=[...metrics].sort((a,b)=>b.m.margemPct-a.m.margemPct)[0];
-
+  const mg=totalFat>0?totalLucro/totalFat*100:0;
+  const withElast=metrics.filter(x=>x.m.elastMedia!==null);
+  const elastMed=withElast.length?withElast.reduce((s,x)=>s+x.m.elastMedia,0)/withElast.length:null;
+  const negMarg=metrics.filter(x=>x.m.margemPct<0).length;
+  const top=[...metrics].sort((a,b)=>b.m.margemPct-a.m.margemPct)[0];
   document.getElementById('rentKpis').innerHTML=`
-    <div class="rent-kpi green">
+    <div class="rent-kpi ${mg>=40?'green':mg>=20?'blue':mg>=0?'amber':'red'}">
       <div class="rent-kpi-label">Receita total</div>
       <div class="rent-kpi-value">${fmtK(totalFat)}</div>
-      <div class="rent-kpi-sub">${metrics.length} SKUs com custo</div>
+      <div class="rent-kpi-sub">${metrics.length} SKUs com custo · ${getRentMonths().length} meses</div>
     </div>
     <div class="rent-kpi blue">
-      <div class="rent-kpi-label">Lucro bruto estimado</div>
+      <div class="rent-kpi-label">Lucro bruto</div>
       <div class="rent-kpi-value">${fmtK(totalLucro)}</div>
-      <div class="rent-kpi-sub">Receita − (custo × qtd vendida)</div>
+      <div class="rent-kpi-sub">Receita − custo × qtd vendida</div>
     </div>
-    <div class="rent-kpi ${margemMedia>=30?'green':margemMedia>=15?'amber':'red'}">
+    <div class="rent-kpi ${mg>=40?'green':mg>=20?'blue':mg>=0?'amber':'red'}">
       <div class="rent-kpi-label">Margem bruta média</div>
-      <div class="rent-kpi-value">${margemMedia.toFixed(1)}%</div>
-      <div class="rent-kpi-sub">${skuComMargPos} SKUs com margem positiva</div>
+      <div class="rent-kpi-value">${mg.toFixed(1)}%</div>
+      <div class="rent-kpi-sub">${negMarg>0?negMarg+' SKUs com margem negativa':'Todas as margens positivas'}</div>
     </div>
     <div class="rent-kpi purple">
       <div class="rent-kpi-label">Elasticidade média</div>
-      <div class="rent-kpi-value">${elastMedia!==null?elastMedia.toFixed(2):'—'}</div>
-      <div class="rent-kpi-sub">${skuElast.length} SKUs com dados suficientes</div>
+      <div class="rent-kpi-value">${elastMed!==null?elastMed.toFixed(2):'—'}</div>
+      <div class="rent-kpi-sub">${withElast.length} SKUs com dados de variação</div>
     </div>
     <div class="rent-kpi amber">
       <div class="rent-kpi-label">Maior margem</div>
-      <div class="rent-kpi-value">${topMargem?topMargem.m.margemPct.toFixed(1)+'%':'—'}</div>
-      <div class="rent-kpi-sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${topMargem?.s.nome?.slice(0,28)||'—'}</div>
+      <div class="rent-kpi-value">${top?top.m.margemPct.toFixed(1)+'%':'—'}</div>
+      <div class="rent-kpi-sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${top?.s.nome?.slice(0,26)||'—'}</div>
     </div>`;
 }
 
-// ── Insights ─────────────────────────────────────────────────────────────────
-function buildRentInsights(metrics){
-  const insights=[];
-
-  // Produtos com preço subiu e volume NÃO caiu (elasticidade positiva — pricing power)
-  const winners=metrics.filter(x=>x.m.varPreco>5&&x.m.varVol>-5&&x.m.totalQ>10);
-  if(winners.length){
-    const w=winners.sort((a,b)=>b.m.lucro-a.m.lucro)[0];
-    insights.push({type:'winner',
-      tag:'↑ Pricing Power',
-      title:`${winners.length} produto${winners.length>1?'s':''} subiram preço sem perder volume`,
-      desc:`Esses produtos têm forte poder de precificação. ${w.s.nome} subiu ${w.m.varPreco.toFixed(1)}% no preço e volume variou apenas ${w.m.varVol.toFixed(1)}%.`,
-      stats:[`+${w.m.varPreco.toFixed(1)}% preço`,`${w.m.varVol.toFixed(1)}% volume`,fmtK(w.m.lucro)+' lucro']
+// ── Cards de categoria e subcategoria ─────────────────────────────────────────
+function buildRentCatCards(metricsAll){
+  // ── Se drill de subcat aberto ──
+  if(rentCatDrill){
+    const sub=document.getElementById('rentSubcatSection');
+    sub.style.display='block';
+    document.getElementById('rentSubcatLabel').textContent=rentCatDrill+' — Subcategorias';
+    const m=metricsAll.filter(x=>x.s.cat===rentCatDrill);
+    const bySub={};
+    m.forEach(({s,mx})=>{
+      if(!bySub[s.sub]) bySub[s.sub]={fat:0,lucro:0,skus:0,elasts:[]};
+      bySub[s.sub].fat+=mx.totalV; bySub[s.sub].lucro+=mx.lucro; bySub[s.sub].skus++;
+      if(mx.elastMedia!==null) bySub[s.sub].elasts.push(mx.elastMedia);
     });
+    // fix: use correct key
+    const m2=metricsAll.filter(x=>x.s.cat===rentCatDrill);
+    const bySub2={};
+    m2.forEach(({s,m:mx})=>{
+      if(!bySub2[s.sub]) bySub2[s.sub]={fat:0,lucro:0,skus:0,elasts:[]};
+      bySub2[s.sub].fat+=mx.totalV; bySub2[s.sub].lucro+=mx.lucro; bySub2[s.sub].skus++;
+      if(mx.elastMedia!==null) bySub2[s.sub].elasts.push(mx.elastMedia);
+    });
+    const subs=Object.entries(bySub2).map(([sub,d])=>({
+      sub, fat:d.fat, lucro:d.lucro, skus:d.skus,
+      mg:d.fat>0?d.lucro/d.fat*100:0,
+      eMed:d.elasts.length?d.elasts.reduce((a,b)=>a+b,0)/d.elasts.length:null
+    })).sort((a,b)=>b.fat-a.fat);
+    const maxFat=subs[0]?.fat||1;
+    const rows=subs.map(d=>{
+      const ec=classifyElast(d.eMed);
+      return `<tr>
+        <td><div class="rcat-name">${d.sub}</div><div class="rcat-sub">${d.skus} SKUs</div></td>
+        <td class="num">${fmtK(d.fat)}</td>
+        <td class="num">${fmtK(d.lucro)}</td>
+        <td>${pctBadge(d.mg)}</td>
+        <td>
+          <div class="rbar">
+            <div class="rbar-track"><div class="rbar-fill" style="width:${Math.round(d.fat/maxFat*100)}%;background:${rentColor(d.mg)}"></div></div>
+            <span class="rbar-val">${Math.round(d.fat/maxFat*100)}%</span>
+          </div>
+        </td>
+        <td>${d.eMed!==null?`<span class="elast-pill ${ec.cls}">${d.eMed.toFixed(2)}</span>`:'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
+      </tr>`;
+    }).join('');
+    document.getElementById('rentSubcatCards').innerHTML=`<div class="tbl-wrap"><table class="rent-cat-table">
+      <thead><tr><th>Subcategoria</th><th class="r">Receita</th><th class="r">Lucro</th><th>Margem</th><th>Participação</th><th>Elasticidade</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+    document.getElementById('rentCatCards').innerHTML='';
+    return;
   }
 
-  // Produtos com margem negativa (preço abaixo do custo)
-  const underwater=metrics.filter(x=>x.m.margemPct<0&&x.m.totalQ>5);
-  if(underwater.length){
-    insights.push({type:'loser',
-      tag:'⚠ Margem Negativa',
-      title:`${underwater.length} produto${underwater.length>1?'s':''} vendendo abaixo do custo`,
-      desc:`Preço de venda médio está abaixo do custo unitário. Ação imediata necessária: revisar precificação ou descontinuar.`,
-      stats:[`${underwater.length} SKUs`,`Pior: ${[...underwater].sort((a,b)=>a.m.margemPct-b.m.margemPct)[0]?.s.nome?.slice(0,20)}`]
-    });
-  }
+  document.getElementById('rentSubcatSection').style.display='none';
 
-  // Produtos elásticos com preço subindo — risco
-  const risco=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia<-1.5&&x.m.varPreco>3);
-  if(risco.length){
-    insights.push({type:'loser',
-      tag:'⚠ Elástico com Alta de Preço',
-      title:`${risco.length} produto${risco.length>1?'s com':'com'} elasticidade alta e preço subindo`,
-      desc:`Volume respondeu mais do que proporcional à alta de preço. Risco de perda de receita se preço continuar subindo.`,
-      stats:[...risco.slice(0,2).map(x=>`${x.s.nome.slice(0,20)} (e=${x.m.elastMedia.toFixed(1)})`)]
-    });
-  }
-
-  // Categoria com melhor margem
+  // ── Tabela de categorias ──
   const byCat={};
-  metrics.forEach(({s,m})=>{
-    if(!byCat[s.cat]) byCat[s.cat]={lucro:0,fat:0};
-    byCat[s.cat].lucro+=m.lucro; byCat[s.cat].fat+=m.totalV;
+  metricsAll.forEach(({s,m})=>{
+    if(!byCat[s.cat]) byCat[s.cat]={fat:0,lucro:0,skus:0,subs:new Set(),elasts:[]};
+    byCat[s.cat].fat+=m.totalV; byCat[s.cat].lucro+=m.lucro; byCat[s.cat].skus++;
+    byCat[s.cat].subs.add(s.sub);
+    if(m.elastMedia!==null) byCat[s.cat].elasts.push(m.elastMedia);
   });
-  const catsSorted=Object.entries(byCat).map(([c,d])=>({c,mg:d.fat>0?d.lucro/d.fat*100:0,fat:d.fat})).sort((a,b)=>b.mg-a.mg);
-  if(catsSorted.length){
-    const best=catsSorted[0];
-    insights.push({type:'winner',
-      tag:'✦ Melhor Margem',
-      title:`${best.c} é a categoria mais rentável`,
-      desc:`Margem bruta de ${best.mg.toFixed(1)}% sobre ${fmtK(best.fat)} em faturamento. Bom candidato para ampliar profundidade de mix.`,
-      stats:[`${best.mg.toFixed(1)}% margem`,fmtK(best.fat)+' faturamento']
-    });
-  }
+  const cats=Object.entries(byCat).map(([c,d])=>({
+    cat:c, fat:d.fat, lucro:d.lucro, skus:d.skus, nsubs:d.subs.size,
+    mg:d.fat>0?d.lucro/d.fat*100:0,
+    eMed:d.elasts.length?d.elasts.reduce((a,b)=>a+b,0)/d.elasts.length:null
+  })).sort((a,b)=>b.fat-a.fat);
+  const totalFat=cats.reduce((s,c)=>s+c.fat,0)||1;
+  const maxFat=cats[0]?.fat||1;
 
-  // Produto com maior potencial de margem (alta qtd, baixa margem atual)
-  const potencial=metrics.filter(x=>x.m.margemPct>0&&x.m.margemPct<20&&x.m.totalQ>50)
-    .sort((a,b)=>b.m.totalQ-a.m.totalQ);
-  if(potencial.length){
-    const p=potencial[0];
-    insights.push({type:'watch',
-      tag:'→ Oportunidade de Margem',
-      title:`${p.s.nome.slice(0,30)} — alto volume, margem baixa`,
-      desc:`${Math.round(p.m.totalQ).toLocaleString('pt-BR')} unidades vendidas com apenas ${p.m.margemPct.toFixed(1)}% de margem. Um reajuste de 5% no preço pode gerar R$ ${fmtK(p.m.totalQ*p.m.precoMedio*0.05)} adicional.`,
-      stats:[`${p.m.margemPct.toFixed(1)}% margem atual`,`${Math.round(p.m.totalQ).toLocaleString('pt-BR')} un.`]
-    });
-  }
+  const rows=cats.map(d=>{
+    const ec=classifyElast(d.eMed);
+    const color=getCatColor(d.cat);
+    return `<tr onclick="drillRentCat('${d.cat.replace(/'/g,"\\'")}')">
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:10px;height:10px;border-radius:2px;background:${color};flex-shrink:0;display:inline-block"></span>
+          <div>
+            <div class="rcat-name" style="color:${color}">${d.cat}</div>
+            <div class="rcat-sub">${d.skus} SKUs · ${d.nsubs} subcategorias · clique para detalhar</div>
+          </div>
+        </div>
+      </td>
+      <td class="num">${fmtK(d.fat)}</td>
+      <td class="num"><span style="color:var(--text3);font-size:10px;font-family:'DM Mono',monospace">${Math.round(d.fat/totalFat*100)}%</span></td>
+      <td class="num">${fmtK(d.lucro)}</td>
+      <td>${pctBadge(d.mg)}</td>
+      <td>
+        <div class="rbar">
+          <div class="rbar-track" style="width:140px"><div class="rbar-fill" style="width:${Math.round(d.fat/maxFat*100)}%;background:${rentColor(d.mg)}"></div></div>
+          <span class="rbar-val">${Math.round(d.fat/maxFat*100)}%</span>
+        </div>
+      </td>
+      <td>${d.eMed!==null?`<span class="elast-pill ${ec.cls}">${d.eMed.toFixed(2)} ${ec.label}</span>`:'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
+    </tr>`;
+  }).join('');
 
-  // Inelásticos com margem baixa — podem subir preço sem perder volume
-  const inelast=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia>-0.5&&x.m.elastMedia<0&&x.m.margemPct<25&&x.m.totalQ>20);
-  if(inelast.length){
-    insights.push({type:'info',
-      tag:'↑ Subir Preço com Segurança',
-      title:`${inelast.length} produto${inelast.length>1?'s com':'com'} demanda inelástica e margem a melhorar`,
-      desc:`Histórico mostra que variação de preço não afeta significativamente o volume. Oportunidade de reajuste com baixo risco.`,
-      stats:[...inelast.slice(0,3).map(x=>x.s.nome.slice(0,22))]
-    });
-  }
+  document.getElementById('rentCatCards').innerHTML=`<div class="tbl-wrap"><table class="rent-cat-table">
+    <thead><tr><th>Categoria</th><th class="r">Receita</th><th class="r">Share</th><th class="r">Lucro Bruto</th><th>Margem</th><th>Volume relativo</th><th>Elasticidade</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+function drillRentCat(cat){
+  rentCatDrill=cat;
+  const skus=getRentSkus().filter(s=>s.cat===cat);
+  const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
+  buildRentCatCards(metrics.length?metrics:getRentSkus().map(s=>({s,m:calcSkuMetrics(s)})));
+}
+function closeRentCat(){
+  rentCatDrill=null;
+  const skus=getRentSkus();
+  const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
+  buildRentCatCards(metrics);
+}
 
-  document.getElementById('rentInsights').innerHTML=insights.slice(0,6).map(i=>`
+// ── Insights ──────────────────────────────────────────────────────────────────
+function buildRentInsights(metrics){
+  const ins=[];
+  // Pricing power
+  const pw=metrics.filter(x=>x.m.varPreco>5&&x.m.varVol>-5&&x.m.totalQ>10);
+  if(pw.length){const w=[...pw].sort((a,b)=>b.m.lucro-a.m.lucro)[0];
+    ins.push({type:'winner',tag:'↑ Pricing Power',
+      title:`${pw.length} SKU${pw.length>1?'s':''} subiram preço sem perder volume`,
+      desc:`${w.s.nome.slice(0,40)} subiu ${w.m.varPreco.toFixed(1)}% no preço, volume variou ${w.m.varVol.toFixed(1)}%.`,
+      stats:[`+${w.m.varPreco.toFixed(1)}% preço`,`${w.m.varVol.toFixed(1)}% volume`,fmtK(w.m.lucro)+' lucro']});}
+  // Margem negativa
+  const neg=metrics.filter(x=>x.m.margemPct<0&&x.m.totalQ>5);
+  if(neg.length){const worst=[...neg].sort((a,b)=>a.m.margemPct-b.m.margemPct)[0];
+    ins.push({type:'loser',tag:'⚠ Margem Negativa',
+      title:`${neg.length} SKU${neg.length>1?'s':''} vendendo abaixo do custo`,
+      desc:`Pior caso: ${worst.s.nome.slice(0,35)} com margem de ${worst.m.margemPct.toFixed(1)}%. Revisar precificação imediatamente.`,
+      stats:[`${neg.length} SKUs`,`Pior: ${worst.m.margemPct.toFixed(1)}%`]});}
+  // Elásticos com preço subindo
+  const risc=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia<-1.5&&x.m.varPreco>3);
+  if(risc.length){ins.push({type:'loser',tag:'⚠ Elástico + Alta de Preço',
+    title:`${risc.length} SKU${risc.length>1?'s':''} com demanda elástica e preço subindo`,
+    desc:`Volume responde mais que proporcionalmente à alta. Risco de perda líquida de receita.`,
+    stats:risc.slice(0,3).map(x=>`${x.s.nome.slice(0,20)} (e=${x.m.elastMedia.toFixed(1)})`)});}
+  // Melhor categoria
+  const byCat={};metrics.forEach(({s,m})=>{if(!byCat[s.cat])byCat[s.cat]={l:0,f:0};byCat[s.cat].l+=m.lucro;byCat[s.cat].f+=m.totalV;});
+  const bestCat=Object.entries(byCat).map(([c,d])=>({c,mg:d.f>0?d.l/d.f*100:0,fat:d.f})).sort((a,b)=>b.mg-a.mg)[0];
+  if(bestCat)ins.push({type:'winner',tag:'✦ Melhor Margem',
+    title:`${bestCat.c} é a categoria mais rentável`,
+    desc:`Margem de ${bestCat.mg.toFixed(1)}% sobre ${fmtK(bestCat.fat)} em receita. Candidato a ampliar profundidade de mix.`,
+    stats:[`${bestCat.mg.toFixed(1)}% margem`,fmtK(bestCat.fat)]});
+  // Oportunidade: alto volume baixa margem
+  const pot=metrics.filter(x=>x.m.margemPct>0&&x.m.margemPct<20&&x.m.totalQ>50).sort((a,b)=>b.m.totalQ-a.m.totalQ);
+  if(pot.length){const p=pot[0];ins.push({type:'watch',tag:'→ Oportunidade de Margem',
+    title:`${p.s.nome.slice(0,35)} — alto volume, margem baixa`,
+    desc:`${Math.round(p.m.totalQ).toLocaleString('pt-BR')} unidades com ${p.m.margemPct.toFixed(1)}% de margem. +5% no preço geraria ${fmtK(p.m.totalQ*p.m.precoMedio*0.05)} adicional.`,
+    stats:[`${p.m.margemPct.toFixed(1)}% margem`,`${Math.round(p.m.totalQ).toLocaleString('pt-BR')} un.`]});}
+  // Inelásticos com margem a melhorar
+  const inel=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia>-0.5&&x.m.elastMedia<0&&x.m.margemPct<25&&x.m.totalQ>20);
+  if(inel.length)ins.push({type:'info',tag:'↑ Subir Preço com Segurança',
+    title:`${inel.length} SKU${inel.length>1?'s':''} com demanda inelástica e margem a melhorar`,
+    desc:`Histórico mostra que variação de preço não afeta significativamente o volume. Baixo risco de reajuste.`,
+    stats:inel.slice(0,3).map(x=>x.s.nome.slice(0,22))});
+
+  document.getElementById('rentInsights').innerHTML=ins.slice(0,6).map(i=>`
     <div class="insight-card ${i.type}">
       <div class="insight-card-tag">${i.tag}</div>
       <div class="insight-card-title">${i.title}</div>
@@ -2443,175 +2530,121 @@ function buildRentInsights(metrics){
     </div>`).join('');
 }
 
-// ── Gráfico margem por categoria ──────────────────────────────────────────────
+// ── Gráficos (chamados com setTimeout) ───────────────────────────────────────
 function buildMargemCatChart(metrics){
   ch('cMargemCat');
   const byCat={};
-  metrics.forEach(({s,m})=>{
-    if(!byCat[s.cat]) byCat[s.cat]={lucro:0,fat:0};
-    byCat[s.cat].lucro+=m.lucro; byCat[s.cat].fat+=m.totalV;
-  });
-  const cats=Object.entries(byCat).map(([c,d])=>({c,mg:d.fat>0?d.lucro/d.fat*100:0}))
-    .sort((a,b)=>b.mg-a.mg);
-  const colors=cats.map(x=>x.mg>=30?'#166534':x.mg>=15?'#D97706':x.mg>=0?'#1D4ED8':'#991B1B');
-  APP.charts.cMargemCat=new Chart(document.getElementById('cMargemCat'),{
-    type:'bar', indexAxis:'y',
-    data:{labels:cats.map(x=>x.c),datasets:[{data:cats.map(x=>parseFloat(x.mg.toFixed(1))),backgroundColor:colors,borderRadius:5}]},
+  metrics.forEach(({s,m})=>{if(!byCat[s.cat])byCat[s.cat]={l:0,f:0};byCat[s.cat].l+=m.lucro;byCat[s.cat].f+=m.totalV;});
+  const cats=Object.entries(byCat).map(([c,d])=>({c,mg:d.f>0?d.l/d.f*100:0})).sort((a,b)=>b.mg-a.mg);
+  APP.charts.cMargemCat=new Chart(document.getElementById('cMargemCat'),{type:'bar',indexAxis:'y',
+    data:{labels:cats.map(x=>x.c),datasets:[{data:cats.map(x=>parseFloat(x.mg.toFixed(1))),
+      backgroundColor:cats.map(x=>rentColor(x.mg)),borderRadius:5}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:ctx=>`Margem: ${ctx.raw.toFixed(1)}%`}}},
+      tooltip:{callbacks:{label:ctx=>`Margem: ${ctx.raw}%`}}},
       scales:{x:{ticks:{callback:v=>v+'%',font:{size:10},color:TX},grid:{color:GC},min:0},
-              y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}
-  });
+              y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
 }
-
-// ── Gráfico receita vs lucro ───────────────────────────────────────────────────
 function buildReceitaVsLucroChart(metrics){
   ch('cReceitaVsLucro');
   const byCat={};
-  metrics.forEach(({s,m})=>{
-    if(!byCat[s.cat]) byCat[s.cat]={fat:0,lucro:0};
-    byCat[s.cat].fat+=m.totalV; byCat[s.cat].lucro+=m.lucro;
-  });
-  const cats=Object.entries(byCat).sort((a,b)=>b[1].fat-a[1].fat).slice(0,8);
-  APP.charts.cReceitaVsLucro=new Chart(document.getElementById('cReceitaVsLucro'),{
-    type:'bar',
-    data:{
-      labels:cats.map(([c])=>c),
-      datasets:[
-        {label:'Receita',data:cats.map(([,d])=>Math.round(d.fat)),backgroundColor:'#CBD5E1',borderRadius:3,stack:'s'},
-        {label:'Lucro Bruto',data:cats.map(([,d])=>Math.round(Math.max(d.lucro,0))),backgroundColor:'#166534',borderRadius:3,stack:'s'}
-      ]
-    },
+  metrics.forEach(({s,m})=>{if(!byCat[s.cat])byCat[s.cat]={f:0,l:0};byCat[s.cat].f+=m.totalV;byCat[s.cat].l+=m.lucro;});
+  const cats=Object.entries(byCat).sort((a,b)=>b[1].f-a[1].f);
+  APP.charts.cReceitaVsLucro=new Chart(document.getElementById('cReceitaVsLucro'),{type:'bar',
+    data:{labels:cats.map(([c])=>c),datasets:[
+      {label:'Receita',data:cats.map(([,d])=>Math.round(d.f)),backgroundColor:'#CBD5E1',borderRadius:3},
+      {label:'Lucro Bruto',data:cats.map(([,d])=>Math.round(Math.max(d.l,0))),backgroundColor:'#166534',borderRadius:3}
+    ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
         tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtK(ctx.raw)}`}}},
       scales:{x:{ticks:{font:{size:10},color:TX},grid:{display:false}},
-              y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}}}}
-  });
+              y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}}}}});
 }
-
-// ── Gráfico elasticidade mês a mês ────────────────────────────────────────────
 function buildElastChart(){
   ch('cElast');
-  const catFilter=document.getElementById('rentElastCat')?.value||'';
+  const catF=document.getElementById('rentElastCat')?.value||'';
   const months=MONTH_SHEETS.map(m=>m.label);
-
-  // Aggregate price and volume per month for selected scope
-  const priceMap={}, qMap={};
-  months.forEach(l=>{priceMap[l]=null; qMap[l]=0;});
-
+  const priceSum={},qSum={};
+  months.forEach(l=>{priceSum[l]=0;qSum[l]=0;});
   const raw=APP.rawSalesBySku||{};
-  for(const [skuStr,data] of Object.entries(raw)){
-    if(!APP.custoMap?.[skuStr]?.custo) continue; // só com custo
-    if(catFilter&&data.cat!==catFilter) continue;
+  for(const [sk,data] of Object.entries(raw)){
+    if(!APP.custoMap?.[sk]?.custo) continue;
+    if(catF&&data.cat!==catF) continue;
     for(const l of months){
       const m=data.meses[l]||{v:0,q:0};
-      if(m.q>0){
-        priceMap[l]=(priceMap[l]||0)+m.v;
-        qMap[l]=(qMap[l]||0)+m.q;
-      }
+      if(m.q>0){priceSum[l]+=m.v;qSum[l]+=m.q;}
     }
   }
-  // Convert summed values to average price
-  const avgPriceMap={};
-  months.forEach(l=>{ avgPriceMap[l]=qMap[l]>0?priceMap[l]/qMap[l]:null; });
-
-  const elastPoints=calcElasticidade(avgPriceMap,qMap);
-
-  // Build dual-axis: % price change and % volume change
-  const labels=elastPoints.map(p=>p.label);
-  const dpData=elastPoints.map(p=>parseFloat((p.dp*100).toFixed(1)));
-  const dqData=elastPoints.map(p=>parseFloat((p.dq*100).toFixed(1)));
-  const eData=elastPoints.map(p=>parseFloat(Math.max(Math.min(p.e,3),-3).toFixed(2)));
-
-  APP.charts.cElast=new Chart(document.getElementById('cElast'),{
-    type:'bar',
-    data:{
-      labels,
-      datasets:[
-        {label:'Δ Preço médio (%)',data:dpData,backgroundColor:'#1D4ED8CC',borderRadius:4,yAxisID:'y'},
-        {label:'Δ Volume (%)',data:dqData,backgroundColor:'#166534CC',borderRadius:4,yAxisID:'y'},
-        {label:'Elasticidade',data:eData,type:'line',borderColor:'#D97706',backgroundColor:'transparent',
-          borderWidth:2,pointRadius:5,pointBackgroundColor:'#D97706',yAxisID:'y2',tension:.3}
-      ]
-    },
+  const avgP={};months.forEach(l=>{avgP[l]=qSum[l]>0?priceSum[l]/qSum[l]:null;});
+  const pts=calcElasticidade(avgP,qSum);
+  if(!pts.length){
+    document.getElementById('cElast').parentElement.innerHTML=
+      '<div style="color:var(--text3);font-size:13px;padding:40px;text-align:center">Dados insuficientes de variação de preço para calcular elasticidade no período selecionado.</div>';
+    return;
+  }
+  const labels=pts.map(p=>p.label);
+  APP.charts.cElast=new Chart(document.getElementById('cElast'),{type:'bar',
+    data:{labels,datasets:[
+      {label:'Δ Preço %',data:pts.map(p=>parseFloat((p.dp*100).toFixed(1))),backgroundColor:'#1D4ED8CC',borderRadius:4,yAxisID:'y'},
+      {label:'Δ Volume %',data:pts.map(p=>parseFloat((p.dq*100).toFixed(1))),backgroundColor:'#166534CC',borderRadius:4,yAxisID:'y'},
+      {label:'Elasticidade',data:pts.map(p=>parseFloat(Math.max(Math.min(p.e,3),-3).toFixed(2))),
+        type:'line',borderColor:'#D97706',backgroundColor:'transparent',borderWidth:2.5,
+        pointRadius:5,pointBackgroundColor:'#D97706',yAxisID:'y2',tension:.3}
+    ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
-        tooltip:{callbacks:{label:ctx=>{
-          if(ctx.datasetIndex===2) return `Elasticidade: ${ctx.raw}`;
-          return `${ctx.dataset.label}: ${ctx.raw>0?'+':''}${ctx.raw}%`;
-        }}}},
+        tooltip:{callbacks:{label:ctx=>ctx.datasetIndex===2?`e = ${ctx.raw}`:`${ctx.dataset.label}: ${ctx.raw>=0?'+':''}${ctx.raw}%`}}},
       scales:{
         y:{position:'left',ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX},grid:{color:GC}},
-        y2:{position:'right',ticks:{callback:v=>v,font:{size:10},color:'#D97706'},grid:{display:false}},
+        y2:{position:'right',ticks:{font:{size:10},color:'#D97706'},grid:{display:false}},
         x:{ticks:{font:{size:10},color:TX},grid:{display:false}}
-      }}
-  });
+      }}});
 }
 
-// ── Tabela rentabilidade ──────────────────────────────────────────────────────
+// ── Tabela de produtos ────────────────────────────────────────────────────────
 function renderRentTable(metricsIn){
-  const metrics=metricsIn||(() => {
-    const skus=getRentSkus();
-    return skus.map(s=>({s,m:calcSkuMetrics(s)}));
-  })();
-
-  const sorted=[...metrics].sort((a,b)=>b.m.lucro-a.m.lucro);
-  const start=rentPage*RENT_PAGE;
-  const slice=sorted.slice(start,start+RENT_PAGE);
-  const maxLucro=sorted[0]?.m.lucro||1;
-
+  const q=(document.getElementById('rentSearch')?.value||'').toLowerCase();
+  let data=metricsIn||getRentSkus().map(s=>({s,m:calcSkuMetrics(s)}));
+  if(rentCatDrill) data=data.filter(x=>x.s.cat===rentCatDrill);
+  if(q) data=data.filter(x=>x.s.nome.toLowerCase().includes(q)||String(x.s.sku).includes(q));
+  data=[...data].sort((a,b)=>b.m.lucro-a.m.lucro);
+  const total=data.length, start=rentPage*RENT_PAGE, slice=data.slice(start,start+RENT_PAGE);
+  const maxL=data[0]?.m.lucro||1;
+  document.getElementById('rentTableTitle').textContent=
+    `${total} produto${total!==1?'s':''} · ordenado por lucro bruto${rentCatDrill?' — '+rentCatDrill:''}`;
   const rows=slice.map(({s,m},i)=>{
-    const barW=Math.max(0,Math.round(Math.max(m.lucro,0)/maxLucro*100));
-    const margemColor=m.margemPct>=30?'#166534':m.margemPct>=15?'#D97706':m.margemPct>=0?'#1D4ED8':'#991B1B';
+    const bw=Math.max(0,Math.round(Math.max(m.lucro,0)/maxL*100));
+    const mc=rentColor(m.margemPct);
     const ec=m.elastClass;
-    const varPrecoSign=m.varPreco>0?'+':'';
-    const varVolSign=m.varVol>0?'+':'';
     return `<tr>
       <td>${start+i+1}</td>
       <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
       <td class="prod-name" title="${s.nome}">${s.nome}</td>
-      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500">${s.cat}</td>
+      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500;white-space:nowrap">${s.cat}</td>
+      <td style="font-size:11px;color:var(--text3);white-space:nowrap">${s.sub||'—'}</td>
       <td class="num">R$ ${m.custo.toFixed(2)}</td>
       <td class="num">R$ ${m.precoMedio.toFixed(2)}</td>
-      <td class="num" style="color:${margemColor};font-weight:500">${m.margemPct.toFixed(1)}%</td>
-      <td class="num">
-        <div style="display:flex;align-items:center;gap:6px">
-          <div class="margin-bar"><div class="margin-bar-fill" style="width:${barW}%;background:${margemColor}"></div></div>
-          ${fmtK(m.lucro)}
-        </div>
+      <td>${pctBadge(m.margemPct)}</td>
+      <td class="num"><div style="display:flex;align-items:center;gap:6px">
+        <div class="margin-bar"><div class="margin-bar-fill" style="width:${bw}%;background:${mc}"></div></div>
+        ${fmtK(m.lucro)}</div>
       </td>
-      <td class="num" style="color:${m.varPreco>2?'#991B1B':m.varPreco<-2?'#166534':'var(--text3)'}">${varPrecoSign}${m.varPreco.toFixed(1)}%</td>
-      <td class="num" style="color:${m.varVol>2?'#166534':m.varVol<-10?'#991B1B':'var(--text3)'}">${varVolSign}${m.varVol.toFixed(1)}%</td>
-      <td>
-        ${m.elastMedia!==null
-          ? `<span class="elast-pill ${ec.cls}" title="${ec.tip||''}">${m.elastMedia.toFixed(2)} ${ec.label}</span>`
-          : `<span style="color:var(--text3);font-size:11px">—</span>`}
-      </td>
+      <td class="num" style="color:${m.varPreco>2?'#991B1B':m.varPreco<-2?'#166534':'var(--text3)'};font-size:11px">${m.varPreco>=0?'+':''}${m.varPreco.toFixed(1)}%</td>
+      <td class="num" style="color:${m.varVol>5?'#166534':m.varVol<-15?'#991B1B':'var(--text3)'};font-size:11px">${m.varVol>=0?'+':''}${m.varVol.toFixed(1)}%</td>
+      <td>${m.elastMedia!==null?`<span class="elast-pill ${ec.cls}" title="${ec.tip||''}">${m.elastMedia.toFixed(2)} ${ec.label}</span>`:'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
     </tr>`;
   }).join('');
-
   document.getElementById('rentTable').innerHTML=`<div class="tbl-wrap"><table>
-    <thead><tr>
-      <th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th>
-      <th style="text-align:right">Custo unit.</th>
-      <th style="text-align:right">Preço médio</th>
-      <th style="text-align:right">Margem %</th>
-      <th style="text-align:right">Lucro bruto</th>
-      <th style="text-align:right">Δ Preço</th>
-      <th style="text-align:right">Δ Volume</th>
-      <th>Elasticidade</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table></div>`;
-
-  document.getElementById('rentPag').innerHTML=sorted.length>RENT_PAGE?`
-    <button class="pag-btn" onclick="rentPage--;buildRentabilidade()" ${rentPage===0?'disabled':''}>← Anterior</button>
-    <span class="pag-info">${start+1}–${Math.min(start+RENT_PAGE,sorted.length)} de ${sorted.length}</span>
-    <button class="pag-btn" onclick="rentPage++;buildRentabilidade()" ${start+RENT_PAGE>=sorted.length?'disabled':''}>Próximo →</button>
-  `:'';
+    <thead><tr><th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th>
+    <th class="r" style="text-align:right">Custo</th><th class="r" style="text-align:right">Preço médio</th>
+    <th>Margem</th><th class="r" style="text-align:right">Lucro bruto</th>
+    <th class="r" style="text-align:right">Δ Preço</th><th class="r" style="text-align:right">Δ Volume</th>
+    <th>Elasticidade</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  document.getElementById('rentPag').innerHTML=total>RENT_PAGE?`
+    <button class="pag-btn" onclick="rentPage--;renderRentTable()" ${rentPage===0?'disabled':''}>← Anterior</button>
+    <span class="pag-info">${start+1}–${Math.min(start+RENT_PAGE,total)} de ${total}</span>
+    <button class="pag-btn" onclick="rentPage++;renderRentTable()" ${start+RENT_PAGE>=total?'disabled':''}>Próximo →</button>`:'';
 }
-
 
 loadData();
 </script>
