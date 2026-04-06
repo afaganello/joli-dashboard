@@ -251,7 +251,37 @@ tbody tr:hover td{background:#FAFAF8}
 .analise-kpi-trend{font-size:11px;font-weight:500;margin-top:4px}
 .analise-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px}
 .analise-empty-icon{font-size:32px;margin-bottom:12px}
-/* ── RENT CAT CARDS ── */
+/* ── COMPRAS & ESTOQUE ── */
+.cob-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap}
+.cob-badge.critico{background:#FEE2E2;color:#991B1B}
+.cob-badge.atencao{background:#FEF3C7;color:#92400E}
+.cob-badge.ok{background:#DCFCE7;color:#166534}
+.cob-badge.excesso{background:#DBEAFE;color:#1E40AF}
+.cob-bar-wrap{display:flex;align-items:center;gap:8px}
+.cob-bar-track{width:100px;height:8px;background:var(--border);border-radius:4px;overflow:hidden;flex-shrink:0}
+.cob-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.comp-kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.comp-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.comp-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.comp-kpi.red::before{background:#991B1B}.comp-kpi.amber::before{background:#D97706}
+.comp-kpi.green::before{background:var(--green)}.comp-kpi.blue::before{background:var(--blue)}
+.comp-kpi.gray::before{background:#6B7280}
+.comp-kpi-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.comp-kpi-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1;color:var(--text)}
+.comp-kpi-sub{font-size:11px;color:var(--text3);margin-top:5px}
+.comp-filter-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.comp-filter-row select,.comp-filter-row input{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.comp-filter-row select:focus,.comp-filter-row input:focus{border-color:var(--text)}
+.urgency-section{margin-bottom:20px}
+.urgency-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.urgency-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.urgency-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;border-left:3px solid}
+.urgency-card.critico{border-left-color:#991B1B;background:#FFF5F5}
+.urgency-card.atencao{border-left-color:#D97706;background:#FFFBEB}
+.urgency-card-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.urgency-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.urgency-card-stat{font-size:10px;font-family:'DM Mono',monospace;background:rgba(0,0,0,.05);border-radius:4px;padding:2px 6px;color:var(--text2)}
+@media(max-width:768px){.comp-kpi-grid{grid-template-columns:1fr 1fr}}
 .rent-cat-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:4px}
 .rent-cat-table thead th{background:#F7F5F0;padding:9px 14px;text-align:left;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);white-space:nowrap}
 .rent-cat-table thead th.r{text-align:right}
@@ -368,6 +398,7 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="tab active"  onclick="showTab('visao')">Visão Geral</div>
   <div class="tab" onclick="showTab('analise')">Análise por Categoria</div>
   <div class="tab" onclick="showTab('rentabilidade')">Rentabilidade</div>
+  <div class="tab" onclick="showTab('compras')">Compras & Estoque</div>
   <div class="tab" onclick="showTab('categorias')">Categorias & Mix</div>
   <div class="tab" onclick="showTab('desenvolvimento')">Desenvolvimento</div>
   <div class="tab" onclick="showTab('abc-valor')">Curva ABC — Valor</div>
@@ -820,6 +851,75 @@ tbody tr:hover td{background:#FAFAF8}
     </div>
   </div>
 
+  <!-- ── COMPRAS & ESTOQUE ── -->
+  <div class="panel" id="compras">
+
+    <!-- Filtros -->
+    <div class="comp-filter-row">
+      <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)">Filtrar:</span>
+      <select id="compFiltStatus" onchange="buildCompras()">
+        <option value="">Todos os status</option>
+        <option value="critico">Crítico (&lt;30 dias)</option>
+        <option value="atencao">Atenção (30–60 dias)</option>
+        <option value="ok">OK (60–90 dias)</option>
+        <option value="excesso">Excesso (&gt;90 dias)</option>
+      </select>
+      <select id="compFiltCat" onchange="buildCompras()"><option value="">Todas as categorias</option></select>
+      <select id="compFiltMarca" onchange="buildCompras()"><option value="">Todas as marcas</option></select>
+      <select id="compFiltAbc" onchange="buildCompras()">
+        <option value="">Todos ABC</option>
+        <option value="A">Classe A</option>
+        <option value="B">Classe B</option>
+        <option value="C">Classe C</option>
+      </select>
+      <input type="text" id="compSearch" placeholder="Buscar produto..." oninput="compPage=0;renderCompTable()" style="min-width:200px"/>
+      <select id="compFiltCobertura" onchange="buildCompras()">
+        <option value="60">Meta: 60 dias</option>
+        <option value="90">Meta: 90 dias</option>
+        <option value="120">Meta: 120 dias</option>
+        <option value="45">Meta: 45 dias</option>
+      </select>
+    </div>
+
+    <!-- KPIs -->
+    <div class="comp-kpi-grid" id="compKpis"></div>
+
+    <!-- Alertas urgentes: crítico + atenção -->
+    <div class="urgency-section">
+      <div class="urgency-title" id="compUrgencyTitle">SKUs que precisam de reposição</div>
+      <div class="urgency-cards" id="compUrgencyCards"></div>
+    </div>
+
+    <!-- Gráficos cobertura -->
+    <div class="chart-2col" style="margin-bottom:16px">
+      <div class="chart-box">
+        <div class="chart-title">Cobertura de estoque por categoria</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">Dias médios de cobertura ponderado por valor de estoque</div>
+        <div class="chart-wrap tall"><canvas id="cCobCat"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Distribuição de status de estoque</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">Quantidade de SKUs por faixa de cobertura</div>
+        <div class="chart-wrap tall"><canvas id="cCobDist"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Tabela completa -->
+    <div class="chart-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div class="chart-title">Análise de reposição por produto</div>
+          <div class="chart-subtitle" style="margin-bottom:0" id="compTableTitle">—</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button onclick="exportComprasCSV()" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2)">↓ Exportar CSV</button>
+        </div>
+      </div>
+      <div id="compTable"></div>
+      <div class="pag" id="compPag"></div>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -1030,6 +1130,7 @@ function buildDashboard(){
   buildAbcValor();buildAbcQtd();buildTodos();
   buildAnaliseCatList();
   initRentFiltros();
+  initComprasFiltros();
 }
 
 // ── FILTER ENGINE ─────────────────────────────────────────────────────────────
@@ -1758,12 +1859,13 @@ function renderTodosPage(){
 }
 
 function showTab(id){
-  const tabs=['visao','analise','rentabilidade','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
+  const tabs=['visao','analise','rentabilidade','compras','categorias','desenvolvimento','abc-valor','abc-qtd','todos'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='analise') initAnalise();
   if(id==='rentabilidade') buildRentabilidade();
+  if(id==='compras') buildCompras();
 }
 
 // ── ABA ANÁLISE ───────────────────────────────────────────────────────────────
@@ -2648,7 +2750,303 @@ function renderRentTable(metricsIn){
     <button class="pag-btn" onclick="rentPage++;renderRentTable()" ${start+RENT_PAGE>=total?'disabled':''}>Próximo →</button>`:'';
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// COMPRAS & ESTOQUE
+// ══════════════════════════════════════════════════════════════════════════════
+
+let compPage=0;
+const COMP_PAGE=30;
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+function getMetaDias(){ return parseInt(document.getElementById('compFiltCobertura')?.value||'60'); }
+
+// Calculate all compras metrics for a SKU
+function calcCompraMetrics(s){
+  const sku=String(s.sku);
+  const raw=APP.rawSalesBySku?.[sku]?.meses||{};
+  const custoData=APP.custoMap?.[sku]||{};
+  const estoque=custoData.estoque||0;
+  const custo=custoData.custo||0;
+
+  // Velocity: last 3 months average units/month
+  const last3=MONTH_SHEETS.slice(-3).map(m=>m.label);
+  const totalQtd3=last3.reduce((s2,l)=>s2+(raw[l]?.q||0),0);
+  const velMensal=totalQtd3/3;
+  const velDiaria=velMensal/30;
+
+  // Last 1 month
+  const lastLabel=MONTH_SHEETS[MONTH_SHEETS.length-1].label;
+  const velUltMes=(raw[lastLabel]?.q||0);
+
+  // Coverage in days
+  const coberturaDias=velDiaria>0?Math.round(estoque/velDiaria):estoque>0?999:0;
+
+  // Status
+  let status='excesso';
+  if(coberturaDias<30) status='critico';
+  else if(coberturaDias<60) status='atencao';
+  else if(coberturaDias<=90) status='ok';
+
+  // Suggested purchase quantity to reach meta
+  const meta=getMetaDias();
+  const estoqueAlvo=Math.ceil(velDiaria*meta);
+  const sugestaoQtd=Math.max(0,estoqueAlvo-estoque);
+  const sugestaoValor=sugestaoQtd*custo;
+
+  // Valor do estoque atual
+  const valorEstoque=estoque*custo;
+
+  // Trend: last month vs 3m average
+  const trend=velMensal>0?Math.round((velUltMes-velMensal)/velMensal*100):0;
+
+  return {estoque,custo,velMensal,velDiaria,velUltMes,coberturaDias,
+          status,sugestaoQtd,sugestaoValor,valorEstoque,trend,estoqueAlvo};
+}
+
+function statusLabel(s){ return {critico:'Crítico',atencao:'Atenção',ok:'OK',excesso:'Excesso'}[s]||s; }
+function statusColor(s){ return {critico:'#991B1B',atencao:'#D97706',ok:'#166534',excesso:'#1E40AF'}[s]||'#6B7280'; }
+function statusBg(s){ return {critico:'#FEE2E2',atencao:'#FEF3C7',ok:'#DCFCE7',excesso:'#DBEAFE'}[s]||'#F3F4F6'; }
+
+function cobBarColor(dias){
+  if(dias<30) return '#991B1B';
+  if(dias<60) return '#D97706';
+  if(dias<=90) return '#166534';
+  return '#1E40AF';
+}
+
+// ── Init filtros ──────────────────────────────────────────────────────────────
+function initComprasFiltros(){
+  const cats=[...new Set(APP.allSkus.map(s=>s.cat))].sort();
+  const marcas=[...new Set(APP.allSkus.map(s=>s.marca).filter(Boolean))].sort();
+  document.getElementById('compFiltCat').innerHTML=
+    '<option value="">Todas as categorias</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+  document.getElementById('compFiltMarca').innerHTML=
+    '<option value="">Todas as marcas</option>'+marcas.map(m=>`<option>${m}</option>`).join('');
+}
+
+// Get filtered SKUs with compras metrics
+function getCompSkus(){
+  const status=document.getElementById('compFiltStatus')?.value||'';
+  const cat=document.getElementById('compFiltCat')?.value||'';
+  const marca=document.getElementById('compFiltMarca')?.value||'';
+  const abc=document.getElementById('compFiltAbc')?.value||'';
+
+  const result=[];
+  for(const s of APP.allSkus){
+    // Only include SKUs that have estoque data
+    if(!(APP.custoMap?.[String(s.sku)])) continue;
+    const m=calcCompraMetrics(s);
+    if(status&&m.status!==status) continue;
+    if(cat&&s.cat!==cat) continue;
+    if(marca&&s.marca!==marca) continue;
+    if(abc&&s.abcV!==abc) continue;
+    result.push({s,m});
+  }
+  return result;
+}
+
+// ── Build principal ───────────────────────────────────────────────────────────
+function buildCompras(){
+  const all=getCompSkus();
+  buildCompKpis(all);
+  buildCompUrgency(all);
+  compPage=0;
+  renderCompTable(all);
+  setTimeout(()=>{ buildCobCatChart(all); buildCobDistChart(all); },50);
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────────────
+function buildCompKpis(all){
+  const byCritico=all.filter(x=>x.m.status==='critico');
+  const byAtencao=all.filter(x=>x.m.status==='atencao');
+  const totalSugestao=all.filter(x=>x.m.sugestaoQtd>0).reduce((s,x)=>s+x.m.sugestaoValor,0);
+  const totalEstoque=all.reduce((s,x)=>s+x.m.valorEstoque,0);
+  const avgCob=all.length?Math.round(all.reduce((s,x)=>s+Math.min(x.m.coberturaDias,180),0)/all.length):0;
+  const semVenda=all.filter(x=>x.m.velMensal===0&&x.m.estoque>0);
+
+  document.getElementById('compKpis').innerHTML=`
+    <div class="comp-kpi red">
+      <div class="comp-kpi-label">SKUs críticos</div>
+      <div class="comp-kpi-value" style="color:#991B1B">${byCritico.length}</div>
+      <div class="comp-kpi-sub">Cobertura &lt; 30 dias · ação imediata</div>
+    </div>
+    <div class="comp-kpi amber">
+      <div class="comp-kpi-label">SKUs em atenção</div>
+      <div class="comp-kpi-value" style="color:#D97706">${byAtencao.length}</div>
+      <div class="comp-kpi-sub">Cobertura 30–60 dias · planejar compra</div>
+    </div>
+    <div class="comp-kpi green">
+      <div class="comp-kpi-label">Investimento sugerido</div>
+      <div class="comp-kpi-value" style="color:var(--green)">${fmtK(totalSugestao)}</div>
+      <div class="comp-kpi-sub">Para atingir meta de ${getMetaDias()} dias de cobertura</div>
+    </div>
+    <div class="comp-kpi blue">
+      <div class="comp-kpi-label">Valor em estoque</div>
+      <div class="comp-kpi-value">${fmtK(totalEstoque)}</div>
+      <div class="comp-kpi-sub">${all.length} SKUs com dados de estoque</div>
+    </div>
+    <div class="comp-kpi gray">
+      <div class="comp-kpi-label">Cobertura média</div>
+      <div class="comp-kpi-value">${avgCob}d</div>
+      <div class="comp-kpi-sub">${semVenda.length} SKUs sem venda nos últimos 3M</div>
+    </div>`;
+}
+
+// ── Cards de urgência ─────────────────────────────────────────────────────────
+function buildCompUrgency(all){
+  const urgent=all.filter(x=>x.m.status==='critico'||x.m.status==='atencao')
+    .sort((a,b)=>a.m.coberturaDias-b.m.coberturaDias)
+    .slice(0,12);
+
+  document.getElementById('compUrgencyTitle').textContent=
+    `${all.filter(x=>x.m.status==='critico'||x.m.status==='atencao').length} SKUs precisam de reposição — ordenados por urgência`;
+
+  if(!urgent.length){
+    document.getElementById('compUrgencyCards').innerHTML=
+      `<div style="color:var(--text3);font-size:13px;padding:16px 0">Nenhum SKU em estado crítico ou de atenção com os filtros atuais.</div>`;
+    return;
+  }
+
+  document.getElementById('compUrgencyCards').innerHTML=urgent.map(({s,m})=>`
+    <div class="urgency-card ${m.status}">
+      <div class="urgency-card-name" title="${s.nome}">${s.nome}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span class="cob-badge ${m.status}">${statusLabel(m.status)} · ${m.coberturaDias}d</span>
+        <span style="font-size:10px;color:${getCatColor(s.cat)};font-weight:500">${s.cat}</span>
+      </div>
+      <div class="urgency-card-meta">
+        <span class="urgency-card-stat">Estoque: ${m.estoque.toLocaleString('pt-BR')} un.</span>
+        <span class="urgency-card-stat">Vel: ${m.velMensal.toFixed(0)} un/mês</span>
+        <span class="urgency-card-stat">Comprar: ${m.sugestaoQtd} un.</span>
+        <span class="urgency-card-stat">Invest: ${fmtK(m.sugestaoValor)}</span>
+        <span class="urgency-card-stat">ABC: ${s.abcV}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ── Gráficos ──────────────────────────────────────────────────────────────────
+function buildCobCatChart(all){
+  ch('cCobCat');
+  const byCat={};
+  all.forEach(({s,m})=>{
+    if(!byCat[s.cat]) byCat[s.cat]={sumWt:0,sumVal:0};
+    const capped=Math.min(m.coberturaDias,180);
+    byCat[s.cat].sumWt+=capped*m.valorEstoque;
+    byCat[s.cat].sumVal+=m.valorEstoque;
+  });
+  const cats=Object.entries(byCat)
+    .map(([c,d])=>({c,avg:d.sumVal>0?Math.round(d.sumWt/d.sumVal):0}))
+    .sort((a,b)=>a.avg-b.avg);
+  const colors=cats.map(x=>cobBarColor(x.avg));
+  APP.charts.cCobCat=new Chart(document.getElementById('cCobCat'),{type:'bar',indexAxis:'y',
+    data:{labels:cats.map(x=>x.c),datasets:[{data:cats.map(x=>x.avg),backgroundColor:colors,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>`${ctx.raw} dias de cobertura`}}},
+      scales:{x:{ticks:{callback:v=>v+'d',font:{size:10},color:TX},grid:{color:GC},min:0,
+        // Add reference line at 60
+      },y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
+}
+
+function buildCobDistChart(all){
+  ch('cCobDist');
+  const counts={critico:0,atencao:0,ok:0,excesso:0};
+  all.forEach(x=>counts[x.m.status]++);
+  const labels=['Crítico (<30d)','Atenção (30–60d)','OK (60–90d)','Excesso (>90d)'];
+  const vals=[counts.critico,counts.atencao,counts.ok,counts.excesso];
+  const colors=['#991B1B','#D97706','#166534','#1E40AF'];
+  APP.charts.cCobDist=new Chart(document.getElementById('cCobDist'),{type:'doughnut',
+    data:{labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',
+      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} SKUs`}}}}});
+}
+
+// ── Tabela de reposição ───────────────────────────────────────────────────────
+function renderCompTable(allIn){
+  const q=(document.getElementById('compSearch')?.value||'').toLowerCase();
+  let data=allIn||getCompSkus();
+  if(q) data=data.filter(x=>x.s.nome.toLowerCase().includes(q)||String(x.s.sku).includes(q));
+
+  // Sort: critical first, then by cobertura ascending
+  const statusOrder={critico:0,atencao:1,ok:2,excesso:3};
+  data=[...data].sort((a,b)=>{
+    const sd=statusOrder[a.m.status]-statusOrder[b.m.status];
+    return sd!==0?sd:a.m.coberturaDias-b.m.coberturaDias;
+  });
+
+  const total=data.length;
+  const start=compPage*COMP_PAGE;
+  const slice=data.slice(start,start+COMP_PAGE);
+
+  document.getElementById('compTableTitle').textContent=
+    `${total} produto${total!==1?'s':''} · ${data.filter(x=>x.m.sugestaoQtd>0).length} com sugestão de compra`;
+
+  const rows=slice.map(({s,m},i)=>{
+    const cobPct=Math.min(100,Math.round(m.coberturaDias/180*100));
+    const trendColor=m.trend>10?'#166534':m.trend<-10?'#991B1B':'var(--text3)';
+    const sugestaoStyle=m.sugestaoQtd>0?'font-weight:500;color:var(--text)':'color:var(--text3)';
+    return `<tr>
+      <td>${start+i+1}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
+      <td class="prod-name" title="${s.nome}">${s.nome}</td>
+      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500;white-space:nowrap">${s.cat}</td>
+      <td style="font-size:11px;color:var(--text3)">${s.sub||'—'}</td>
+      <td><span class="badge ${s.abcV}">${s.abcV}</span></td>
+      <td class="num" style="font-family:'DM Mono',monospace">${m.estoque.toLocaleString('pt-BR')}</td>
+      <td class="num" style="font-size:11px;font-family:'DM Mono',monospace">${m.velMensal.toFixed(1)}</td>
+      <td>
+        <div class="cob-bar-wrap">
+          <div class="cob-bar-track"><div class="cob-bar-fill" style="width:${cobPct}%;background:${cobBarColor(m.coberturaDias)}"></div></div>
+          <span class="cob-badge ${m.status}" style="font-size:10px;padding:2px 7px">${m.coberturaDias>=180?'180+d':m.coberturaDias+'d'}</span>
+        </div>
+      </td>
+      <td class="num" style="${sugestaoStyle}">${m.sugestaoQtd>0?m.sugestaoQtd.toLocaleString('pt-BR')+'&nbsp;un.':'—'}</td>
+      <td class="num" style="${sugestaoStyle}">${m.sugestaoQtd>0?fmtK(m.sugestaoValor):'—'}</td>
+      <td class="num" style="color:${trendColor};font-size:11px">${m.trend!==0?(m.trend>0?'+':'')+m.trend+'%':'—'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('compTable').innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>ABC</th>
+      <th style="text-align:right">Estoque</th>
+      <th style="text-align:right">Vel/mês</th>
+      <th>Cobertura</th>
+      <th style="text-align:right">Sugestão compra</th>
+      <th style="text-align:right">Investimento</th>
+      <th style="text-align:right">Tendência</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+
+  document.getElementById('compPag').innerHTML=total>COMP_PAGE?`
+    <button class="pag-btn" onclick="compPage--;buildCompras()" ${compPage===0?'disabled':''}>← Anterior</button>
+    <span class="pag-info">${start+1}–${Math.min(start+COMP_PAGE,total)} de ${total}</span>
+    <button class="pag-btn" onclick="compPage++;buildCompras()" ${start+COMP_PAGE>=total?'disabled':''}>Próximo →</button>`:'';
+}
+
+// ── Exportar CSV ──────────────────────────────────────────────────────────────
+function exportComprasCSV(){
+  const all=getCompSkus();
+  const meta=getMetaDias();
+  const header=['SKU','Produto','Categoria','Subcategoria','Marca','ABC','Estoque Atual','Vel/mês (un)','Cobertura (dias)','Status','Sugestão Compra (un)','Investimento (R$)','Custo Unit (R$)'];
+  const rows=all.map(({s,m})=>[
+    s.sku, `"${s.nome}"`, s.cat, s.sub||'', s.marca||'', s.abcV,
+    m.estoque, m.velMensal.toFixed(1), m.coberturaDias,
+    statusLabel(m.status), m.sugestaoQtd, m.sugestaoValor.toFixed(2), m.custo.toFixed(2)
+  ]);
+  const csv=[header,...rows].map(r=>r.join(';')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`compras_joli_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+
 loadData();
 </script>
 </body>
 </html>
+
