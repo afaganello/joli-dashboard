@@ -448,14 +448,19 @@ tbody tr:hover td{background:#FAFAF8}
 @media(max-width:768px){.comp-kpi-grid{grid-templa
 @media(max-width:900px){.analise-layout{grid-template-columns:1fr}.analise-sidebar{position:static}}
 /* ── RENTABILIDADE ── */
-.rent-kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px}
-.rent-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
-.rent-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.rent-kpi.green::before{background:var(--green)}.rent-kpi.amber::before{background:#D97706}.rent-kpi.blue::before{background:var(--blue)}.rent-kpi.purple::before{background:var(--purple)}.rent-kpi.red::before{background:var(--red)}
-.rent-kpi-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-.rent-kpi-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1;color:var(--text)}
-.rent-kpi-sub{font-size:11px;color:var(--text3);margin-top:5px}
-/* Elasticidade scatter */
+.rent-kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:24px}
+.rent-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;position:relative;overflow:hidden;transition:box-shadow .15s}
+.rent-kpi:hover{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.rent-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius) var(--radius) 0 0}
+.rent-kpi.green{border-top:4px solid #166534}.rent-kpi.amber{border-top:4px solid #D97706}
+.rent-kpi.blue{border-top:4px solid #1D4ED8}.rent-kpi.purple{border-top:4px solid #5B21B6}
+.rent-kpi.red{border-top:4px solid #991B1B}
+.rent-kpi::before{display:none}
+.rent-kpi-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.rent-kpi-value{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;line-height:1;color:var(--text);margin-bottom:6px}
+.rent-kpi-sub{font-size:11px;color:var(--text3);line-height:1.4}
+/* Scatter container */
+.scatter-container{position:relative;height:380px}
 .elast-table{width:100%}
 .elast-table th{background:#F7F5F0;padding:9px 12px;text-align:left;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);white-space:nowrap}
 .elast-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);vertical-align:middle}
@@ -955,7 +960,10 @@ tbody tr:hover td{background:#FAFAF8}
 
     <!-- ── 9. INSIGHTS ── -->
     <div style="margin-bottom:20px">
-      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Insights de rentabilidade</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Insights de rentabilidade</div>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
       <div class="insight-cards-grid" id="rentInsights"></div>
     </div>
 
@@ -1020,7 +1028,7 @@ tbody tr:hover td{background:#FAFAF8}
         <div style="background:#DBEAFE;border-radius:4px;padding:5px 8px;color:#1E40AF">↙ RECUPERAR · queda + margem alta</div>
         <div style="background:#FEE2E2;border-radius:4px;padding:5px 8px;color:#991B1B">↙ AVALIAR SAÍDA · queda + margem baixa</div>
       </div>
-      <div style="height:380px;position:relative"><canvas id="cScatter"></canvas></div>
+      <div style="height:420px;position:relative;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;padding:8px"><canvas id="cScatter"></canvas></div>
     </div>
 
     <!-- ── 6.1 Campeões + 6.2 Destruidores ── -->
@@ -3009,12 +3017,25 @@ function calcSkuMetrics(s){
   const labs=months.filter(l=>priceMap[l]);
   const varPreco=labs.length>=2?((priceMap[labs[labs.length-1]]-priceMap[labs[0]])/priceMap[labs[0]]*100):0;
   const varVol=labs.length>=2&&qMap[labs[0]]?((qMap[labs[labs.length-1]]-qMap[labs[0]])/qMap[labs[0]]*100):0;
-  // Growth vs prev period
+  // Growth vs prev period — always compare same-length window before current
   const allLabels=MONTH_SHEETS.map(m=>m.label);
   const curStart=allLabels.indexOf(months[0]||'');
-  const prevLabels=allLabels.slice(Math.max(0,curStart-months.length),curStart);
+  const n=months.length;
+  const prevLabels=allLabels.slice(Math.max(0,curStart-n),Math.max(0,curStart));
   const prevV=prevLabels.reduce((s2,l)=>s2+(raw[l]?.v||0),0);
-  const growth=prevV>0?pct(totalV,prevV):totalV>0?100:0;
+  // If no prev window at all (period = full history), compare H2 vs H1
+  let growth;
+  if(prevV>0){
+    growth=pct(totalV,prevV);
+  } else if(allLabels.length>=4){
+    // fallback: last half vs first half of available data
+    const half=Math.floor(allLabels.length/2);
+    const h2=allLabels.slice(-half).reduce((s2,l)=>s2+(raw[l]?.v||0),0);
+    const h1=allLabels.slice(0,half).reduce((s2,l)=>s2+(raw[l]?.v||0),0);
+    growth=h1>0?pct(h2,h1):h2>0?50:0;
+  } else {
+    growth=0;
+  }
   // Cobertura
   const est=APP.custoMap?.[String(s.sku)]?.estoque||0;
   const velDia=totalQ>0?totalQ/months.length/30:0;
@@ -3413,18 +3434,41 @@ function buildScatterChart(metrics){
     if(p.x<0&&p.y>=25)  return '#1D4ED8CC';  // recuperar
     return '#991B1BCC';                        // avaliar saída
   });
+  // Quadrant background plugin
+  const quadrantPlugin={id:'quadrant',beforeDraw(chart){
+    const {ctx,chartArea:{left,right,top,bottom},scales:{x,y}}=chart;
+    const cx=x.getPixelForValue(0),cy=y.getPixelForValue(25);
+    ctx.save();
+    ctx.fillStyle='rgba(22,101,52,0.05)';ctx.fillRect(cx,top,right-cx,cy-top);
+    ctx.fillStyle='rgba(217,119,6,0.05)';ctx.fillRect(cx,cy,right-cx,bottom-cy);
+    ctx.fillStyle='rgba(59,130,246,0.05)';ctx.fillRect(left,top,cx-left,cy-top);
+    ctx.fillStyle='rgba(153,27,27,0.05)';ctx.fillRect(left,cy,cx-left,bottom-cy);
+    ctx.strokeStyle='rgba(0,0,0,0.12)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(cx,top);ctx.lineTo(cx,bottom);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(left,cy);ctx.lineTo(right,cy);ctx.stroke();
+    ctx.setLineDash([]);ctx.restore();
+  }};
   APP.charts.cScatter=new Chart(document.getElementById('cScatter'),{type:'bubble',
+    plugins:[quadrantPlugin],
     data:{datasets:[{data:points.map(p=>({x:p.x,y:p.y,r:p.r,label:p.label,fat:p.fat,lucro:p.lucro})),
-      backgroundColor:ptColors,borderColor:ptColors.map(c=>c.replace('CC','FF')),borderWidth:1}]},
+      backgroundColor:ptColors,borderColor:ptColors.map(c=>c.replace('CC','FF')),borderWidth:1.5}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
       tooltip:{callbacks:{label:ctx=>{
         const d=ctx.raw;const p=points[ctx.dataIndex];
         return [`${p.label}`,`Crescimento: ${d.x>=0?'+':''}${d.x}%`,`Margem: ${d.y}%`,`Receita: ${fmtK(d.fat)}`,`Lucro: ${fmtK(d.lucro)}`];
       }}}},
       scales:{
-        x:{title:{display:true,text:'Crescimento vs período anterior (%)',font:{size:10}},ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX},grid:{color:GC},
-          afterBuildTicks(ax){ax.ticks=[...ax.ticks,{value:0}]}},
-        y:{title:{display:true,text:'Margem bruta (%)',font:{size:10}},ticks:{callback:v=>v+'%',font:{size:10},color:TX},grid:{color:GC}}
+        x:{title:{display:true,text:'Crescimento vs período (%)',font:{size:10}},
+          ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX,maxTicksLimit:8},
+          grid:{color:GC},
+          afterDataLimits(ax){
+            const spread=Math.max(ax.max-ax.min,60);const mid=(ax.max+ax.min)/2;
+            ax.min=Math.min(ax.min,mid-spread/2,-10);ax.max=Math.max(ax.max,mid+spread/2,10);
+          }},
+        y:{title:{display:true,text:'Margem bruta (%)',font:{size:10}},
+          ticks:{callback:v=>v+'%',font:{size:10},color:TX,maxTicksLimit:8},
+          grid:{color:GC},
+          afterDataLimits(ax){ax.min=Math.min(ax.min-5,-10);ax.max=Math.max(ax.max+5,60);}}
       }}});
 }
 
