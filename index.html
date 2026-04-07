@@ -309,6 +309,143 @@ tbody tr:hover td{background:#FAFAF8}
 .margin-bar{display:inline-flex;width:80px;height:8px;background:var(--border);border-radius:4px;overflow:hidden;vertical-align:middle}
 .margin-bar-fill{height:100%;border-radius:4px}
 @media(max-width:768px){.rbar-track{width:60px}}
+/* ── COCKPIT VISÃO GERAL ── */
+.cockpit-kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:20px}
+.ckpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;cursor:default}
+.ckpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--border)}
+.ckpi.c-fat::before{background:#1A1917}.ckpi.c-lb::before{background:#166534}.ckpi.c-mg::before{background:#1D4ED8}
+.ckpi.c-cob::before{background:#92400E}.ckpi.c-top::before{background:#5B21B6}.ckpi.c-cres::before{background:#D97706}
+.ckpi-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'DM Mono',monospace;margin-bottom:7px}
+.ckpi-value{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);line-height:1}
+.ckpi-delta{font-size:11px;font-weight:500;margin-top:5px}
+.ckpi-delta.up{color:var(--green)}.ckpi-delta.dn{color:var(--red)}.ckpi-delta.neutral{color:var(--text3)}
+.ckpi-sub{font-size:10px;color:var(--text3);margin-top:4px;font-family:'DM Mono',monospace}
+/* Main chart combo */
+.cockpit-main{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.cockpit-main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cockpit-main-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.cockpit-metric-tabs{display:flex;gap:4px}
+.cmt{padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .1s}
+.cmt.active{background:var(--text);color:#fff;border-color:var(--text)}
+/* Drivers */
+.drivers-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.driver-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.driver-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.driver-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.driver-row:last-child{border-bottom:none}
+.driver-rank{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.driver-rank.up{background:var(--green-bg);color:var(--green)}.driver-rank.dn{background:var(--red-bg);color:var(--red)}
+.driver-info{flex:1;min-width:0}
+.driver-nome{font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.driver-meta{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+.driver-delta{font-size:12px;font-weight:600;font-family:'DM Mono',monospace;flex-shrink:0}
+.driver-delta.up{color:var(--green)}.driver-delta.dn{color:var(--red)}
+/* Mix hierárquico */
+.mix-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.mix-cat-row{padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.mix-cat-row:last-child{border-bottom:none}
+.mix-cat-header{display:flex;align-items:center;gap:8px}
+.mix-cat-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.mix-cat-name{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.mix-cat-pct{font-size:12px;font-family:'DM Mono',monospace;color:var(--text2)}
+.mix-cat-cres{font-size:11px;font-weight:600;font-family:'DM Mono',monospace;flex-shrink:0}
+.mix-cat-cres.up{color:var(--green)}.mix-cat-cres.dn{color:var(--red)}
+.mix-bar-row{display:flex;align-items:center;gap:6px;margin-top:6px}
+.mix-bar-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.mix-bar-fill{height:100%;border-radius:3px}
+.mix-sub-rows{display:none;padding-left:18px;margin-top:4px}
+.mix-cat-row.open .mix-sub-rows{display:block}
+.mix-sub-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border)}
+.mix-sub-row:last-child{border-bottom:none}
+.mix-sub-name{font-size:11px;color:var(--text2);flex:1}
+.mix-sub-pct-cat{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
+.mix-sub-cres{font-size:11px;font-weight:600;font-family:'DM Mono',monospace;flex-shrink:0}
+.mix-sub-cres.up{color:var(--green)}.mix-sub-cres.dn{color:var(--red)}
+.mix-sub-bar{width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;flex-shrink:0}
+.mix-sub-bar-fill{height:100%;border-radius:2px;opacity:.7}
+.mix-toggle{font-size:10px;color:var(--text3);transition:transform .2s}
+.mix-cat-row.open .mix-toggle{transform:rotate(90deg)}
+/* Insights automáticos */
+.cockpit-insights{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;margin-bottom:16px}
+.ci-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;border-left:3px solid}
+.ci-card.pos{border-left-color:var(--green)}.ci-card.neg{border-left-color:var(--red)}
+.ci-card.warn{border-left-color:#D97706}.ci-card.info{border-left-color:var(--blue)}
+.ci-tag{font-size:9px;font-family:'DM Mono',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.ci-card.pos .ci-tag{color:var(--green)}.ci-card.neg .ci-tag{color:var(--red)}
+.ci-card.warn .ci-tag{color:#D97706}.ci-card.info .ci-tag{color:var(--blue)}
+.ci-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px}
+.ci-desc{font-size:11px;color:var(--text2);line-height:1.5}
+/* Alertas */
+.alert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:16px}
+.alert-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert-body{flex:1;min-width:0}
+.alert-title{font-size:12px;font-weight:500;color:var(--text)}
+.alert-meta{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:3px}
+.alert-card.red{background:#FFF5F5;border-color:#FECDD3}
+.alert-card.amber{background:#FFFBEB;border-color:#FDE68A}
+.alert-card.blue{background:#EFF6FF;border-color:#BFDBFE}
+/* Resumo executivo */
+.exec-summary{background:var(--text);color:#F7F5F0;border-radius:var(--radius);padding:20px 24px;margin-bottom:20px}
+.exec-summary-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;opacity:.5;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.exec-summary-text{font-size:13px;line-height:1.7;opacity:.9}
+.exec-summary-text strong{opacity:1;font-weight:600}
+/* Visão cockpit search filters */
+.cockpit-filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 0;margin-bottom:4px}
+.cockpit-filter-row select,.cockpit-filter-row input{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.cockpit-filter-row select:focus,.cockpit-filter-row input:focus{border-color:var(--text)}
+.cockpit-filter-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)}
+@media(max-width:1100px){.cockpit-kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){.cockpit-kpi-grid{grid-template-columns:1fr 1fr}.drivers-grid{grid-template-columns:1fr}}
+
+/* ── RENT v2 ADIÇÕES ── */
+.class-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap}
+.class-badge.estrela{background:#FEF9C3;color:#854D0E}
+.class-badge.defender{background:#DCFCE7;color:#166534}
+.class-badge.ajustar{background:#FEF3C7;color:#92400E}
+.class-badge.rever{background:#DBEAFE;color:#1E40AF}
+.class-badge.recuperar{background:#EDE9FE;color:#5B21B6}
+.class-badge.descontinuar{background:#FEE2E2;color:#991B1B}
+.causa-badge{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-family:'DM Mono',monospace;background:var(--bg);border:1px solid var(--border);color:var(--text2)}
+.camp-table{width:100%;font-size:11px;border-collapse:collapse}
+.camp-table th{background:#F7F5F0;padding:7px 10px;text-align:left;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border);white-space:nowrap}
+.camp-table th.r{text-align:right}
+.camp-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.camp-table tr:last-child td{border-bottom:none}
+.camp-table tr:hover td{background:#FAFAF8}
+.camp-table .r{text-align:right;font-family:'DM Mono',monospace;font-size:11px}
+/* ── COMPRAS ── */
+
+.cob-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap}
+.cob-badge.critico{background:#FEE2E2;color:#991B1B}
+.cob-badge.atencao{background:#FEF3C7;color:#92400E}
+.cob-badge.ok{background:#DCFCE7;color:#166534}
+.cob-badge.excesso{background:#DBEAFE;color:#1E40AF}
+.cob-bar-wrap{display:flex;align-items:center;gap:8px}
+.cob-bar-track{width:100px;height:8px;background:var(--border);border-radius:4px;overflow:hidden;flex-shrink:0}
+.cob-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.comp-kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.comp-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.comp-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.comp-kpi.red::before{background:#991B1B}.comp-kpi.amber::before{background:#D97706}
+.comp-kpi.green::before{background:var(--green)}.comp-kpi.blue::before{background:var(--blue)}
+.comp-kpi.gray::before{background:#6B7280}
+.comp-kpi-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.comp-kpi-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1;color:var(--text)}
+.comp-kpi-sub{font-size:11px;color:var(--text3);margin-top:5px}
+.comp-filter-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.comp-filter-row select,.comp-filter-row input{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.comp-filter-row select:focus,.comp-filter-row input:focus{border-color:var(--text)}
+.urgency-section{margin-bottom:20px}
+.urgency-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.urgency-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.urgency-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;border-left:3px solid}
+.urgency-card.critico{border-left-color:#991B1B;background:#FFF5F5}
+.urgency-card.atencao{border-left-color:#D97706;background:#FFFBEB}
+.urgency-card-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.urgency-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.urgency-card-stat{font-size:10px;font-family:'DM Mono',monospace;background:rgba(0,0,0,.05);border-radius:4px;padding:2px 6px;color:var(--text2)}
+@media(max-width:768px){.comp-kpi-grid{grid-templa
 @media(max-width:900px){.analise-layout{grid-template-columns:1fr}.analise-sidebar{position:static}}
 /* ── RENTABILIDADE ── */
 .rent-kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px}
@@ -463,45 +600,78 @@ tbody tr:hover td{background:#FAFAF8}
   <div class="insights-bar" id="insights"></div>
 
   <!-- ── VISÃO GERAL ── -->
+  <!-- ── COCKPIT EXECUTIVO ── -->
   <div class="panel active" id="visao">
-    <div class="period-row">
-      <span class="period-label">Período:</span>
-      <div id="periodBtns"></div>
+
+    <!-- Filtros contextuais do cockpit -->
+    <div class="cockpit-filter-row">
+      <span class="cockpit-filter-label">Filtrar visão:</span>
+      <select id="vFiltCat"    onchange="onVisaoFilter()"><option value="">Todas as categorias</option></select>
+      <select id="vFiltSubcat" onchange="onVisaoFilter()"><option value="">Todas as subcategorias</option></select>
+      <select id="vFiltMarca"  onchange="onVisaoFilter()"><option value="">Todas as marcas</option></select>
+      <input  id="vFiltSku" type="text" placeholder="SKU ou produto..." oninput="onVisaoFilter()" style="width:180px"/>
+      <div id="periodBtns" style="display:flex;gap:4px"></div>
     </div>
-    <div class="chart-2col">
-      <div class="chart-box full">
-        <div class="chart-title">Evolução mensal</div>
-        <div class="chart-subtitle">Faturamento (R$)</div>
-        <div class="chart-wrap"><canvas id="cFat"></canvas></div>
+
+    <!-- 1. KPIs macro -->
+    <div class="cockpit-kpi-grid" id="cockpitKpis"></div>
+
+    <!-- 2. Gráfico principal combo -->
+    <div class="cockpit-main" id="cockpitMainChart">
+      <div class="cockpit-main-header">
+        <div class="cockpit-main-title">Evolução mensal — visão macro</div>
+        <div class="cockpit-metric-tabs" id="cockpitMetricTabs">
+          <button class="cmt active" onclick="setCockpitMetric('fat',this)">Faturamento</button>
+          <button class="cmt" onclick="setCockpitMetric('lucro',this)">Lucro Bruto</button>
+          <button class="cmt" onclick="setCockpitMetric('margem',this)">Margem %</button>
+          <button class="cmt" onclick="setCockpitMetric('qtd',this)">Volume</button>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cCockpitMain"></canvas></div>
+    </div>
+
+    <!-- 3. Resumo executivo -->
+    <div class="exec-summary" id="execSummary"></div>
+
+    <!-- 4. Drivers de resultado -->
+    <div class="section-hdr" style="margin-bottom:12px">
+      <h2>Drivers de resultado</h2>
+      <p>Top 5 SKUs por variação de faturamento — vs período anterior equivalente</p>
+    </div>
+    <div class="drivers-grid">
+      <div class="driver-box">
+        <div class="driver-title">↑ Maiores alavancas de crescimento</div>
+        <div id="driversUp"></div>
+      </div>
+      <div class="driver-box">
+        <div class="driver-title">↓ Maiores detratores de resultado</div>
+        <div id="driversDown"></div>
       </div>
     </div>
-    <div class="chart-2col">
-      <div class="chart-box">
-        <div class="chart-title">Mix por categoria</div>
-        <div class="chart-subtitle">Faturamento por categoria</div>
-        <div class="legend" id="legCat"></div>
-        <div class="chart-wrap"><canvas id="cCat"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-title">Volume</div>
-        <div class="chart-subtitle">Unidades vendidas por mês</div>
-        <div class="chart-wrap"><canvas id="cQtd"></canvas></div>
-      </div>
+
+    <!-- 5. Mix hierárquico categoria > subcategoria -->
+    <div class="section-hdr" style="margin-bottom:12px">
+      <h2>Mix por categoria e subcategoria</h2>
+      <p>Clique em uma categoria para expandir as subcategorias</p>
     </div>
-    <div class="chart-2col">
-      <div class="chart-box">
-        <div class="chart-title">Eficiência</div>
-        <div class="chart-subtitle">Ticket médio por mês (R$/un)</div>
-        <div class="chart-wrap"><canvas id="cTicket"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-title">Concentração ABC</div>
-        <div class="chart-subtitle">Participação no faturamento</div>
-        <div class="legend" id="legAbcVSmall"></div>
-        <div class="chart-wrap"><canvas id="cAbcVSmall"></canvas></div>
-      </div>
+    <div class="mix-section" id="mixSection"></div>
+
+    <!-- 6. Insights automáticos -->
+    <div class="section-hdr" style="margin-bottom:12px">
+      <h2>Insights automáticos</h2>
+      <p>Detectados com base em variação de subcategoria e concentração de mix</p>
     </div>
+    <div class="cockpit-insights" id="cockpitInsights"></div>
+
+    <!-- 7 + 8. Alertas (cobertura + queda) -->
+    <div class="section-hdr" style="margin-bottom:12px">
+      <h2>Alertas operacionais</h2>
+      <p>Rupturas, excessos e quedas de venda por subcategoria</p>
+    </div>
+    <div class="alert-grid" id="cockpitAlerts"></div>
+
   </div>
+
 
   <!-- ── ANÁLISE POR CATEGORIA ── -->
   <div class="panel" id="analise">
@@ -762,7 +932,7 @@ tbody tr:hover td{background:#FAFAF8}
   <!-- ── RENTABILIDADE ── -->
   <div class="panel" id="rentabilidade">
 
-    <!-- Filtros no topo -->
+    <!-- ── FILTROS ── -->
     <div class="rent-filter-row" style="margin-bottom:20px">
       <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap">Filtrar:</span>
       <select id="rentFiltCat"     onchange="onRentFilter()"><option value="">Todas as categorias</option></select>
@@ -770,27 +940,108 @@ tbody tr:hover td{background:#FAFAF8}
       <select id="rentFiltMarca"   onchange="onRentFilter()"><option value="">Todas as marcas</option></select>
       <select id="rentFiltAbc"     onchange="onRentFilter()">
         <option value="">Todos ABC</option>
-        <option value="A">Classe A</option>
-        <option value="B">Classe B</option>
-        <option value="C">Classe C</option>
+        <option value="A">Classe A</option><option value="B">Classe B</option><option value="C">Classe C</option>
       </select>
       <select id="rentFiltPeriodo" onchange="onRentFilter()">
         <option value="all">13 meses</option>
         <option value="6">Últimos 6 meses</option>
         <option value="3">Últimos 3 meses</option>
       </select>
+      <input type="text" id="rentSearch" placeholder="Buscar SKU ou produto..." oninput="rentPage=0;renderRentTable()" style="min-width:190px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none"/>
     </div>
 
-    <!-- KPIs -->
+    <!-- ── 2. KPIs ── -->
     <div class="rent-kpi-grid" id="rentKpis"></div>
 
-    <!-- Resumo por categoria (cards clicáveis) -->
+    <!-- ── 9. INSIGHTS ── -->
     <div style="margin-bottom:20px">
-      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Rentabilidade por categoria</div>
-      <div id="rentCatCards"></div>
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Insights de rentabilidade</div>
+      <div class="insight-cards-grid" id="rentInsights"></div>
     </div>
 
-    <!-- Detalhamento subcategoria (aparece ao clicar em categoria) -->
+    <!-- ── 3.1 + 3.2 Gráficos categoria ── -->
+    <div class="chart-2col" style="margin-bottom:16px">
+      <div class="chart-box">
+        <div class="chart-title">Margem % por categoria</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">Verde ≥40% · Azul ≥20% · Âmbar ≥0% · Vermelho &lt;0%</div>
+        <div class="chart-wrap tall"><canvas id="cMargemCat"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Receita vs Lucro Bruto por categoria</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">Identifica categorias com baixa eficiência</div>
+        <div class="chart-wrap tall"><canvas id="cReceitaVsLucro"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ── 3.3 + 3.4 Gráficos subcategoria ── -->
+    <div class="chart-2col" style="margin-bottom:16px">
+      <div class="chart-box">
+        <div class="chart-title">Margem % por subcategoria</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">Top subcategorias — melhores e piores margens</div>
+        <div class="chart-wrap tall"><canvas id="cMargemSub"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Receita vs Lucro por subcategoria</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">Distorções dentro das categorias — Top 12 por receita</div>
+        <div class="chart-wrap tall"><canvas id="cReceitaVsLucroSub"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ── 4. EVOLUÇÃO MARGEM NO TEMPO ── -->
+    <div class="chart-box" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div class="chart-title">Evolução da margem no tempo</div>
+          <div class="chart-subtitle" style="margin-bottom:0">Margem % e lucro bruto mês a mês · linha tracejada = média histórica</div>
+        </div>
+        <select id="rentEvolCat" onchange="buildMargemEvolChart(getRentSkus().map(s=>({s,m:calcSkuMetrics(s)})))" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;flex-shrink:0">
+          <option value="">Portfólio filtrado</option>
+        </select>
+      </div>
+      <div class="chart-wrap xtall"><canvas id="cMargemEvol"></canvas></div>
+      <div id="rentEvolExplicacao" style="margin-top:12px;padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px;color:var(--text2);line-height:1.6"></div>
+    </div>
+
+    <!-- ── 5. SCATTER ESTRATÉGICO ── -->
+    <div class="chart-box" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div class="chart-title">Mapa estratégico — Crescimento × Margem</div>
+          <div class="chart-subtitle" style="margin-bottom:0">Tamanho = receita · posição define estratégia recomendada</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="analise-period-btn active" id="scatterModeSku" onclick="setScatterMode('sku',this)">Por SKU</button>
+          <button class="analise-period-btn" id="scatterModeSub" onclick="setScatterMode('sub',this)">Por Subcategoria</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;font-size:10px;font-family:'DM Mono',monospace">
+        <div style="background:#DCFCE7;border-radius:4px;padding:5px 8px;color:#166534">↗ FOCO · crescimento + margem alta</div>
+        <div style="background:#FEF3C7;border-radius:4px;padding:5px 8px;color:#92400E">↗ REVISAR PREÇO · crescimento + margem baixa</div>
+        <div style="background:#DBEAFE;border-radius:4px;padding:5px 8px;color:#1E40AF">↙ RECUPERAR · queda + margem alta</div>
+        <div style="background:#FEE2E2;border-radius:4px;padding:5px 8px;color:#991B1B">↙ AVALIAR SAÍDA · queda + margem baixa</div>
+      </div>
+      <div style="height:380px;position:relative"><canvas id="cScatter"></canvas></div>
+    </div>
+
+    <!-- ── 6.1 Campeões + 6.2 Destruidores ── -->
+    <div class="chart-2col" style="margin-bottom:16px">
+      <div class="chart-box">
+        <div class="chart-title">🏆 Campeões de lucro</div>
+        <div class="chart-subtitle" style="margin-bottom:12px">Top SKUs por lucro bruto gerado</div>
+        <div id="campeoesTable"></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">⚠️ Destruidores de margem</div>
+        <div class="chart-subtitle" style="margin-bottom:12px">Receita relevante com margem baixa — requerem ação</div>
+        <div id="destruidoresTable"></div>
+      </div>
+    </div>
+
+    <!-- ── RENTABILIDADE POR CATEGORIA (drill) ── -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Rentabilidade por categoria — clique para detalhar subcategorias</div>
+      <div id="rentCatCards"></div>
+    </div>
     <div id="rentSubcatSection" style="display:none;margin-bottom:20px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em" id="rentSubcatLabel">Subcategorias</div>
@@ -799,52 +1050,21 @@ tbody tr:hover td{background:#FAFAF8}
       <div id="rentSubcatCards"></div>
     </div>
 
-    <!-- Gráficos (Canvas — init com timeout) -->
-    <div class="chart-2col" style="margin-bottom:16px">
-      <div class="chart-box">
-        <div class="chart-title">Margem bruta por categoria</div>
-        <div class="chart-subtitle" style="margin-bottom:16px">% margem ponderada pelo faturamento</div>
-        <div class="chart-wrap tall"><canvas id="cMargemCat"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-title">Receita vs Lucro Bruto</div>
-        <div class="chart-subtitle" style="margin-bottom:16px">Por categoria — R$</div>
-        <div class="chart-wrap tall"><canvas id="cReceitaVsLucro"></canvas></div>
-      </div>
-    </div>
-
-    <!-- Elasticidade -->
-    <div class="chart-box" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <div>
-          <div class="chart-title">Elasticidade preço-volume</div>
-          <div class="chart-subtitle" style="margin-bottom:0">Δ% preço médio e Δ% volume mês a mês — linha = elasticidade calculada</div>
-        </div>
-        <select id="rentElastCat" onchange="buildElastChart()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;flex-shrink:0">
-          <option value="">Portfólio total</option>
-        </select>
-      </div>
-      <div style="font-size:11px;color:var(--text3);margin:8px 0 12px;font-family:'DM Mono',monospace">
-        e = ΔVol% ÷ ΔPreço% · negativo = comportamento normal · abaixo de -1,5 = produto elástico (sensível a preço)
-      </div>
-      <div class="chart-wrap xtall"><canvas id="cElast"></canvas></div>
-    </div>
-
-    <!-- Insights -->
-    <div style="margin-bottom:20px">
-      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Insights detectados</div>
-      <div class="insight-cards-grid" id="rentInsights"></div>
-    </div>
-
-    <!-- Tabela de produtos -->
+    <!-- ── 7. TABELA COMPLETA ── -->
     <div class="chart-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div>
-          <div class="chart-title">Rentabilidade por produto</div>
+          <div class="chart-title">Tabela completa de rentabilidade</div>
           <div class="chart-subtitle" style="margin-bottom:0" id="rentTableTitle">—</div>
         </div>
-        <input type="text" id="rentSearch" placeholder="Buscar produto..." oninput="rentPage=0;renderRentTable()"
-          style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;width:200px"/>
+        <div style="display:flex;gap:6px">
+          <select id="rentTblSort" onchange="renderRentTable()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+            <option value="lucro">Ordenar: Lucro</option>
+            <option value="receita">Ordenar: Receita</option>
+            <option value="margem">Ordenar: Margem %</option>
+            <option value="status">Ordenar: Status</option>
+          </select>
+        </div>
       </div>
       <div id="rentTable"></div>
       <div class="pag" id="rentPag"></div>
@@ -854,72 +1074,104 @@ tbody tr:hover td{background:#FAFAF8}
   <!-- ── COMPRAS & ESTOQUE ── -->
   <div class="panel" id="compras">
 
-    <!-- Filtros -->
-    <div class="comp-filter-row">
-      <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)">Filtrar:</span>
+    <!-- Parâmetros e filtros -->
+    <div class="comp-filter-row" style="margin-bottom:8px">
+      <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap">Parâmetros:</span>
+      <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px">
+        Lead time
+        <input type="number" id="paramLeadTime" value="5" min="1" max="12" onchange="buildCompras()"
+          style="width:42px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:'DM Mono',monospace;background:var(--bg)"/>
+        meses
+      </label>
+      <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px">
+        Segurança
+        <input type="number" id="paramSeguranca" value="1" min="0" max="6" onchange="buildCompras()"
+          style="width:42px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:'DM Mono',monospace;background:var(--bg)"/>
+        meses
+      </label>
+      <div class="fb-sep" style="height:20px;width:1px;background:var(--border)"></div>
+      <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap">Filtrar:</span>
       <select id="compFiltStatus" onchange="buildCompras()">
         <option value="">Todos os status</option>
-        <option value="critico">Crítico (&lt;30 dias)</option>
-        <option value="atencao">Atenção (30–60 dias)</option>
-        <option value="ok">OK (60–90 dias)</option>
-        <option value="excesso">Excesso (&gt;90 dias)</option>
+        <option value="ruptura">Ruptura (&lt;1M)</option>
+        <option value="risco">Risco (&lt;lead time)</option>
+        <option value="ideal">Ideal</option>
+        <option value="excesso">Excesso</option>
       </select>
-      <select id="compFiltCat" onchange="buildCompras()"><option value="">Todas as categorias</option></select>
+      <select id="compFiltCat"   onchange="buildCompras()"><option value="">Todas as categorias</option></select>
       <select id="compFiltMarca" onchange="buildCompras()"><option value="">Todas as marcas</option></select>
-      <select id="compFiltAbc" onchange="buildCompras()">
+      <select id="compFiltAbc"   onchange="buildCompras()">
         <option value="">Todos ABC</option>
-        <option value="A">Classe A</option>
-        <option value="B">Classe B</option>
-        <option value="C">Classe C</option>
+        <option value="A">Classe A</option><option value="B">Classe B</option><option value="C">Classe C</option>
       </select>
-      <input type="text" id="compSearch" placeholder="Buscar produto..." oninput="compPage=0;renderCompTable()" style="min-width:200px"/>
-      <select id="compFiltCobertura" onchange="buildCompras()">
-        <option value="60">Meta: 60 dias</option>
-        <option value="90">Meta: 90 dias</option>
-        <option value="120">Meta: 120 dias</option>
-        <option value="45">Meta: 45 dias</option>
-      </select>
+      <input type="text" id="compSearch" placeholder="Buscar produto..." oninput="compPage=0;renderCompTable()"
+        style="min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none"/>
     </div>
 
     <!-- KPIs -->
     <div class="comp-kpi-grid" id="compKpis"></div>
 
-    <!-- Alertas urgentes: crítico + atenção -->
-    <div class="urgency-section">
-      <div class="urgency-title" id="compUrgencyTitle">SKUs que precisam de reposição</div>
-      <div class="urgency-cards" id="compUrgencyCards"></div>
+    <!-- Insights automáticos -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Insights de estoque</div>
+      <div class="insight-cards-grid" id="compInsights"></div>
     </div>
 
-    <!-- Gráficos cobertura -->
+    <!-- Alertas (SKU classe A em ruptura + subcats) -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px" id="compAlertTitle">Alertas operacionais</div>
+      <div class="alert-grid" id="compAlerts"></div>
+    </div>
+
+    <!-- Gráficos -->
     <div class="chart-2col" style="margin-bottom:16px">
       <div class="chart-box">
-        <div class="chart-title">Cobertura de estoque por categoria</div>
-        <div class="chart-subtitle" style="margin-bottom:16px">Dias médios de cobertura ponderado por valor de estoque</div>
-        <div class="chart-wrap tall"><canvas id="cCobCat"></canvas></div>
-      </div>
-      <div class="chart-box">
-        <div class="chart-title">Distribuição de status de estoque</div>
+        <div class="chart-title">Distribuição por status de estoque</div>
         <div class="chart-subtitle" style="margin-bottom:16px">Quantidade de SKUs por faixa de cobertura</div>
         <div class="chart-wrap tall"><canvas id="cCobDist"></canvas></div>
       </div>
+      <div class="chart-box">
+        <div class="chart-title">Investimento sugerido por categoria</div>
+        <div class="chart-subtitle" style="margin-bottom:16px">R$ de compra necessário para atingir estoque ideal</div>
+        <div class="chart-wrap tall"><canvas id="cCobCat"></canvas></div>
+      </div>
     </div>
 
-    <!-- Tabela completa -->
+    <!-- Ranking: maior necessidade + maior excesso -->
+    <div class="chart-2col" style="margin-bottom:16px">
+      <div class="chart-box">
+        <div class="chart-title">🛒 Maior necessidade de compra</div>
+        <div class="chart-subtitle" style="margin-bottom:10px">Top SKUs por investimento necessário (R$)</div>
+        <div id="compRankCompra"></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">📦 Maior excesso de estoque</div>
+        <div class="chart-subtitle" style="margin-bottom:10px">Top SKUs por capital parado (R$)</div>
+        <div id="compRankExcesso"></div>
+      </div>
+    </div>
+
+    <!-- Tabela principal -->
     <div class="chart-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div>
-          <div class="chart-title">Análise de reposição por produto</div>
+          <div class="chart-title">Tabela de reposição inteligente</div>
           <div class="chart-subtitle" style="margin-bottom:0" id="compTableTitle">—</div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button onclick="exportComprasCSV()" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2)">↓ Exportar CSV</button>
+        <div style="display:flex;gap:6px">
+          <select id="compTblSort" onchange="renderCompTable()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+            <option value="urgencia">Ordenar: Urgência</option>
+            <option value="compra">Ordenar: Compra R$</option>
+            <option value="cobertura">Ordenar: Cobertura</option>
+            <option value="excesso">Ordenar: Excesso</option>
+          </select>
+          <button onclick="exportComprasCSV()" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2)">↓ CSV</button>
         </div>
       </div>
       <div id="compTable"></div>
       <div class="pag" id="compPag"></div>
     </div>
   </div>
-
 </main>
 
 <script>
@@ -1130,6 +1382,8 @@ function buildDashboard(){
   buildAbcValor();buildAbcQtd();buildTodos();
   buildAnaliseCatList();
   initRentFiltros();
+  initComprasFiltros();
+  initVisaoFiltros();
   initComprasFiltros();
 }
 
@@ -1388,89 +1642,459 @@ function toggleDrop(id){
 
 
 
-function buildKPIs(){
-  const m=getMonthly();
-  if(!m||!m.length) return;
-  const totalV=m.reduce((s,x)=>s+x.Valor,0),totalQ=m.reduce((s,x)=>s+x.Qtd,0);
-  const last=m[m.length-1],prev=m[m.length-2];
-  const mm=prev&&prev.Valor?pct(last.Valor,prev.Valor):0;
-  const ticket=totalQ>0?totalV/totalQ:0;
-  const skuAtivos=APP.allSkus.filter(s=>s.TotalValor>0).length;
-  // Show filter context in subtitle
-  const filterCtx=FILTER.cats.length?FILTER.cats.join(', '):FILTER.subcats.length?FILTER.subcats.join(', '):'';
-  const periodCtx=FILTER.meses.length?`${FILTER.meses[0]}–${FILTER.meses[FILTER.meses.length-1]}`:`${m[0].label} — ${m[m.length-1].label}`;
-  document.getElementById('kpis').innerHTML=`
-    <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">${fmtK(totalV)}</div><div class="kpi-sub">${periodCtx}${filterCtx?' · '+filterCtx:''}</div></div>
-    <div class="kpi"><div class="kpi-label">Unidades vendidas</div><div class="kpi-value">${Math.round(totalQ).toLocaleString('pt-BR')}</div><div class="kpi-sub">${m.length} meses · ${skuAtivos} SKUs</div></div>
-    <div class="kpi"><div class="kpi-label">${last.label} — último mês</div><div class="kpi-value">${fmtK(last.Valor)}</div><div class="kpi-trend ${mm>=0?'up':'dn'}">${mm>=0?'▲':'▼'} ${Math.abs(mm).toFixed(1)}% vs mês anterior</div></div>
-    <div class="kpi"><div class="kpi-label">Ticket médio</div><div class="kpi-value">R$ ${Math.round(ticket).toLocaleString('pt-BR')}</div><div class="kpi-sub">${skuAtivos} SKUs ativos</div></div>`;
+// ── COCKPIT ENGINE ────────────────────────────────────────────────────────────
+
+// State
+const VISAO = { metric:'fat', catFilter:'', subcatFilter:'', marcaFilter:'', skuFilter:'' };
+
+function onVisaoFilter(){
+  VISAO.catFilter=document.getElementById('vFiltCat')?.value||'';
+  VISAO.marcaFilter=document.getElementById('vFiltMarca')?.value||'';
+  VISAO.skuFilter=(document.getElementById('vFiltSku')?.value||'').toLowerCase();
+  // Update subcat options based on cat
+  const subcats=VISAO.catFilter?[...new Set(APP.allSkus.filter(s=>s.cat===VISAO.catFilter).map(s=>s.sub).filter(Boolean))].sort():[];
+  document.getElementById('vFiltSubcat').innerHTML='<option value="">Todas as subcategorias</option>'+subcats.map(s=>`<option>${s}</option>`).join('');
+  VISAO.subcatFilter=document.getElementById('vFiltSubcat')?.value||'';
+  buildVisao();
+}
+function initVisaoFiltros(){
+  const cats=[...new Set(APP.allSkus.map(s=>s.cat))].sort();
+  const marcas=[...new Set(APP.allSkus.map(s=>s.marca).filter(Boolean))].sort();
+  document.getElementById('vFiltCat').innerHTML='<option value="">Todas as categorias</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+  document.getElementById('vFiltMarca').innerHTML='<option value="">Todas as marcas</option>'+marcas.map(m=>`<option>${m}</option>`).join('');
 }
 
-function buildInsights(){
-  const classA=APP.allSkus.filter(s=>s.abcV==='A').length;
-  const total=APP.allSkus.length;
-  const topCat=APP.categories[0];
-  const totalV=APP.allSkus.reduce((s,x)=>s+x.TotalValor,0);
-  const m=getMonthly();
-  if(!m||m.length<2){document.getElementById('insights').innerHTML='';return;}
-  const growth=pct(m[m.length-1].Valor,m[0].Valor);
-  const marcas=new Set(APP.allSkus.map(s=>s.marca).filter(Boolean));
-  const filterActive=FILTER.cats.length||FILTER.subcats.length||FILTER.marcas.length||FILTER.meses.length;
-  document.getElementById('insights').innerHTML=`
-    ${filterActive?`<div class="insight-chip" style="background:#FEF3C7;border-color:#FDE68A"><span class="dot amber"></span>Filtros ativos — dados parciais do portfólio</div>`:''}
-    <div class="insight-chip"><span class="dot"></span>${classA} SKUs (${Math.round(classA/Math.max(total,1)*100)}% do portfólio) = 80% do faturamento</div>
-    ${topCat?`<div class="insight-chip"><span class="dot blue"></span>${topCat.Categoria}: ${Math.round((topCat.Valor||0)/Math.max(totalV,1)*100)}% do faturamento</div>`:''}
-    <div class="insight-chip"><span class="dot ${growth>=0?'':'amber'}"></span>Variação ${m[0].label}→${m[m.length-1].label}: ${growth>=0?'+':''}${growth}%</div>
-    <div class="insight-chip"><span class="dot purple"></span>${marcas.size} marcas · ${APP.categories.length} categorias · ${Object.values(APP.subcatMap).reduce((s,o)=>s+Object.keys(o).length,0)} subcategorias</div>`;
+// Filter SKUs for cockpit
+function getVisaoSkus(){
+  return APP.allSkus.filter(s=>{
+    if(VISAO.catFilter&&s.cat!==VISAO.catFilter) return false;
+    if(VISAO.subcatFilter&&s.sub!==VISAO.subcatFilter) return false;
+    if(VISAO.marcaFilter&&s.marca!==VISAO.marcaFilter) return false;
+    if(VISAO.skuFilter&&!s.nome.toLowerCase().includes(VISAO.skuFilter)&&!String(s.sku).includes(VISAO.skuFilter)) return false;
+    return true;
+  });
 }
 
+// Get monthly data for visao filtered set
+function getVisaoMonthly(){
+  const months=getActiveMonths();
+  const byMonth={};
+  months.forEach(l=>byMonth[l]={label:l,v:0,q:0,lucro:0});
+  const raw=APP.rawSalesBySku||{};
+  for(const [skuStr,data] of Object.entries(raw)){
+    if(VISAO.catFilter&&data.cat!==VISAO.catFilter) continue;
+    if(VISAO.subcatFilter&&data.sub!==VISAO.subcatFilter) continue;
+    if(VISAO.marcaFilter&&data.marca!==VISAO.marcaFilter) continue;
+    if(VISAO.skuFilter&&!data.nome.toLowerCase().includes(VISAO.skuFilter)&&!skuStr.includes(VISAO.skuFilter)) continue;
+    const custo=APP.custoMap?.[skuStr]?.custo||0;
+    for(const [label,vals] of Object.entries(data.meses)){
+      if(byMonth[label]){
+        byMonth[label].v+=vals.v;
+        byMonth[label].q+=vals.q;
+        byMonth[label].lucro+=custo>0?(vals.v-custo*vals.q):0;
+      }
+    }
+  }
+  return months.map(l=>byMonth[l]);
+}
+
+// Build everything in cockpit
+function buildVisao(){
+  const skus=getVisaoSkus();
+  const monthly=getVisaoMonthly();
+  buildCockpitKpis(skus,monthly);
+  buildPeriodBtns();
+  setCockpitMetric(VISAO.metric,null);
+  buildExecSummary(skus,monthly);
+  buildDrivers(skus,monthly);
+  buildMixHierarquico(skus,monthly);
+  buildCockpitInsights(skus,monthly);
+  buildCockpitAlerts(skus,monthly);
+}
+// Compatibility alias for legacy calls
+function rebuildVisaoCharts(){ buildVisao(); }
+function buildCatDonut(){}  // absorbed into cockpit
+function buildKPIs(){} // absorbed into cockpit
+function buildInsights(){} // absorbed into cockpit
+
+function setCockpitMetric(m,btn){
+  VISAO.metric=m;
+  document.querySelectorAll('.cmt').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  else document.querySelectorAll('.cmt').forEach((b,i)=>{if(['fat','lucro','margem','qtd'][i]===m)b.classList.add('active')});
+  buildCockpitMainChart(getVisaoMonthly());
+}
+
+// ── 1. KPIs ───────────────────────────────────────────────────────────────────
+function buildCockpitKpis(skus,monthly){
+  const totalV=monthly.reduce((s,m)=>s+m.v,0);
+  const totalQ=monthly.reduce((s,m)=>s+m.q,0);
+  const totalLucro=monthly.reduce((s,m)=>s+m.lucro,0);
+  const margem=totalV>0?totalLucro/totalV*100:0;
+  // Prev period comparison (same number of months, period before)
+  const n=monthly.length;
+  const allLabels=MONTH_SHEETS.map(m=>m.label);
+  const curLabels=monthly.map(m=>m.label);
+  const curStart=allLabels.indexOf(curLabels[0]);
+  const prevLabels=allLabels.slice(Math.max(0,curStart-n),curStart);
+  // Compute prev period values
+  let prevV=0;
+  const raw=APP.rawSalesBySku||{};
+  for(const [skuStr,data] of Object.entries(raw)){
+    if(VISAO.catFilter&&data.cat!==VISAO.catFilter) continue;
+    if(VISAO.subcatFilter&&data.sub!==VISAO.subcatFilter) continue;
+    if(VISAO.marcaFilter&&data.marca!==VISAO.marcaFilter) continue;
+    for(const l of prevLabels) prevV+=(data.meses[l]?.v||0);
+  }
+  const crescR=totalV-prevV;
+  const crescPct=prevV>0?pct(totalV,prevV):0;
+  const last=monthly[monthly.length-1]||{v:0};
+  const prev2=monthly[monthly.length-2]||{v:0};
+  const mmPct=prev2.v>0?pct(last.v,prev2.v):0;
+
+  // Cobertura média (dos SKUs filtrados com estoque)
+  const skusComEst=skus.filter(s=>APP.custoMap?.[String(s.sku)]?.estoque>0);
+  let cobSum=0,cobCount=0;
+  skusComEst.forEach(s=>{
+    const est=APP.custoMap[String(s.sku)].estoque||0;
+    const vel=s.TotalQtd/monthly.length/30;
+    if(vel>0){cobSum+=est/vel;cobCount++;}
+  });
+  const cobMedia=cobCount>0?Math.round(cobSum/cobCount):0;
+
+  // Top10 concentração
+  const top10V=[...skus].sort((a,b)=>b.TotalValor-a.TotalValor).slice(0,10).reduce((s,x)=>s+x.TotalValor,0);
+  const concTop10=totalV>0?Math.round(top10V/totalV*100):0;
+
+  // Maior subcat
+  const bySub={};
+  skus.forEach(s=>{const k=s.cat+'|'+s.sub;if(!bySub[k])bySub[k]={v:0,label:s.sub};bySub[k].v+=s.TotalValor;});
+  const topSub=Object.values(bySub).sort((a,b)=>b.v-a.v)[0];
+  const topSubPct=totalV>0&&topSub?Math.round(topSub.v/totalV*100):0;
+
+  document.getElementById('cockpitKpis').innerHTML=`
+    <div class="ckpi c-fat">
+      <div class="ckpi-label">Faturamento</div>
+      <div class="ckpi-value">${fmtK(totalV)}</div>
+      <div class="ckpi-delta ${mmPct>=0?'up':'dn'}">${mmPct>=0?'▲':'▼'} ${Math.abs(mmPct)}% M/M</div>
+      <div class="ckpi-sub">${monthly[0]?.label}→${monthly[monthly.length-1]?.label}</div>
+    </div>
+    <div class="ckpi c-cres">
+      <div class="ckpi-label">Crescimento vs período ant.</div>
+      <div class="ckpi-value" style="color:${crescPct>=0?'#166534':'#991B1B'}">${crescPct>=0?'+':''}${crescPct}%</div>
+      <div class="ckpi-delta ${crescPct>=0?'up':'dn'}">${crescR>=0?'+':''}${fmtK(Math.abs(crescR))}</div>
+      <div class="ckpi-sub">vs ${n} meses anteriores</div>
+    </div>
+    <div class="ckpi c-lb">
+      <div class="ckpi-label">Lucro bruto</div>
+      <div class="ckpi-value">${fmtK(totalLucro)}</div>
+      <div class="ckpi-delta neutral">Margem: ${margem.toFixed(1)}%</div>
+      <div class="ckpi-sub">Receita − custo × qtd</div>
+    </div>
+    <div class="ckpi c-mg">
+      <div class="ckpi-label">Margem bruta</div>
+      <div class="ckpi-value" style="color:${margem>=40?'#166534':margem>=20?'#1D4ED8':'#D97706'}">${margem.toFixed(1)}%</div>
+      <div class="ckpi-delta neutral">${skus.filter(s=>s.TotalValor>0).length} SKUs ativos</div>
+      <div class="ckpi-sub">Média ponderada pelo faturamento</div>
+    </div>
+    <div class="ckpi c-cob">
+      <div class="ckpi-label">Cobertura média</div>
+      <div class="ckpi-value" style="color:${cobMedia<30?'#991B1B':cobMedia<60?'#D97706':'#166534'}">${cobMedia}d</div>
+      <div class="ckpi-delta neutral">${skusComEst.length} SKUs com estoque</div>
+      <div class="ckpi-sub">Dias baseado em vel. 3M</div>
+    </div>
+    <div class="ckpi c-top">
+      <div class="ckpi-label">Concentração Top 10</div>
+      <div class="ckpi-value">${concTop10}%</div>
+      <div class="ckpi-delta ${topSubPct>60?'dn':'neutral'}">Maior subcat: ${topSubPct}%</div>
+      <div class="ckpi-sub">${topSub?.label?.slice(0,22)||'—'}</div>
+    </div>`;
+}
+
+// ── 2. Gráfico principal ──────────────────────────────────────────────────────
+function buildCockpitMainChart(monthly){
+  ch('cCockpitMain');
+  const m=VISAO.metric;
+  let data,color,yFmt,label;
+  if(m==='fat'){
+    data=monthly.map(x=>Math.round(x.v));color='#1A1917';yFmt=v=>fmtK(v);label='Faturamento';
+  } else if(m==='lucro'){
+    data=monthly.map(x=>Math.round(x.lucro));color='#166534';yFmt=v=>fmtK(v);label='Lucro Bruto';
+  } else if(m==='margem'){
+    data=monthly.map(x=>x.v>0?parseFloat((x.lucro/x.v*100).toFixed(1)):0);
+    color='#1D4ED8';yFmt=v=>v+'%';label='Margem %';
+  } else {
+    data=monthly.map(x=>Math.round(x.q));color='#7C2D12';yFmt=v=>v.toLocaleString('pt-BR');label='Unidades';
+  }
+  const type=m==='margem'?'line':'bar';
+  APP.charts.cCockpitMain=new Chart(document.getElementById('cCockpitMain'),{
+    type,
+    data:{labels:monthly.map(x=>x.label),datasets:[{
+      label,data,
+      backgroundColor:m==='margem'?color+'22':color,
+      borderColor:color,borderRadius:type==='bar'?4:0,
+      fill:m==='margem',tension:.35,pointRadius:m==='margem'?4:0,
+      borderWidth:m==='margem'?2:0,pointBackgroundColor:color
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>label+': '+yFmt(ctx.raw)}}},
+      scales:{
+        y:{ticks:{callback:yFmt,font:{size:10},color:TX},grid:{color:GC}},
+        x:{ticks:{font:{size:10},color:TX},grid:{display:false}}
+      }}
+  });
+}
+
+// ── 3. Resumo executivo ───────────────────────────────────────────────────────
+function buildExecSummary(skus,monthly){
+  const totalV=monthly.reduce((s,m)=>s+m.v,0);
+  const totalLucro=monthly.reduce((s,m)=>s+m.lucro,0);
+  const margem=totalV>0?(totalLucro/totalV*100).toFixed(1):0;
+  const n=monthly.length;
+  const allLabels=MONTH_SHEETS.map(m=>m.label);
+  const curStart=allLabels.indexOf(monthly[0]?.label||'');
+  const prevLabels=allLabels.slice(Math.max(0,curStart-n),curStart);
+  let prevV=0;
+  const raw=APP.rawSalesBySku||{};
+  for(const [sk,data] of Object.entries(raw)){
+    if(VISAO.catFilter&&data.cat!==VISAO.catFilter) continue;
+    if(VISAO.subcatFilter&&data.sub!==VISAO.subcatFilter) continue;
+    for(const l of prevLabels) prevV+=(data.meses[l]?.v||0);
+  }
+  const crescPct=prevV>0?pct(totalV,prevV):0;
+
+  // Top growing subcat
+  const subGrowth=getSubcatGrowth(skus,monthly);
+  const topGrow=subGrowth.sort((a,b)=>b.delta-a.delta)[0];
+  const topFall=subGrowth.sort((a,b)=>a.delta-b.delta)[0];
+  // Ruptura
+  const emRuptura=skus.filter(s=>{
+    const c=APP.custoMap?.[String(s.sku)];if(!c)return false;
+    const vel=s.TotalQtd/n/30;return vel>0&&c.estoque/vel<30;
+  });
+
+  const lines=[];
+  if(crescPct>=5) lines.push(`Faturamento <strong>cresceu ${crescPct}%</strong> vs período anterior${topGrow&&topGrow.delta>0?' — puxado por '+topGrow.sub+' (+'+topGrow.delta+'%)':''}.`);
+  else if(crescPct<-5) lines.push(`Faturamento <strong>recuou ${Math.abs(crescPct)}%</strong> vs período anterior${topFall&&topFall.delta<0?' — impactado por '+topFall.sub+' ('+topFall.delta+'%)':''}.`);
+  else lines.push(`Faturamento <strong>estável</strong> vs período anterior (${crescPct>=0?'+':''}${crescPct}%).`);
+  if(parseFloat(margem)>0) lines.push(`Margem bruta de <strong>${margem}%</strong> com lucro de <strong>${fmtK(totalLucro)}</strong>.`);
+  if(topFall&&topFall.delta<-15) lines.push(`Queda relevante em <strong>${topFall.sub}</strong> (${topFall.delta}%) impacta o mix.`);
+  if(emRuptura.length>0) lines.push(`<strong>Risco de ruptura</strong> em ${emRuptura.length} SKU${emRuptura.length>1?'s':''} com cobertura crítica.`);
+
+  document.getElementById('execSummary').innerHTML=`
+    <div class="exec-summary-title">Resumo executivo</div>
+    <div class="exec-summary-text">${lines.join(' ')}</div>`;
+}
+
+// ── 4. Drivers ────────────────────────────────────────────────────────────────
+function buildDrivers(skus,monthly){
+  const n=monthly.length;
+  const allLabels=MONTH_SHEETS.map(m=>m.label);
+  const curLabels=monthly.map(m=>m.label);
+  const curStart=allLabels.indexOf(curLabels[0]);
+  const prevLabels=allLabels.slice(Math.max(0,curStart-n),curStart);
+
+  const raw=APP.rawSalesBySku||{};
+  const deltas=skus.map(s=>{
+    const data=raw[String(s.sku)];if(!data)return null;
+    const cur=curLabels.reduce((s2,l)=>s2+(data.meses[l]?.v||0),0);
+    const prev=prevLabels.reduce((s2,l)=>s2+(data.meses[l]?.v||0),0);
+    return {s,cur,prev,delta:cur-prev,pct:prev>0?pct(cur,prev):cur>0?100:0};
+  }).filter(Boolean).filter(x=>Math.abs(x.delta)>100);
+
+  const top5up=[...deltas].sort((a,b)=>b.delta-a.delta).slice(0,5);
+  const top5dn=[...deltas].sort((a,b)=>a.delta-b.delta).slice(0,5);
+
+  function renderRows(arr,dir){
+    return arr.map((x,i)=>`
+      <div class="driver-row">
+        <div class="driver-rank ${dir}">${i+1}</div>
+        <div class="driver-info">
+          <div class="driver-nome" title="${x.s.nome}">${x.s.nome.length>34?x.s.nome.slice(0,34)+'…':x.s.nome}</div>
+          <div class="driver-meta">${x.s.cat} › ${x.s.sub||'—'} · ${fmtK(x.cur)}</div>
+        </div>
+        <div class="driver-delta ${dir}">${dir==='up'?'+':''}${fmtK(x.delta)}<br><span style="font-size:9px">${x.pct>=0?'+':''}${x.pct}%</span></div>
+      </div>`).join('');
+  }
+  document.getElementById('driversUp').innerHTML=top5up.length?renderRows(top5up,'up'):'<div style="color:var(--text3);font-size:12px;padding:12px 0">Sem dados suficientes para o período</div>';
+  document.getElementById('driversDown').innerHTML=top5dn.length?renderRows(top5dn,'dn'):'<div style="color:var(--text3);font-size:12px;padding:12px 0">Sem dados suficientes para o período</div>';
+}
+
+// ── 5. Mix hierárquico ────────────────────────────────────────────────────────
+function getSubcatGrowth(skus,monthly){
+  const n=monthly.length;
+  const allLabels=MONTH_SHEETS.map(m=>m.label);
+  const curLabels=monthly.map(m=>m.label);
+  const curStart=allLabels.indexOf(curLabels[0]);
+  const prevLabels=allLabels.slice(Math.max(0,curStart-n),curStart);
+  const raw=APP.rawSalesBySku||{};
+  const bySub={};
+  skus.forEach(s=>{
+    const data=raw[String(s.sku)];if(!data)return;
+    const key=s.cat+'|||'+s.sub;
+    if(!bySub[key])bySub[key]={cat:s.cat,sub:s.sub,cur:0,prev:0};
+    curLabels.forEach(l=>bySub[key].cur+=(data.meses[l]?.v||0));
+    prevLabels.forEach(l=>bySub[key].prev+=(data.meses[l]?.v||0));
+  });
+  return Object.values(bySub).map(d=>({...d,delta:d.prev>0?pct(d.cur,d.prev):d.cur>0?100:0}));
+}
+
+function buildMixHierarquico(skus,monthly){
+  const totalV=skus.reduce((s,x)=>s+x.TotalValor,0)||1;
+  const n=monthly.length;
+  const allLabels=MONTH_SHEETS.map(m=>m.label);
+  const curLabels=monthly.map(m=>m.label);
+  const curStart=allLabels.indexOf(curLabels[0]);
+  const prevLabels=allLabels.slice(Math.max(0,curStart-n),curStart);
+  const raw=APP.rawSalesBySku||{};
+
+  // Group by cat then sub
+  const byCat={};
+  skus.forEach(s=>{
+    if(!byCat[s.cat])byCat[s.cat]={v:0,prev:0,subs:{}};
+    byCat[s.cat].v+=s.TotalValor;
+    const data=raw[String(s.sku)];
+    if(data) prevLabels.forEach(l=>byCat[s.cat].prev+=(data.meses[l]?.v||0));
+    if(!byCat[s.cat].subs[s.sub])byCat[s.cat].subs[s.sub]={v:0,prev:0};
+    byCat[s.cat].subs[s.sub].v+=s.TotalValor;
+    if(data) prevLabels.forEach(l=>byCat[s.cat].subs[s.sub].prev+=(data.meses[l]?.v||0));
+  });
+
+  const cats=Object.entries(byCat).sort((a,b)=>b[1].v-a[1].v);
+
+  const html=cats.map(([cat,cd])=>{
+    const pctCat=Math.round(cd.v/totalV*100);
+    const crescCat=cd.prev>0?pct(cd.v,cd.prev):cd.v>0?100:0;
+    const color=getCatColor(cat);
+    const subs=Object.entries(cd.subs).sort((a,b)=>b[1].v-a[1].v);
+    const catV=cd.v||1;
+
+    const subRows=subs.map(([sub,sd])=>{
+      const pctSub=Math.round(sd.v/catV*100);
+      const crescSub=sd.prev>0?pct(sd.v,sd.prev):sd.v>0?100:0;
+      return `<div class="mix-sub-row">
+        <div class="mix-sub-bar"><div class="mix-sub-bar-fill" style="width:${pctSub}%;background:${color}"></div></div>
+        <div class="mix-sub-name">${sub||'—'}</div>
+        <div class="mix-sub-pct-cat">${pctSub}% da cat.</div>
+        <div class="mix-sub-cres ${crescSub>=0?'up':'dn'}">${crescSub>=0?'+':''}${crescSub}%</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="mix-cat-row" onclick="this.classList.toggle('open')">
+      <div class="mix-cat-header">
+        <span class="mix-toggle">▶</span>
+        <div class="mix-cat-dot" style="background:${color}"></div>
+        <div class="mix-cat-name">${cat}</div>
+        <div class="mix-cat-pct">${pctCat}% do total</div>
+        <div class="mix-cat-cres ${crescCat>=0?'up':'dn'}">${crescCat>=0?'+':''}${crescCat}%</div>
+      </div>
+      <div class="mix-bar-row">
+        <div class="mix-bar-track"><div class="mix-bar-fill" style="width:${pctCat}%;background:${color}"></div></div>
+      </div>
+      <div class="mix-sub-rows">${subRows}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('mixSection').innerHTML=html||'<div style="color:var(--text3);padding:16px">Sem dados</div>';
+}
+
+// ── 6. Insights automáticos ───────────────────────────────────────────────────
+function buildCockpitInsights(skus,monthly){
+  const insights=[];
+  const subGrowth=getSubcatGrowth(skus,monthly);
+  const totalV=skus.reduce((s,x)=>s+x.TotalValor,0)||1;
+
+  // Media de crescimento do portfólio
+  const allGrowths=subGrowth.filter(x=>x.prev>0);
+  const avgGrowth=allGrowths.length?allGrowths.reduce((s,x)=>s+x.delta,0)/allGrowths.length:0;
+
+  // Crescimento concentrado
+  const topGrow=[...subGrowth].sort((a,b)=>b.cur-a.cur).slice(0,1)[0];
+  if(topGrow){
+    const conc=Math.round(topGrow.cur/totalV*100);
+    if(conc>40) insights.push({type:'warn',tag:'Concentração',title:`${conc}% do faturamento em "${topGrow.sub}"`,desc:`Alta dependência de uma única subcategoria. Risco de volatilidade no resultado.`});
+    else if(topGrow.delta>30) insights.push({type:'pos',tag:'Crescimento',title:`Crescimento concentrado em "${topGrow.sub}"`,desc:`+${topGrow.delta}% vs período anterior. Maior driver positivo do portfólio.`});
+  }
+  // Subcats acima da média
+  const acimaDaMedia=subGrowth.filter(x=>x.delta>avgGrowth+20&&x.prev>0&&x.cur>5000);
+  acimaDaMedia.forEach(x=>insights.push({type:'pos',tag:'Destaque',title:`"${x.sub}" cresce acima da média da categoria`,desc:`+${x.delta}% vs ${x.cat} (média: ${avgGrowth>=0?'+':''}${Math.round(avgGrowth)}%). Oportunidade de ampliar mix.`}));
+  // Quedas relevantes
+  const quedas=subGrowth.filter(x=>x.delta<-20&&x.prev>5000);
+  quedas.slice(0,2).forEach(x=>insights.push({type:'neg',tag:'Queda',title:`Queda relevante em "${x.sub}"`,desc:`${x.delta}% vs período anterior em ${x.cat}. Avaliar causa: mix, estoque ou demanda.`}));
+  // Subcat dominante dentro da categoria
+  const byCatSub={};
+  subGrowth.forEach(x=>{if(!byCatSub[x.cat])byCatSub[x.cat]=[];byCatSub[x.cat].push(x);});
+  Object.entries(byCatSub).forEach(([cat,subs])=>{
+    if(subs.length<2) return;
+    const total=subs.reduce((s,x)=>s+x.cur,0)||1;
+    const top=subs.sort((a,b)=>b.cur-a.cur)[0];
+    const dom=Math.round(top.cur/total*100);
+    if(dom>70) insights.push({type:'info',tag:'Mix',title:`Alta dependência de "${top.sub}" em ${cat}`,desc:`${dom}% da receita da categoria concentrada em uma subcategoria. Considere diversificar.`});
+  });
+
+  if(!insights.length) insights.push({type:'info',tag:'Portfólio',title:'Mix equilibrado no período selecionado',desc:'Nenhuma anomalia de concentração ou variação extrema detectada. Continue monitorando mês a mês.'});
+
+  document.getElementById('cockpitInsights').innerHTML=insights.slice(0,6).map(i=>`
+    <div class="ci-card ${i.type}">
+      <div class="ci-tag">${i.tag}</div>
+      <div class="ci-title">${i.title}</div>
+      <div class="ci-desc">${i.desc}</div>
+    </div>`).join('');
+}
+
+// ── 8. Alertas ────────────────────────────────────────────────────────────────
+function buildCockpitAlerts(skus,monthly){
+  const n=monthly.length;
+  const alerts=[];
+
+  // Grupamentos por subcategoria para estoque
+  const subEst={},subVel={};
+  skus.forEach(s=>{
+    const key=s.cat+'|'+s.sub;
+    const c=APP.custoMap?.[String(s.sku)];
+    const vel=s.TotalQtd/n/30;
+    if(!subEst[key]) subEst[key]={cat:s.cat,sub:s.sub,est:0,vel:0,skus:0,dias:0};
+    if(c){subEst[key].est+=c.estoque;subEst[key].vel+=vel;subEst[key].skus++;}
+  });
+  Object.entries(subEst).forEach(([k,d])=>{
+    d.dias=d.vel>0?Math.round(d.est/d.vel):999;
+  });
+
+  // Rupturas por subcat
+  const rupturas=Object.values(subEst).filter(d=>d.dias<30&&d.dias>=0&&d.skus>0).sort((a,b)=>a.dias-b.dias);
+  rupturas.slice(0,3).forEach(d=>alerts.push({type:'red',icon:'🔴',title:`Ruptura iminente — ${d.sub}`,meta:`${d.cat} · ${d.dias}d de cobertura · ${d.skus} SKU${d.skus>1?'s':''}`}));
+
+  // Excesso por subcat
+  const excessos=Object.values(subEst).filter(d=>d.dias>150&&d.skus>0).sort((a,b)=>b.dias-a.dias);
+  excessos.slice(0,2).forEach(d=>alerts.push({type:'blue',icon:'🔵',title:`Excesso de estoque — ${d.sub}`,meta:`${d.cat} · +${d.dias>999?'∞':d.dias}d de cobertura · capital parado`}));
+
+  // Queda de vendas por subcat
+  const subGrowth=getSubcatGrowth(skus,monthly).filter(x=>x.delta<-20&&x.prev>2000);
+  subGrowth.slice(0,3).forEach(x=>alerts.push({type:'amber',icon:'🟡',title:`Queda de vendas — ${x.sub}`,meta:`${x.cat} · ${x.delta}% vs período anterior`}));
+
+  if(!alerts.length) alerts.push({type:'blue',icon:'✅',title:'Nenhum alerta crítico no momento',meta:'Estoque e vendas dentro dos parâmetros normais'});
+
+  document.getElementById('cockpitAlerts').innerHTML=alerts.slice(0,8).map(a=>`
+    <div class="alert-card ${a.type}">
+      <div class="alert-icon">${a.icon}</div>
+      <div class="alert-body">
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-meta">${a.meta}</div>
+      </div>
+    </div>`).join('');
+}
+
+// Compatibility: period buttons still work
 function buildPeriodBtns(){
-  document.getElementById('periodBtns').innerHTML=[{v:'3',l:'3M'},{v:'6',l:'6M'},{v:'all',l:'12M'}]
+  document.getElementById('periodBtns').innerHTML=[{v:'3',l:'3M'},{v:'6',l:'6M'},{v:'all',l:'13M'}]
     .map(p=>`<button class="period-btn ${activePeriod.v===p.v&&FILTER.meses.length===0?'active':''}" onclick="setPeriod('${p.v}')">${p.l}</button>`).join('');
 }
 function setPeriod(p){
-  activePeriod.v=p;
-  FILTER.meses=[];  // period buttons clear month range filter
-  FILTER._rangeStart=null;
-  renderMonthGrid();
-  updateFilterBtnLabels();renderActiveChips();
-  buildPeriodBtns();rebuildVisaoCharts();
+  activePeriod.v=p;FILTER.meses=[];FILTER._rangeStart=null;
+  renderMonthGrid();updateFilterBtnLabels();renderActiveChips();
+  buildPeriodBtns();buildVisao();
 }
 
-function ch(id){if(APP.charts[id]){try{APP.charts[id].destroy()}catch(e){}delete APP.charts[id]}}
-const TX='#A09C98',GC='rgba(0,0,0,.05)';
-
-function buildVisao(){rebuildVisaoCharts();buildCatDonut()}
-function rebuildVisaoCharts(){
-  const data=getMonthly();
-  ['cFat','cQtd','cTicket','cAbcVSmall'].forEach(ch);
-  APP.charts.cFat=new Chart(document.getElementById('cFat'),{type:'bar',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Valor),backgroundColor:'#1A1917',borderRadius:4,hoverBackgroundColor:'#555'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  APP.charts.cQtd=new Chart(document.getElementById('cQtd'),{type:'bar',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Qtd),backgroundColor:'#166534',borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  APP.charts.cTicket=new Chart(document.getElementById('cTicket'),{type:'line',
-    data:{labels:data.map(m=>m.label),datasets:[{data:data.map(m=>m.Qtd>0?Math.round(m.Valor/m.Qtd):0),borderColor:'#7C2D12',backgroundColor:'rgba(124,45,18,.06)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#7C2D12'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR'),font:{size:10},color:TX},grid:{color:GC}},x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
-  const gA=APP.allSkus.filter(s=>s.abcV==='A').reduce((s,x)=>s+x.TotalValor,0);
-  const gB=APP.allSkus.filter(s=>s.abcV==='B').reduce((s,x)=>s+x.TotalValor,0);
-  const gC=APP.allSkus.filter(s=>s.abcV==='C').reduce((s,x)=>s+x.TotalValor,0);
-  const tv=gA+gB+gC;
-  document.getElementById('legAbcVSmall').innerHTML=['A','B','C'].map((c,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${['#166534','#92400E','#991B1B'][i]}"></span>Classe ${c} — ${Math.round([gA,gB,gC][i]/tv*100)}%</span>`).join('');
-  APP.charts.cAbcVSmall=new Chart(document.getElementById('cAbcVSmall'),{type:'doughnut',
-    data:{labels:['A','B','C'],datasets:[{data:[Math.round(gA),Math.round(gB),Math.round(gC)],backgroundColor:['#166534','#92400E','#991B1B'],borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
-}
-function buildCatDonut(){
-  const cats=APP.categories;const totalV=cats.reduce((s,c)=>s+c.Valor,0);
-  const colors=cats.map(c=>CAT_COLOR[c.Categoria]||'#6B7280');
-  document.getElementById('legCat').innerHTML=cats.map((c,i)=>`<span class="leg-item"><span class="leg-dot" style="background:${colors[i]}"></span>${c.Categoria} (${Math.round(c.Valor/totalV*100)}%)</span>`).join('');
-  ch('cCat');
-  APP.charts.cCat=new Chart(document.getElementById('cCat'),{type:'doughnut',
-    data:{labels:cats.map(c=>c.Categoria),datasets:[{data:cats.map(c=>Math.round(c.Valor)),backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtK(ctx.raw)}`}}}}});
-}
 
 // ── CATEGORIAS ───────────────────────────────────────────────────────────────
 function buildCategorias(){buildCatKpiCards();buildSubcatDetail(null);buildCatBars();buildHeatmap();buildCatDepthTable()}
@@ -2315,10 +2939,10 @@ function renderAnaliseTabela(){
 
 
 // ══════════════════════════════════════════════════════════════════════════════
-// RENTABILIDADE & ELASTICIDADE — v2 (corrigido: charts com timeout)
+// RENTABILIDADE v3 — completo conforme briefing
 // ══════════════════════════════════════════════════════════════════════════════
 
-let rentPage=0, rentCatDrill=null;
+let rentPage=0, rentCatDrill=null, scatterMode='sku';
 const RENT_PAGE=25;
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -2342,8 +2966,7 @@ function getRentSkus(){
   });
 }
 function calcElasticidade(priceMap,qMap){
-  const labels=MONTH_SHEETS.map(m=>m.label);
-  const points=[];
+  const labels=MONTH_SHEETS.map(m=>m.label);const points=[];
   for(let i=1;i<labels.length;i++){
     const l=labels[i],lp=labels[i-1];
     const p1=priceMap[lp],p2=priceMap[l],q1=qMap[lp],q2=qMap[l];
@@ -2354,13 +2977,13 @@ function calcElasticidade(priceMap,qMap){
   }
   return points;
 }
-function avgElasticidade(pts){ return pts.length?pts.reduce((s,p)=>s+p.e,0)/pts.length:null; }
+function avgElasticidade(pts){return pts.length?pts.reduce((s,p)=>s+p.e,0)/pts.length:null;}
 function classifyElast(e){
   if(e===null) return {label:'Sem dados',cls:'neutral'};
   if(e>0)      return {label:'Anômalo',cls:'neutral',tip:'Preço e volume subiram juntos'};
   if(e>=-0.5)  return {label:'Inelástico',cls:'inelastic',tip:'Volume pouco sensível ao preço'};
   if(e>=-1.5)  return {label:'Normal',cls:'good',tip:'Elasticidade unitária'};
-  return       {label:'Elástico',cls:'elastic',tip:'Volume cai muito com alta de preço'};
+  return        {label:'Elástico',cls:'elastic',tip:'Volume cai muito com alta de preço'};
 }
 function calcSkuMetrics(s){
   const months=getRentMonths();
@@ -2369,8 +2992,7 @@ function calcSkuMetrics(s){
   let totalV=0,totalQ=0;
   const priceMap={},qMap={};
   for(const l of months){
-    const m=raw[l]||{v:0,q:0};
-    totalV+=m.v;totalQ+=m.q;
+    const m=raw[l]||{v:0,q:0};totalV+=m.v;totalQ+=m.q;
     if(m.q>0){priceMap[l]=m.v/m.q;qMap[l]=m.q;}
   }
   const precoMedio=totalQ>0?totalV/totalQ:0;
@@ -2383,14 +3005,44 @@ function calcSkuMetrics(s){
   const labs=months.filter(l=>priceMap[l]);
   const varPreco=labs.length>=2?((priceMap[labs[labs.length-1]]-priceMap[labs[0]])/priceMap[labs[0]]*100):0;
   const varVol=labs.length>=2&&qMap[labs[0]]?((qMap[labs[labs.length-1]]-qMap[labs[0]])/qMap[labs[0]]*100):0;
+  // Growth vs prev period
+  const allLabels=MONTH_SHEETS.map(m=>m.label);
+  const curStart=allLabels.indexOf(months[0]||'');
+  const prevLabels=allLabels.slice(Math.max(0,curStart-months.length),curStart);
+  const prevV=prevLabels.reduce((s2,l)=>s2+(raw[l]?.v||0),0);
+  const growth=prevV>0?pct(totalV,prevV):totalV>0?100:0;
+  // Cobertura
+  const est=APP.custoMap?.[String(s.sku)]?.estoque||0;
+  const velDia=totalQ>0?totalQ/months.length/30:0;
+  const cobertura=velDia>0?Math.round(est/velDia):est>0?999:0;
   return {custo,precoMedio,margemUn,margemPct,lucro,elastMedia,elastClass,
-    elastPoints:pts,totalV,totalQ,varPreco,varVol,priceMap,qMap};
+    elastPoints:pts,totalV,totalQ,varPreco,varVol,growth,cobertura,prevV};
 }
 function pctBadge(p){
   const cls=p>=40?'hi':p>=20?'md':p>=0?'lo':'ng';
   return `<span class="rent-pct-badge ${cls}">${p.toFixed(1)}%</span>`;
 }
-function rentColor(p){ return p>=40?'#166534':p>=20?'#1D4ED8':p>=0?'#D97706':'#991B1B'; }
+function rentColor(p){return p>=40?'#166534':p>=20?'#1D4ED8':p>=0?'#D97706':'#991B1B';}
+
+// ── 8. Classificação automática ───────────────────────────────────────────────
+function classifySkuRole(s,m){
+  if(m.margemPct>=35&&m.growth>10)  return {cls:'estrela',  label:'⭐ Estrela',    tip:'Crescimento + margem alta'};
+  if(m.margemPct>=30&&m.totalQ>20)  return {cls:'defender', label:'🛡 Defender',   tip:'Margem alta + volume consistente'};
+  if(m.totalV>5000&&m.margemPct<20&&m.margemPct>=0) return {cls:'ajustar',label:'💰 Ajustar preço',tip:'Receita alta + margem baixa'};
+  if(m.cobertura>90&&m.margemPct<25) return {cls:'rever',   label:'📦 Rever compra',tip:'Estoque alto + margem baixa'};
+  if(m.margemPct>=30&&m.growth<-10) return {cls:'recuperar',label:'🔄 Recuperar',  tip:'Margem alta + queda de vendas'};
+  if(m.margemPct<10&&m.totalV<2000) return {cls:'descontinuar',label:'🗑 Descontinuar',tip:'Margem baixa + baixa relevância'};
+  return {cls:'defender',label:'—',tip:'Estável'};
+}
+
+// ── causa destruição margem ───────────────────────────────────────────────────
+function causaMargem(s,m){
+  if(m.margemPct<0)          return 'preço errado';
+  if(m.custo>m.precoMedio*0.8) return 'custo alto';
+  if(m.totalQ>100&&m.margemPct<15) return 'volume sem retorno';
+  if(m.margemPct<20&&s.abcV==='C') return 'mix inadequado';
+  return 'margem baixa';
+}
 
 // ── init filtros ──────────────────────────────────────────────────────────────
 function initRentFiltros(){
@@ -2400,15 +3052,15 @@ function initRentFiltros(){
     '<option value="">Todas as categorias</option>'+cats.map(c=>`<option>${c}</option>`).join('');
   document.getElementById('rentFiltMarca').innerHTML=
     '<option value="">Todas as marcas</option>'+marcas.map(m=>`<option>${m}</option>`).join('');
-  const sel=document.getElementById('rentElastCat');
-  if(sel) sel.innerHTML='<option value="">Portfólio total</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+  const sel=document.getElementById('rentEvolCat');
+  if(sel) sel.innerHTML='<option value="">Portfólio filtrado</option>'+cats.map(c=>`<option>${c}</option>`).join('');
 }
 function onRentFilter(){
   const cat=document.getElementById('rentFiltCat')?.value||'';
   const subcats=cat?[...new Set(APP.allSkus.filter(s=>s.cat===cat).map(s=>s.sub).filter(Boolean))].sort():[];
   document.getElementById('rentFiltSubcat').innerHTML=
     '<option value="">Todas as subcategorias</option>'+subcats.map(s=>`<option>${s}</option>`).join('');
-  rentPage=0; rentCatDrill=null;
+  rentPage=0;rentCatDrill=null;
   buildRentabilidade();
 }
 
@@ -2417,224 +3069,147 @@ function buildRentabilidade(){
   const skus=getRentSkus();
   if(!skus.length){
     document.getElementById('rentKpis').innerHTML=
-      `<div style="grid-column:1/-1;color:var(--text3);font-size:13px;padding:20px 0">
-        Nenhum produto com custo cadastrado. Verifique a aba <strong>Estoque</strong> no Google Sheets.
-       </div>`;
+      `<div style="grid-column:1/-1;color:var(--text3);font-size:13px;padding:20px 0">Nenhum produto com custo cadastrado. Verifique a aba <strong>Estoque</strong> no Google Sheets.</div>`;
     return;
   }
   const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
   buildRentKpis(metrics);
-  buildRentCatCards(metrics);
   buildRentInsights(metrics);
+  buildRentCatCards(metrics);
+  buildCampeoesDestruidores(metrics);
   rentPage=0;
   renderRentTable(metrics);
-  // Charts need timeout so canvas has dimensions after panel becomes visible
-  setTimeout(()=>{ buildMargemCatChart(metrics); buildReceitaVsLucroChart(metrics); buildElastChart(); },50);
+  setTimeout(()=>{
+    buildMargemCatChart(metrics);
+    buildReceitaVsLucroChart(metrics);
+    buildMargemSubChart(metrics);
+    buildReceitaVsLucroSubChart(metrics);
+    buildMargemEvolChart(metrics);
+    buildScatterChart(metrics);
+  },50);
 }
 
-// ── KPIs ──────────────────────────────────────────────────────────────────────
+// ── 2. KPIs ───────────────────────────────────────────────────────────────────
 function buildRentKpis(metrics){
   const totalFat=metrics.reduce((s,x)=>s+x.m.totalV,0);
   const totalLucro=metrics.reduce((s,x)=>s+x.m.lucro,0);
   const mg=totalFat>0?totalLucro/totalFat*100:0;
-  const withElast=metrics.filter(x=>x.m.elastMedia!==null);
-  const elastMed=withElast.length?withElast.reduce((s,x)=>s+x.m.elastMedia,0)/withElast.length:null;
-  const negMarg=metrics.filter(x=>x.m.margemPct<0).length;
-  const top=[...metrics].sort((a,b)=>b.m.margemPct-a.m.margemPct)[0];
+  // Variação de margem vs período anterior
+  const prevLucro=metrics.reduce((s,x)=>s+(x.m.prevV>0?x.m.prevV*(mg/100):0),0);
+  const prevFat=metrics.reduce((s,x)=>s+x.m.prevV,0);
+  const prevMg=prevFat>0?prevLucro/prevFat*100:0;
+  const deltaMg=mg-prevMg;
+  // Top 10 lucro concentração
+  const sorted=[...metrics].sort((a,b)=>b.m.lucro-a.m.lucro);
+  const top10L=sorted.slice(0,10).reduce((s,x)=>s+x.m.lucro,0);
+  const concTop10=totalLucro>0?Math.round(top10L/totalLucro*100):0;
+  // SKUs críticos
+  const skusCriticos=metrics.filter(x=>x.m.margemPct<20&&x.m.margemPct>=0&&x.m.totalV>0).length;
+  // Oportunidade de reajuste (inelásticos com margem <30)
+  const skusOport=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia>-0.8&&x.m.elastMedia<0&&x.m.margemPct<35).length;
+
   document.getElementById('rentKpis').innerHTML=`
-    <div class="rent-kpi ${mg>=40?'green':mg>=20?'blue':mg>=0?'amber':'red'}">
-      <div class="rent-kpi-label">Receita total</div>
-      <div class="rent-kpi-value">${fmtK(totalFat)}</div>
-      <div class="rent-kpi-sub">${metrics.length} SKUs com custo · ${getRentMonths().length} meses</div>
-    </div>
-    <div class="rent-kpi blue">
-      <div class="rent-kpi-label">Lucro bruto</div>
+    <div class="rent-kpi green">
+      <div class="rent-kpi-label">Lucro bruto total</div>
       <div class="rent-kpi-value">${fmtK(totalLucro)}</div>
-      <div class="rent-kpi-sub">Receita − custo × qtd vendida</div>
+      <div class="rent-kpi-sub">${fmtK(totalFat)} em receita</div>
     </div>
     <div class="rent-kpi ${mg>=40?'green':mg>=20?'blue':mg>=0?'amber':'red'}">
       <div class="rent-kpi-label">Margem bruta média</div>
       <div class="rent-kpi-value">${mg.toFixed(1)}%</div>
-      <div class="rent-kpi-sub">${negMarg>0?negMarg+' SKUs com margem negativa':'Todas as margens positivas'}</div>
+      <div class="rent-kpi-sub">${metrics.length} SKUs com custo</div>
+    </div>
+    <div class="rent-kpi ${deltaMg>=0?'green':'red'}">
+      <div class="rent-kpi-label">Variação de margem</div>
+      <div class="rent-kpi-value" style="color:${deltaMg>=0?'#166534':'#991B1B'}">${deltaMg>=0?'+':''}${deltaMg.toFixed(1)} p.p.</div>
+      <div class="rent-kpi-sub">vs período anterior equivalente</div>
     </div>
     <div class="rent-kpi purple">
-      <div class="rent-kpi-label">Elasticidade média</div>
-      <div class="rent-kpi-value">${elastMed!==null?elastMed.toFixed(2):'—'}</div>
-      <div class="rent-kpi-sub">${withElast.length} SKUs com dados de variação</div>
+      <div class="rent-kpi-label">Lucro Top 10 SKUs</div>
+      <div class="rent-kpi-value">${concTop10}%</div>
+      <div class="rent-kpi-sub">concentração em 10 produtos</div>
     </div>
-    <div class="rent-kpi amber">
-      <div class="rent-kpi-label">Maior margem</div>
-      <div class="rent-kpi-value">${top?top.m.margemPct.toFixed(1)+'%':'—'}</div>
-      <div class="rent-kpi-sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${top?.s.nome?.slice(0,26)||'—'}</div>
+    <div class="rent-kpi ${skusCriticos>10?'red':'amber'}">
+      <div class="rent-kpi-label">SKUs margem crítica</div>
+      <div class="rent-kpi-value" style="color:${skusCriticos>10?'#991B1B':'#D97706'}">${skusCriticos}</div>
+      <div class="rent-kpi-sub">margem entre 0% e 20%</div>
+    </div>
+    <div class="rent-kpi blue">
+      <div class="rent-kpi-label">Oportunidade de reajuste</div>
+      <div class="rent-kpi-value">${skusOport}</div>
+      <div class="rent-kpi-sub">inelásticos com margem &lt;35%</div>
     </div>`;
 }
 
-// ── Cards de categoria e subcategoria ─────────────────────────────────────────
-function buildRentCatCards(metricsAll){
-  // ── Se drill de subcat aberto ──
-  if(rentCatDrill){
-    const sub=document.getElementById('rentSubcatSection');
-    sub.style.display='block';
-    document.getElementById('rentSubcatLabel').textContent=rentCatDrill+' — Subcategorias';
-    const m=metricsAll.filter(x=>x.s.cat===rentCatDrill);
-    const bySub={};
-    m.forEach(({s,mx})=>{
-      if(!bySub[s.sub]) bySub[s.sub]={fat:0,lucro:0,skus:0,elasts:[]};
-      bySub[s.sub].fat+=mx.totalV; bySub[s.sub].lucro+=mx.lucro; bySub[s.sub].skus++;
-      if(mx.elastMedia!==null) bySub[s.sub].elasts.push(mx.elastMedia);
-    });
-    // fix: use correct key
-    const m2=metricsAll.filter(x=>x.s.cat===rentCatDrill);
-    const bySub2={};
-    m2.forEach(({s,m:mx})=>{
-      if(!bySub2[s.sub]) bySub2[s.sub]={fat:0,lucro:0,skus:0,elasts:[]};
-      bySub2[s.sub].fat+=mx.totalV; bySub2[s.sub].lucro+=mx.lucro; bySub2[s.sub].skus++;
-      if(mx.elastMedia!==null) bySub2[s.sub].elasts.push(mx.elastMedia);
-    });
-    const subs=Object.entries(bySub2).map(([sub,d])=>({
-      sub, fat:d.fat, lucro:d.lucro, skus:d.skus,
-      mg:d.fat>0?d.lucro/d.fat*100:0,
-      eMed:d.elasts.length?d.elasts.reduce((a,b)=>a+b,0)/d.elasts.length:null
-    })).sort((a,b)=>b.fat-a.fat);
-    const maxFat=subs[0]?.fat||1;
-    const rows=subs.map(d=>{
-      const ec=classifyElast(d.eMed);
-      return `<tr>
-        <td><div class="rcat-name">${d.sub}</div><div class="rcat-sub">${d.skus} SKUs</div></td>
-        <td class="num">${fmtK(d.fat)}</td>
-        <td class="num">${fmtK(d.lucro)}</td>
-        <td>${pctBadge(d.mg)}</td>
-        <td>
-          <div class="rbar">
-            <div class="rbar-track"><div class="rbar-fill" style="width:${Math.round(d.fat/maxFat*100)}%;background:${rentColor(d.mg)}"></div></div>
-            <span class="rbar-val">${Math.round(d.fat/maxFat*100)}%</span>
-          </div>
-        </td>
-        <td>${d.eMed!==null?`<span class="elast-pill ${ec.cls}">${d.eMed.toFixed(2)}</span>`:'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
-      </tr>`;
-    }).join('');
-    document.getElementById('rentSubcatCards').innerHTML=`<div class="tbl-wrap"><table class="rent-cat-table">
-      <thead><tr><th>Subcategoria</th><th class="r">Receita</th><th class="r">Lucro</th><th>Margem</th><th>Participação</th><th>Elasticidade</th></tr></thead>
-      <tbody>${rows}</tbody></table></div>`;
-    document.getElementById('rentCatCards').innerHTML='';
-    return;
-  }
-
-  document.getElementById('rentSubcatSection').style.display='none';
-
-  // ── Tabela de categorias ──
-  const byCat={};
-  metricsAll.forEach(({s,m})=>{
-    if(!byCat[s.cat]) byCat[s.cat]={fat:0,lucro:0,skus:0,subs:new Set(),elasts:[]};
-    byCat[s.cat].fat+=m.totalV; byCat[s.cat].lucro+=m.lucro; byCat[s.cat].skus++;
-    byCat[s.cat].subs.add(s.sub);
-    if(m.elastMedia!==null) byCat[s.cat].elasts.push(m.elastMedia);
-  });
-  const cats=Object.entries(byCat).map(([c,d])=>({
-    cat:c, fat:d.fat, lucro:d.lucro, skus:d.skus, nsubs:d.subs.size,
-    mg:d.fat>0?d.lucro/d.fat*100:0,
-    eMed:d.elasts.length?d.elasts.reduce((a,b)=>a+b,0)/d.elasts.length:null
-  })).sort((a,b)=>b.fat-a.fat);
-  const totalFat=cats.reduce((s,c)=>s+c.fat,0)||1;
-  const maxFat=cats[0]?.fat||1;
-
-  const rows=cats.map(d=>{
-    const ec=classifyElast(d.eMed);
-    const color=getCatColor(d.cat);
-    return `<tr onclick="drillRentCat('${d.cat.replace(/'/g,"\\'")}')">
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="width:10px;height:10px;border-radius:2px;background:${color};flex-shrink:0;display:inline-block"></span>
-          <div>
-            <div class="rcat-name" style="color:${color}">${d.cat}</div>
-            <div class="rcat-sub">${d.skus} SKUs · ${d.nsubs} subcategorias · clique para detalhar</div>
-          </div>
-        </div>
-      </td>
-      <td class="num">${fmtK(d.fat)}</td>
-      <td class="num"><span style="color:var(--text3);font-size:10px;font-family:'DM Mono',monospace">${Math.round(d.fat/totalFat*100)}%</span></td>
-      <td class="num">${fmtK(d.lucro)}</td>
-      <td>${pctBadge(d.mg)}</td>
-      <td>
-        <div class="rbar">
-          <div class="rbar-track" style="width:140px"><div class="rbar-fill" style="width:${Math.round(d.fat/maxFat*100)}%;background:${rentColor(d.mg)}"></div></div>
-          <span class="rbar-val">${Math.round(d.fat/maxFat*100)}%</span>
-        </div>
-      </td>
-      <td>${d.eMed!==null?`<span class="elast-pill ${ec.cls}">${d.eMed.toFixed(2)} ${ec.label}</span>`:'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
-    </tr>`;
-  }).join('');
-
-  document.getElementById('rentCatCards').innerHTML=`<div class="tbl-wrap"><table class="rent-cat-table">
-    <thead><tr><th>Categoria</th><th class="r">Receita</th><th class="r">Share</th><th class="r">Lucro Bruto</th><th>Margem</th><th>Volume relativo</th><th>Elasticidade</th></tr></thead>
-    <tbody>${rows}</tbody></table></div>`;
-}
-function drillRentCat(cat){
-  rentCatDrill=cat;
-  const skus=getRentSkus().filter(s=>s.cat===cat);
-  const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
-  buildRentCatCards(metrics.length?metrics:getRentSkus().map(s=>({s,m:calcSkuMetrics(s)})));
-}
-function closeRentCat(){
-  rentCatDrill=null;
-  const skus=getRentSkus();
-  const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
-  buildRentCatCards(metrics);
-}
-
-// ── Insights ──────────────────────────────────────────────────────────────────
+// ── 9. Insights com subcategoria ──────────────────────────────────────────────
 function buildRentInsights(metrics){
   const ins=[];
-  // Pricing power
-  const pw=metrics.filter(x=>x.m.varPreco>5&&x.m.varVol>-5&&x.m.totalQ>10);
-  if(pw.length){const w=[...pw].sort((a,b)=>b.m.lucro-a.m.lucro)[0];
-    ins.push({type:'winner',tag:'↑ Pricing Power',
-      title:`${pw.length} SKU${pw.length>1?'s':''} subiram preço sem perder volume`,
-      desc:`${w.s.nome.slice(0,40)} subiu ${w.m.varPreco.toFixed(1)}% no preço, volume variou ${w.m.varVol.toFixed(1)}%.`,
-      stats:[`+${w.m.varPreco.toFixed(1)}% preço`,`${w.m.varVol.toFixed(1)}% volume`,fmtK(w.m.lucro)+' lucro']});}
-  // Margem negativa
-  const neg=metrics.filter(x=>x.m.margemPct<0&&x.m.totalQ>5);
-  if(neg.length){const worst=[...neg].sort((a,b)=>a.m.margemPct-b.m.margemPct)[0];
-    ins.push({type:'loser',tag:'⚠ Margem Negativa',
-      title:`${neg.length} SKU${neg.length>1?'s':''} vendendo abaixo do custo`,
-      desc:`Pior caso: ${worst.s.nome.slice(0,35)} com margem de ${worst.m.margemPct.toFixed(1)}%. Revisar precificação imediatamente.`,
-      stats:[`${neg.length} SKUs`,`Pior: ${worst.m.margemPct.toFixed(1)}%`]});}
-  // Elásticos com preço subindo
-  const risc=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia<-1.5&&x.m.varPreco>3);
-  if(risc.length){ins.push({type:'loser',tag:'⚠ Elástico + Alta de Preço',
-    title:`${risc.length} SKU${risc.length>1?'s':''} com demanda elástica e preço subindo`,
-    desc:`Volume responde mais que proporcionalmente à alta. Risco de perda líquida de receita.`,
-    stats:risc.slice(0,3).map(x=>`${x.s.nome.slice(0,20)} (e=${x.m.elastMedia.toFixed(1)})`)});}
-  // Melhor categoria
-  const byCat={};metrics.forEach(({s,m})=>{if(!byCat[s.cat])byCat[s.cat]={l:0,f:0};byCat[s.cat].l+=m.lucro;byCat[s.cat].f+=m.totalV;});
-  const bestCat=Object.entries(byCat).map(([c,d])=>({c,mg:d.f>0?d.l/d.f*100:0,fat:d.f})).sort((a,b)=>b.mg-a.mg)[0];
-  if(bestCat)ins.push({type:'winner',tag:'✦ Melhor Margem',
-    title:`${bestCat.c} é a categoria mais rentável`,
-    desc:`Margem de ${bestCat.mg.toFixed(1)}% sobre ${fmtK(bestCat.fat)} em receita. Candidato a ampliar profundidade de mix.`,
-    stats:[`${bestCat.mg.toFixed(1)}% margem`,fmtK(bestCat.fat)]});
-  // Oportunidade: alto volume baixa margem
-  const pot=metrics.filter(x=>x.m.margemPct>0&&x.m.margemPct<20&&x.m.totalQ>50).sort((a,b)=>b.m.totalQ-a.m.totalQ);
-  if(pot.length){const p=pot[0];ins.push({type:'watch',tag:'→ Oportunidade de Margem',
-    title:`${p.s.nome.slice(0,35)} — alto volume, margem baixa`,
-    desc:`${Math.round(p.m.totalQ).toLocaleString('pt-BR')} unidades com ${p.m.margemPct.toFixed(1)}% de margem. +5% no preço geraria ${fmtK(p.m.totalQ*p.m.precoMedio*0.05)} adicional.`,
-    stats:[`${p.m.margemPct.toFixed(1)}% margem`,`${Math.round(p.m.totalQ).toLocaleString('pt-BR')} un.`]});}
-  // Inelásticos com margem a melhorar
-  const inel=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia>-0.5&&x.m.elastMedia<0&&x.m.margemPct<25&&x.m.totalQ>20);
-  if(inel.length)ins.push({type:'info',tag:'↑ Subir Preço com Segurança',
-    title:`${inel.length} SKU${inel.length>1?'s':''} com demanda inelástica e margem a melhorar`,
-    desc:`Histórico mostra que variação de preço não afeta significativamente o volume. Baixo risco de reajuste.`,
-    stats:inel.slice(0,3).map(x=>x.s.nome.slice(0,22))});
+  const totalFat=metrics.reduce((s,x)=>s+x.m.totalV,0)||1;
+  const totalLucro=metrics.reduce((s,x)=>s+x.m.lucro,0)||1;
+  const mgGlobal=totalLucro/totalFat*100;
+
+  // Agrupar por subcat
+  const bySub={};
+  metrics.forEach(({s,m})=>{
+    const k=s.cat+'|||'+s.sub;
+    if(!bySub[k])bySub[k]={cat:s.cat,sub:s.sub,fat:0,lucro:0,skus:[]};
+    bySub[k].fat+=m.totalV;bySub[k].lucro+=m.lucro;bySub[k].skus.push({s,m});
+  });
+  const subs=Object.values(bySub).map(d=>({...d,mg:d.fat>0?d.lucro/d.fat*100:0}));
+  const subsSorted=[...subs].sort((a,b)=>b.fat-a.fat);
+
+  // Alta receita, baixa margem (destruição)
+  const altaReceitaBaixaMargem=subsSorted.filter(d=>d.fat/totalFat>0.08&&d.mg<mgGlobal-10);
+  altaReceitaBaixaMargem.slice(0,2).forEach(d=>ins.push({type:'loser',tag:'⚠ Destruição de margem',
+    title:`"${d.sub}" tem alta receita mas margem abaixo da média`,
+    desc:`${Math.round(d.fat/totalFat*100)}% da receita com margem de ${d.mg.toFixed(1)}% vs média de ${mgGlobal.toFixed(1)}% do portfólio. Categoria: ${d.cat}.`}));
+
+  // Subcat mais rentável
+  const topLucro=[...subs].sort((a,b)=>b.lucro-a.lucro)[0];
+  if(topLucro)ins.push({type:'winner',tag:'✦ Mais rentável',
+    title:`"${topLucro.sub}" é a subcategoria mais rentável`,
+    desc:`Gera ${fmtK(topLucro.lucro)} de lucro bruto com margem de ${topLucro.mg.toFixed(1)}%. Categoria: ${topLucro.cat}.`});
+
+  // Produto destruindo margem dentro de subcat
+  const piorProd=metrics.filter(x=>x.m.margemPct<0&&x.m.totalV>2000).sort((a,b)=>a.m.margemPct-b.m.margemPct)[0];
+  if(piorProd)ins.push({type:'loser',tag:'⚠ Produto destruindo margem',
+    title:`"${piorProd.s.nome.slice(0,35)}" vende abaixo do custo`,
+    desc:`Margem de ${piorProd.m.margemPct.toFixed(1)}% em ${piorProd.s.sub}/${piorProd.s.cat}. Receita: ${fmtK(piorProd.m.totalV)}. Ação imediata necessária.`});
+
+  // Crescimento concentrado em subcat
+  const topGrowSub=[...subs].filter(d=>d.fat>3000).sort((a,b)=>{
+    const gA=a.skus.reduce((s,x)=>s+x.m.growth*x.m.totalV,0)/Math.max(a.fat,1);
+    const gB=b.skus.reduce((s,x)=>s+x.m.growth*x.m.totalV,0)/Math.max(b.fat,1);
+    return gB-gA;
+  })[0];
+  if(topGrowSub){
+    const g=Math.round(topGrowSub.skus.reduce((s,x)=>s+x.m.growth*x.m.totalV,0)/Math.max(topGrowSub.fat,1));
+    if(g>20)ins.push({type:'winner',tag:'↑ Crescimento concentrado',
+      title:`Crescimento concentrado em "${topGrowSub.sub}"`,
+      desc:`Subcategoria cresce ~${g}% vs período anterior em ${topGrowSub.cat}. ${Math.round(topGrowSub.fat/totalFat*100)}% da receita filtrada.`});
+  }
+
+  // Subcat com alta margem + oportunidade de escalar
+  const oport=[...subs].filter(d=>d.mg>50&&d.fat/totalFat<0.1).sort((a,b)=>b.mg-a.mg)[0];
+  if(oport)ins.push({type:'info',tag:'→ Oportunidade de escala',
+    title:`"${oport.sub}" tem alta margem mas baixa participação`,
+    desc:`Margem de ${oport.mg.toFixed(1)}% com apenas ${Math.round(oport.fat/totalFat*100)}% da receita. Potencial de crescimento com investimento em mix.`});
+
+  // Pricing Power: SKUs com oportunidade de reajuste
+  const pw=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia>-0.8&&x.m.elastMedia<0&&x.m.margemPct<35&&x.m.totalV>3000);
+  if(pw.length)ins.push({type:'info',tag:'💰 Pricing Power',
+    title:`${pw.length} SKU${pw.length>1?'s com':' com'} demanda inelástica e margem a melhorar`,
+    desc:`Histórico mostra que variações de preço não afetam significativamente o volume. Oportunidade de reajuste com baixo risco.`});
 
   document.getElementById('rentInsights').innerHTML=ins.slice(0,6).map(i=>`
     <div class="insight-card ${i.type}">
       <div class="insight-card-tag">${i.tag}</div>
       <div class="insight-card-title">${i.title}</div>
       <div class="insight-card-desc">${i.desc}</div>
-      <div class="insight-card-stats">${(i.stats||[]).map(s=>`<span class="insight-card-stat">${s}</span>`).join('')}</div>
     </div>`).join('');
 }
 
-// ── Gráficos (chamados com setTimeout) ───────────────────────────────────────
+// ── 3.1 Margem % por categoria ────────────────────────────────────────────────
 function buildMargemCatChart(metrics){
   ch('cMargemCat');
   const byCat={};
@@ -2648,6 +3223,8 @@ function buildMargemCatChart(metrics){
       scales:{x:{ticks:{callback:v=>v+'%',font:{size:10},color:TX},grid:{color:GC},min:0},
               y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
 }
+
+// ── 3.2 Receita vs Lucro por categoria ───────────────────────────────────────
 function buildReceitaVsLucroChart(metrics){
   ch('cReceitaVsLucro');
   const byCat={};
@@ -2664,86 +3241,340 @@ function buildReceitaVsLucroChart(metrics){
       scales:{x:{ticks:{font:{size:10},color:TX},grid:{display:false}},
               y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}}}}});
 }
-function buildElastChart(){
-  ch('cElast');
-  const catF=document.getElementById('rentElastCat')?.value||'';
-  const months=MONTH_SHEETS.map(m=>m.label);
-  const priceSum={},qSum={};
-  months.forEach(l=>{priceSum[l]=0;qSum[l]=0;});
-  const raw=APP.rawSalesBySku||{};
-  for(const [sk,data] of Object.entries(raw)){
-    if(!APP.custoMap?.[sk]?.custo) continue;
-    if(catF&&data.cat!==catF) continue;
-    for(const l of months){
-      const m=data.meses[l]||{v:0,q:0};
-      if(m.q>0){priceSum[l]+=m.v;qSum[l]+=m.q;}
-    }
-  }
-  const avgP={};months.forEach(l=>{avgP[l]=qSum[l]>0?priceSum[l]/qSum[l]:null;});
-  const pts=calcElasticidade(avgP,qSum);
-  if(!pts.length){
-    document.getElementById('cElast').parentElement.innerHTML=
-      '<div style="color:var(--text3);font-size:13px;padding:40px;text-align:center">Dados insuficientes de variação de preço para calcular elasticidade no período selecionado.</div>';
-    return;
-  }
-  const labels=pts.map(p=>p.label);
-  APP.charts.cElast=new Chart(document.getElementById('cElast'),{type:'bar',
-    data:{labels,datasets:[
-      {label:'Δ Preço %',data:pts.map(p=>parseFloat((p.dp*100).toFixed(1))),backgroundColor:'#1D4ED8CC',borderRadius:4,yAxisID:'y'},
-      {label:'Δ Volume %',data:pts.map(p=>parseFloat((p.dq*100).toFixed(1))),backgroundColor:'#166534CC',borderRadius:4,yAxisID:'y'},
-      {label:'Elasticidade',data:pts.map(p=>parseFloat(Math.max(Math.min(p.e,3),-3).toFixed(2))),
-        type:'line',borderColor:'#D97706',backgroundColor:'transparent',borderWidth:2.5,
-        pointRadius:5,pointBackgroundColor:'#D97706',yAxisID:'y2',tension:.3}
+
+// ── 3.4 Margem % por subcategoria ─────────────────────────────────────────────
+function buildMargemSubChart(metrics){
+  ch('cMargemSub');
+  const bySub={};
+  metrics.forEach(({s,m})=>{
+    const k=s.sub||'Outros';
+    if(!bySub[k])bySub[k]={l:0,f:0};
+    bySub[k].l+=m.lucro;bySub[k].f+=m.totalV;
+  });
+  const subs=Object.entries(bySub)
+    .map(([s,d])=>({s,mg:d.f>0?d.l/d.f*100:0,f:d.f}))
+    .filter(x=>x.f>0)
+    .sort((a,b)=>b.mg-a.mg)
+    .slice(0,15);
+  APP.charts.cMargemSub=new Chart(document.getElementById('cMargemSub'),{type:'bar',indexAxis:'y',
+    data:{labels:subs.map(x=>x.s.length>22?x.s.slice(0,22)+'…':x.s),
+      datasets:[{data:subs.map(x=>parseFloat(x.mg.toFixed(1))),
+        backgroundColor:subs.map(x=>rentColor(x.mg)),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>`Margem: ${ctx.raw}%`}}},
+      scales:{x:{ticks:{callback:v=>v+'%',font:{size:10},color:TX},grid:{color:GC}},
+              y:{ticks:{font:{size:10},color:'#555'},grid:{display:false}}}}});
+}
+
+// ── 3.3 Receita vs Lucro por subcategoria ─────────────────────────────────────
+function buildReceitaVsLucroSubChart(metrics){
+  ch('cReceitaVsLucroSub');
+  const bySub={};
+  metrics.forEach(({s,m})=>{
+    const k=s.sub||'Outros';
+    if(!bySub[k])bySub[k]={f:0,l:0};
+    bySub[k].f+=m.totalV;bySub[k].l+=m.lucro;
+  });
+  const subs=Object.entries(bySub).sort((a,b)=>b[1].f-a[1].f).slice(0,12);
+  APP.charts.cReceitaVsLucroSub=new Chart(document.getElementById('cReceitaVsLucroSub'),{type:'bar',
+    data:{labels:subs.map(([s])=>s.length>18?s.slice(0,18)+'…':s),datasets:[
+      {label:'Receita',data:subs.map(([,d])=>Math.round(d.f)),backgroundColor:'#CBD5E1',borderRadius:3},
+      {label:'Lucro Bruto',data:subs.map(([,d])=>Math.round(Math.max(d.l,0))),backgroundColor:'#166534',borderRadius:3}
     ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
-        tooltip:{callbacks:{label:ctx=>ctx.datasetIndex===2?`e = ${ctx.raw}`:`${ctx.dataset.label}: ${ctx.raw>=0?'+':''}${ctx.raw}%`}}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtK(ctx.raw)}`}}},
+      scales:{x:{ticks:{font:{size:9},color:TX,maxRotation:35},grid:{display:false}},
+              y:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}}}}});
+}
+
+// ── 4. Evolução margem no tempo ────────────────────────────────────────────────
+function buildMargemEvolChart(metricsAll){
+  ch('cMargemEvol');
+  const catF=document.getElementById('rentEvolCat')?.value||'';
+  const months=MONTH_SHEETS.map(m=>m.label);
+  const monthly=months.map(l=>{
+    let fat=0,lucro=0;
+    const raw=APP.rawSalesBySku||{};
+    for(const [sk,data] of Object.entries(raw)){
+      if(!APP.custoMap?.[sk]?.custo) continue;
+      if(catF&&data.cat!==catF) continue;
+      // Apply current filters
+      const s=APP.allSkus.find(x=>String(x.sku)===sk);
+      if(!s) continue;
+      const cat2=document.getElementById('rentFiltCat')?.value||'';
+      const sub2=document.getElementById('rentFiltSubcat')?.value||'';
+      if(cat2&&s.cat!==cat2) continue;
+      if(sub2&&s.sub!==sub2) continue;
+      const custo=APP.custoMap[sk].custo;
+      const mv=data.meses[l]||{v:0,q:0};
+      fat+=mv.v;lucro+=mv.v-custo*mv.q;
+    }
+    return {l,fat,lucro,mg:fat>0?lucro/fat*100:0};
+  });
+
+  const mgValues=monthly.map(x=>parseFloat(x.mg.toFixed(1)));
+  const lucroValues=monthly.map(x=>Math.round(x.lucro));
+  const avg=mgValues.filter(v=>v!==0).reduce((s,v)=>s+v,0)/Math.max(mgValues.filter(v=>v!==0).length,1);
+  const maxMg=Math.max(...mgValues);const minMg=Math.min(...mgValues.filter(v=>v!==0));
+  const maxIdx=mgValues.indexOf(maxMg);
+  const minIdx=mgValues.indexOf(minMg);
+
+  // Point colors: highlight best/worst
+  const ptColors=mgValues.map((v,i)=>i===maxIdx?'#166534':i===minIdx?'#991B1B':'#1D4ED8');
+  const ptRadius=mgValues.map((v,i)=>(i===maxIdx||i===minIdx)?7:4);
+
+  APP.charts.cMargemEvol=new Chart(document.getElementById('cMargemEvol'),{type:'line',
+    data:{labels:monthly.map(x=>x.l),datasets:[
+      {label:'Margem %',data:mgValues,borderColor:'#1D4ED8',backgroundColor:'#1D4ED822',
+        fill:true,tension:.35,pointRadius:ptRadius,pointBackgroundColor:ptColors,yAxisID:'y',borderWidth:2},
+      {label:'Lucro Bruto',data:lucroValues,borderColor:'#166534',backgroundColor:'transparent',
+        tension:.3,pointRadius:3,pointBackgroundColor:'#166534',yAxisID:'y2',borderDash:[],borderWidth:2},
+      {label:'Média histórica',data:monthly.map(()=>parseFloat(avg.toFixed(1))),
+        borderColor:'#D97706',backgroundColor:'transparent',borderDash:[5,4],
+        pointRadius:0,yAxisID:'y',borderWidth:1.5}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
+        tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.datasetIndex===1?fmtK(ctx.raw):ctx.raw+'%'),
+          afterBody:(items)=>{
+            const i=items[0].dataIndex;
+            const m=monthly[i];
+            return [`Receita: ${fmtK(m.fat)}`,`vs prev: ${i>0&&monthly[i-1].mg>0?(m.mg-monthly[i-1].mg>=0?'+':'')+(m.mg-monthly[i-1].mg).toFixed(1)+'p.p.':'—'}`];
+          }
+        }}},
+      scales:{y:{position:'left',ticks:{callback:v=>v+'%',font:{size:10},color:TX},grid:{color:GC}},
+              y2:{position:'right',ticks:{callback:v=>fmtK(v),font:{size:10},color:'#166534'},grid:{display:false}},
+              x:{ticks:{font:{size:10},color:TX},grid:{display:false}}}}});
+
+  // ── 10. Explicação da margem ──
+  const lastMg=mgValues.filter(v=>v!==0).slice(-1)[0]||0;
+  const prevMg2=mgValues.filter(v=>v!==0).slice(-2,-1)[0]||0;
+  const trend=lastMg>prevMg2?'subindo':'caindo';
+  const delta=(lastMg-avg).toFixed(1);
+  let causa='';
+  const bySub2={};
+  metricsAll.forEach(({s,m})=>{
+    const k=s.sub||'Outros';
+    if(!bySub2[k])bySub2[k]={f:0,l:0};
+    bySub2[k].f+=m.totalV;bySub2[k].l+=m.lucro;
+  });
+  const subsSorted=Object.entries(bySub2).map(([s,d])=>({s,mg:d.f>0?d.l/d.f*100:0,f:d.f})).sort((a,b)=>b.f-a.f);
+  const topSubLowMg=subsSorted.find(x=>x.mg<20&&x.f>0);
+  if(topSubLowMg) causa=`Possível causa: mix de subcategorias — "${topSubLowMg.s}" tem alta receita com margem de ${topSubLowMg.mg.toFixed(1)}%.`;
+  else if(lastMg>avg+3) causa='Possível causa: crescimento de produtos premium ou subcategorias de alta margem.';
+  else if(lastMg<avg-3) causa='Possível causa: crescimento de itens de baixa margem ou pressão de preço no período.';
+  else causa='Margem estável próxima à média histórica. Monitorar evolução nos próximos meses.';
+
+  document.getElementById('rentEvolExplicacao').innerHTML=
+    `<strong>Tendência:</strong> margem <strong>${trend}</strong> no último mês (${lastMg.toFixed(1)}% vs média histórica de ${avg.toFixed(1)}%, delta ${delta>=0?'+':''}${delta}p.p.) — ${causa}`;
+}
+
+// ── 5. Scatter estratégico ─────────────────────────────────────────────────────
+function setScatterMode(mode,btn){
+  scatterMode=mode;
+  document.getElementById('scatterModeSku')?.classList.toggle('active',mode==='sku');
+  document.getElementById('scatterModeSub')?.classList.toggle('active',mode==='sub');
+  const skus=getRentSkus();
+  buildScatterChart(skus.map(s=>({s,m:calcSkuMetrics(s)})));
+}
+function buildScatterChart(metrics){
+  ch('cScatter');
+  let points=[];
+  if(scatterMode==='sku'){
+    points=metrics.filter(x=>x.m.totalV>1000).map(({s,m})=>({
+      x:m.growth,y:parseFloat(m.margemPct.toFixed(1)),
+      r:Math.max(4,Math.min(22,Math.sqrt(m.totalV/500))),
+      label:s.nome.slice(0,28),cat:s.cat,sub:s.sub,fat:m.totalV,lucro:m.lucro
+    }));
+  } else {
+    const bySub={};
+    metrics.forEach(({s,m})=>{
+      const k=s.sub||'Outros';
+      if(!bySub[k])bySub[k]={fat:0,lucro:0,growW:0,cat:s.cat,sub:s.sub,n:0};
+      bySub[k].fat+=m.totalV;bySub[k].lucro+=m.lucro;
+      bySub[k].growW+=m.growth*m.totalV;bySub[k].n++;
+    });
+    points=Object.values(bySub).filter(d=>d.fat>1000).map(d=>({
+      x:Math.round(d.growW/Math.max(d.fat,1)),
+      y:parseFloat((d.fat>0?d.lucro/d.fat*100:0).toFixed(1)),
+      r:Math.max(6,Math.min(28,Math.sqrt(d.fat/300))),
+      label:d.sub,cat:d.cat,sub:d.sub,fat:d.fat,lucro:d.lucro
+    }));
+  }
+  // Color by quadrant
+  const ptColors=points.map(p=>{
+    if(p.x>=0&&p.y>=25) return '#166534CC';  // foco
+    if(p.x>=0&&p.y<25)  return '#D97706CC';  // revisar preço
+    if(p.x<0&&p.y>=25)  return '#1D4ED8CC';  // recuperar
+    return '#991B1BCC';                        // avaliar saída
+  });
+  APP.charts.cScatter=new Chart(document.getElementById('cScatter'),{type:'bubble',
+    data:{datasets:[{data:points.map(p=>({x:p.x,y:p.y,r:p.r,label:p.label,fat:p.fat,lucro:p.lucro})),
+      backgroundColor:ptColors,borderColor:ptColors.map(c=>c.replace('CC','FF')),borderWidth:1}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>{
+        const d=ctx.raw;const p=points[ctx.dataIndex];
+        return [`${p.label}`,`Crescimento: ${d.x>=0?'+':''}${d.x}%`,`Margem: ${d.y}%`,`Receita: ${fmtK(d.fat)}`,`Lucro: ${fmtK(d.lucro)}`];
+      }}}},
       scales:{
-        y:{position:'left',ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX},grid:{color:GC}},
-        y2:{position:'right',ticks:{font:{size:10},color:'#D97706'},grid:{display:false}},
-        x:{ticks:{font:{size:10},color:TX},grid:{display:false}}
+        x:{title:{display:true,text:'Crescimento vs período anterior (%)',font:{size:10}},ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX},grid:{color:GC},
+          afterBuildTicks(ax){ax.ticks=[...ax.ticks,{value:0}]}},
+        y:{title:{display:true,text:'Margem bruta (%)',font:{size:10}},ticks:{callback:v=>v+'%',font:{size:10},color:TX},grid:{color:GC}}
       }}});
 }
 
-// ── Tabela de produtos ────────────────────────────────────────────────────────
+// ── 6.1 Campeões + 6.2 Destruidores ──────────────────────────────────────────
+function buildCampeoesDestruidores(metrics){
+  const totalFat=metrics.reduce((s,x)=>s+x.m.totalV,0)||1;
+  // Campeões: top 8 por lucro
+  const campeoes=[...metrics].sort((a,b)=>b.m.lucro-a.m.lucro).slice(0,8);
+  document.getElementById('campeoesTable').innerHTML=`<table class="camp-table">
+    <thead><tr><th>#</th><th>Produto</th><th>Subcat</th><th class="r">Receita</th><th class="r">Lucro</th><th class="r">Marg.</th><th>Classe</th></tr></thead>
+    <tbody>${campeoes.map(({s,m},i)=>{
+      const role=classifySkuRole(s,m);
+      return `<tr>
+        <td style="color:var(--text3);font-size:10px">${i+1}</td>
+        <td class="prod-name" style="max-width:160px" title="${s.nome}">${s.nome.length>22?s.nome.slice(0,22)+'…':s.nome}</td>
+        <td style="font-size:10px;color:var(--text3)">${s.sub||'—'}</td>
+        <td class="r">${fmtK(m.totalV)}</td>
+        <td class="r" style="color:#166534;font-weight:600">${fmtK(m.lucro)}</td>
+        <td class="r">${pctBadge(m.margemPct)}</td>
+        <td><span class="class-badge ${role.cls}">${role.label}</span></td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+
+  // Destruidores: receita relevante + margem baixa
+  const destruidores=[...metrics]
+    .filter(x=>x.m.totalV>totalFat*0.005&&x.m.margemPct<20)
+    .sort((a,b)=>a.m.margemPct-b.m.margemPct)
+    .slice(0,8);
+  document.getElementById('destruidoresTable').innerHTML=`<table class="camp-table">
+    <thead><tr><th>#</th><th>Produto</th><th>Subcat</th><th class="r">Receita</th><th class="r">Marg.</th><th>Causa</th></tr></thead>
+    <tbody>${destruidores.map(({s,m},i)=>`<tr>
+      <td style="color:var(--text3);font-size:10px">${i+1}</td>
+      <td class="prod-name" style="max-width:140px" title="${s.nome}">${s.nome.length>20?s.nome.slice(0,20)+'…':s.nome}</td>
+      <td style="font-size:10px;color:var(--text3)">${s.sub||'—'}</td>
+      <td class="r">${fmtK(m.totalV)}</td>
+      <td class="r">${pctBadge(m.margemPct)}</td>
+      <td><span class="causa-badge">${causaMargem(s,m)}</span></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+// ── Categoria drill ───────────────────────────────────────────────────────────
+function buildRentCatCards(metricsAll){
+  if(rentCatDrill){
+    const sub=document.getElementById('rentSubcatSection');
+    sub.style.display='block';
+    document.getElementById('rentSubcatLabel').textContent=rentCatDrill+' — Subcategorias';
+    const m2=metricsAll.filter(x=>x.s.cat===rentCatDrill);
+    const bySub2={};
+    m2.forEach(({s,m})=>{
+      if(!bySub2[s.sub])bySub2[s.sub]={fat:0,lucro:0,skus:0,elasts:[]};
+      bySub2[s.sub].fat+=m.totalV;bySub2[s.sub].lucro+=m.lucro;bySub2[s.sub].skus++;
+      if(m.elastMedia!==null)bySub2[s.sub].elasts.push(m.elastMedia);
+    });
+    const subs2=Object.entries(bySub2).map(([sub,d])=>({
+      sub,fat:d.fat,lucro:d.lucro,skus:d.skus,mg:d.fat>0?d.lucro/d.fat*100:0,
+      eMed:d.elasts.length?d.elasts.reduce((a,b)=>a+b,0)/d.elasts.length:null
+    })).sort((a,b)=>b.fat-a.fat);
+    const maxFat2=subs2[0]?.fat||1;
+    document.getElementById('rentSubcatCards').innerHTML=`<div class="tbl-wrap"><table class="rent-cat-table">
+      <thead><tr><th>Subcategoria</th><th class="r">Receita</th><th class="r">Lucro</th><th>Margem</th><th>Volume relativo</th><th>Elasticidade</th></tr></thead>
+      <tbody>${subs2.map(d=>{const ec=classifyElast(d.eMed);return`<tr>
+        <td><div class="rcat-name">${d.sub}</div><div class="rcat-sub">${d.skus} SKUs</div></td>
+        <td class="num">${fmtK(d.fat)}</td><td class="num">${fmtK(d.lucro)}</td>
+        <td>${pctBadge(d.mg)}</td>
+        <td><div class="rbar"><div class="rbar-track"><div class="rbar-fill" style="width:${Math.round(d.fat/maxFat2*100)}%;background:${rentColor(d.mg)}"></div></div></div></td>
+        <td>${d.eMed!==null?`<span class="elast-pill ${ec.cls}">${d.eMed.toFixed(2)}</span>`:'—'}</td>
+      </tr>`;}).join('')}</tbody></table></div>`;
+    document.getElementById('rentCatCards').innerHTML='';
+    return;
+  }
+  document.getElementById('rentSubcatSection').style.display='none';
+  const byCat2={};
+  metricsAll.forEach(({s,m})=>{
+    if(!byCat2[s.cat])byCat2[s.cat]={fat:0,lucro:0,skus:0,subs:new Set(),elasts:[]};
+    byCat2[s.cat].fat+=m.totalV;byCat2[s.cat].lucro+=m.lucro;byCat2[s.cat].skus++;
+    byCat2[s.cat].subs.add(s.sub);
+    if(m.elastMedia!==null)byCat2[s.cat].elasts.push(m.elastMedia);
+  });
+  const cats2=Object.entries(byCat2).map(([c,d])=>({
+    cat:c,fat:d.fat,lucro:d.lucro,skus:d.skus,nsubs:d.subs.size,
+    mg:d.fat>0?d.lucro/d.fat*100:0,
+    eMed:d.elasts.length?d.elasts.reduce((a,b)=>a+b,0)/d.elasts.length:null
+  })).sort((a,b)=>b.fat-a.fat);
+  const totalFat2=cats2.reduce((s,c)=>s+c.fat,0)||1;
+  const maxFat3=cats2[0]?.fat||1;
+  document.getElementById('rentCatCards').innerHTML=`<div class="tbl-wrap"><table class="rent-cat-table">
+    <thead><tr><th>Categoria</th><th class="r">Receita</th><th class="r">Share</th><th class="r">Lucro Bruto</th><th>Margem</th><th>Volume relativo</th><th>Elasticidade</th></tr></thead>
+    <tbody>${cats2.map(d=>{
+      const ec=classifyElast(d.eMed);const color=getCatColor(d.cat);
+      return`<tr onclick="drillRentCat('${d.cat.replace(/'/g,"\\'")}')">
+        <td><div style="display:flex;align-items:center;gap:8px">
+          <span style="width:10px;height:10px;border-radius:2px;background:${color};flex-shrink:0;display:inline-block"></span>
+          <div><div class="rcat-name" style="color:${color}">${d.cat}</div>
+          <div class="rcat-sub">${d.skus} SKUs · ${d.nsubs} subcats · clique para detalhar</div></div>
+        </div></td>
+        <td class="num">${fmtK(d.fat)}</td>
+        <td class="num"><span style="color:var(--text3);font-size:10px;font-family:'DM Mono',monospace">${Math.round(d.fat/totalFat2*100)}%</span></td>
+        <td class="num">${fmtK(d.lucro)}</td>
+        <td>${pctBadge(d.mg)}</td>
+        <td><div class="rbar"><div class="rbar-track" style="width:140px"><div class="rbar-fill" style="width:${Math.round(d.fat/maxFat3*100)}%;background:${rentColor(d.mg)}"></div></div></div></td>
+        <td>${d.eMed!==null?`<span class="elast-pill ${classifyElast(d.eMed).cls}">${d.eMed.toFixed(2)} ${classifyElast(d.eMed).label}</span>`:'—'}</td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`;
+}
+function drillRentCat(cat){rentCatDrill=cat;const skus=getRentSkus();const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));buildRentCatCards(metrics);}
+function closeRentCat(){rentCatDrill=null;const skus=getRentSkus();const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));buildRentCatCards(metrics);}
+
+// ── 7. Tabela completa ─────────────────────────────────────────────────────────
 function renderRentTable(metricsIn){
   const q=(document.getElementById('rentSearch')?.value||'').toLowerCase();
+  const sortBy=document.getElementById('rentTblSort')?.value||'lucro';
   let data=metricsIn||getRentSkus().map(s=>({s,m:calcSkuMetrics(s)}));
-  if(rentCatDrill) data=data.filter(x=>x.s.cat===rentCatDrill);
-  if(q) data=data.filter(x=>x.s.nome.toLowerCase().includes(q)||String(x.s.sku).includes(q));
-  data=[...data].sort((a,b)=>b.m.lucro-a.m.lucro);
-  const total=data.length, start=rentPage*RENT_PAGE, slice=data.slice(start,start+RENT_PAGE);
-  const maxL=data[0]?.m.lucro||1;
+  if(rentCatDrill)data=data.filter(x=>x.s.cat===rentCatDrill);
+  if(q)data=data.filter(x=>x.s.nome.toLowerCase().includes(q)||String(x.s.sku).includes(q));
+  const sortFns={lucro:(a,b)=>b.m.lucro-a.m.lucro,receita:(a,b)=>b.m.totalV-a.m.totalV,
+    margem:(a,b)=>b.m.margemPct-a.m.margemPct,status:(a,b)=>a.m.margemPct-b.m.margemPct};
+  data=[...data].sort(sortFns[sortBy]||sortFns.lucro);
+  const total=data.length,start=rentPage*RENT_PAGE,slice=data.slice(start,start+RENT_PAGE);
+  const maxL=Math.max(...data.map(x=>x.m.lucro),1);
   document.getElementById('rentTableTitle').textContent=
-    `${total} produto${total!==1?'s':''} · ordenado por lucro bruto${rentCatDrill?' — '+rentCatDrill:''}`;
+    `${total} produto${total!==1?'s':''} · ordenado por ${sortBy}${rentCatDrill?' — '+rentCatDrill:''}`;
   const rows=slice.map(({s,m},i)=>{
     const bw=Math.max(0,Math.round(Math.max(m.lucro,0)/maxL*100));
     const mc=rentColor(m.margemPct);
-    const ec=m.elastClass;
+    const role=classifySkuRole(s,m);
+    const cobColor=m.cobertura<30?'#991B1B':m.cobertura<60?'#D97706':'#166534';
+    const ticket=m.totalQ>0?Math.round(m.totalV/m.totalQ):0;
     return `<tr>
       <td>${start+i+1}</td>
       <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
-      <td class="prod-name" title="${s.nome}">${s.nome}</td>
-      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500;white-space:nowrap">${s.cat}</td>
-      <td style="font-size:11px;color:var(--text3);white-space:nowrap">${s.sub||'—'}</td>
-      <td class="num">R$ ${m.custo.toFixed(2)}</td>
-      <td class="num">R$ ${m.precoMedio.toFixed(2)}</td>
-      <td>${pctBadge(m.margemPct)}</td>
-      <td class="num"><div style="display:flex;align-items:center;gap:6px">
+      <td class="prod-name" title="${s.nome}" style="max-width:160px">${s.nome.length>24?s.nome.slice(0,24)+'…':s.nome}</td>
+      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500">${s.cat}</td>
+      <td style="font-size:11px;color:var(--text3)">${s.sub||'—'}</td>
+      <td style="font-size:11px;color:var(--text3)">${s.marca||'—'}</td>
+      <td class="num">${fmtK(m.totalV)}</td>
+      <td class="num">${Math.round(m.totalQ).toLocaleString('pt-BR')}</td>
+      <td class="num" style="font-family:'DM Mono',monospace">R$&nbsp;${ticket.toLocaleString('pt-BR')}</td>
+      <td class="num" style="font-family:'DM Mono',monospace">R$&nbsp;${m.custo.toFixed(2)}</td>
+      <td class="num"><div style="display:flex;align-items:center;gap:5px">
         <div class="margin-bar"><div class="margin-bar-fill" style="width:${bw}%;background:${mc}"></div></div>
-        ${fmtK(m.lucro)}</div>
-      </td>
-      <td class="num" style="color:${m.varPreco>2?'#991B1B':m.varPreco<-2?'#166534':'var(--text3)'};font-size:11px">${m.varPreco>=0?'+':''}${m.varPreco.toFixed(1)}%</td>
-      <td class="num" style="color:${m.varVol>5?'#166534':m.varVol<-15?'#991B1B':'var(--text3)'};font-size:11px">${m.varVol>=0?'+':''}${m.varVol.toFixed(1)}%</td>
-      <td>${m.elastMedia!==null?`<span class="elast-pill ${ec.cls}" title="${ec.tip||''}">${m.elastMedia.toFixed(2)} ${ec.label}</span>`:'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
+        ${fmtK(m.lucro)}</div></td>
+      <td>${pctBadge(m.margemPct)}</td>
+      <td><span class="badge ${s.abcV}">${s.abcV}</span></td>
+      <td style="font-size:11px;color:${cobColor};font-family:'DM Mono',monospace">${m.cobertura>=999?'∞':m.cobertura+'d'}</td>
+      <td><span class="class-badge ${role.cls}" style="font-size:9px">${role.label}</span></td>
     </tr>`;
   }).join('');
   document.getElementById('rentTable').innerHTML=`<div class="tbl-wrap"><table>
-    <thead><tr><th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th>
-    <th class="r" style="text-align:right">Custo</th><th class="r" style="text-align:right">Preço médio</th>
-    <th>Margem</th><th class="r" style="text-align:right">Lucro bruto</th>
-    <th class="r" style="text-align:right">Δ Preço</th><th class="r" style="text-align:right">Δ Volume</th>
-    <th>Elasticidade</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    <thead><tr><th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>Marca</th>
+    <th class="r" style="text-align:right">Receita</th><th class="r" style="text-align:right">Qtd</th>
+    <th class="r" style="text-align:right">Ticket</th><th class="r" style="text-align:right">Custo</th>
+    <th class="r" style="text-align:right">Lucro</th><th>Margem</th><th>ABC</th>
+    <th style="text-align:right">Cobertura</th><th>Status</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
   document.getElementById('rentPag').innerHTML=total>RENT_PAGE?`
     <button class="pag-btn" onclick="rentPage--;renderRentTable()" ${rentPage===0?'disabled':''}>← Anterior</button>
     <span class="pag-info">${start+1}–${Math.min(start+RENT_PAGE,total)} de ${total}</span>
@@ -2751,298 +3582,484 @@ function renderRentTable(metricsIn){
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// COMPRAS & ESTOQUE
+
+// ══════════════════════════════════════════════════════════════════════════════
+// COMPRAS & ESTOQUE v2 — Módulo de decisão de capital
+// Lead time 5M · Estoque segurança 1M · Demanda inteligente
 // ══════════════════════════════════════════════════════════════════════════════
 
 let compPage=0;
 const COMP_PAGE=30;
 
-// ── helpers ──────────────────────────────────────────────────────────────────
+// ── Parâmetros ────────────────────────────────────────────────────────────────
+function getLeadTime(){ return parseInt(document.getElementById('paramLeadTime')?.value||'5'); }
+function getSeguranca(){ return parseInt(document.getElementById('paramSeguranca')?.value||'1'); }
 
-function getMetaDias(){ return parseInt(document.getElementById('compFiltCobertura')?.value||'60'); }
+// ── 2. Cálculo inteligente de demanda ────────────────────────────────────────
+function calcDemandaInteligente(sku){
+  const raw = APP.rawSalesBySku?.[sku]?.meses || {};
+  const allLabels = MONTH_SHEETS.map(m=>m.label);
 
-// Calculate all compras metrics for a SKU
+  // 2.3 Meses com possível ruptura (vendas zero mas produto ativo)
+  // Heurística: mês com zero vendas mas produto tem histórico de vendas
+  const salesByMonth = allLabels.map(l => raw[l]?.q || 0);
+  const hasHistory = salesByMonth.some(v=>v>0);
+
+  // Calcular todas as médias móveis de 3 meses
+  const movingAvg3 = [];
+  for(let i=2; i<allLabels.length; i++){
+    const w3 = [salesByMonth[i-2], salesByMonth[i-1], salesByMonth[i]];
+    // 2.3: se algum mês da janela pode ser ruptura (zero com historico ao redor)
+    const adjusted = w3.map((v,j)=>{
+      if(v===0 && hasHistory){
+        // check if neighbors have sales (indicative of rupture not real zero)
+        const prevOk = j>0 && w3[j-1]>0;
+        const nextOk = j<w3.length-1 && w3[j+1]>0;
+        if(prevOk || nextOk) return null; // exclude this month
+      }
+      return v;
+    }).filter(v=>v!==null);
+    if(adjusted.length>0) movingAvg3.push(adjusted.reduce((a,b)=>a+b,0)/adjusted.length);
+  }
+
+  // 2.1 Média recente: últimos 3 meses (com ajuste de ruptura)
+  const last3Labels = allLabels.slice(-3);
+  const last3Sales = last3Labels.map(l=>raw[l]?.q||0);
+  const last3Adj = last3Sales.map((v,i)=>{
+    if(v===0 && hasHistory){
+      const prev = i>0?last3Sales[i-1]:0;
+      const next = i<last3Sales.length-1?last3Sales[i+1]:0;
+      if(prev>0||next>0) return null;
+    }
+    return v;
+  }).filter(v=>v!==null);
+  const mediaRecente = last3Adj.length>0 ? last3Adj.reduce((a,b)=>a+b,0)/last3Adj.length : 0;
+
+  // 2.2 Média histórica: percentil 75 das médias móveis (evita superestimação)
+  let mediaHistorica = 0;
+  if(movingAvg3.length>0){
+    const sorted = [...movingAvg3].sort((a,b)=>a-b);
+    const p75idx = Math.floor(sorted.length*0.75);
+    mediaHistorica = sorted[Math.min(p75idx, sorted.length-1)];
+  }
+
+  // 2.4 Demanda estimada = max(recente, histórica ajustada)
+  const demandaMensal = Math.max(mediaRecente, mediaHistorica);
+  return { demandaMensal, mediaRecente, mediaHistorica };
+}
+
+// ── 3. Métricas de estoque ────────────────────────────────────────────────────
 function calcCompraMetrics(s){
-  const sku=String(s.sku);
-  const raw=APP.rawSalesBySku?.[sku]?.meses||{};
-  const custoData=APP.custoMap?.[sku]||{};
-  const estoque=custoData.estoque||0;
-  const custo=custoData.custo||0;
+  const sku       = String(s.sku);
+  const custoData = APP.custoMap?.[sku] || {};
+  const estoque   = custoData.estoque || 0;
+  const custo     = custoData.custo   || 0;
+  const lead      = getLeadTime();
+  const seg       = getSeguranca();
 
-  // Velocity: last 3 months average units/month
-  const last3=MONTH_SHEETS.slice(-3).map(m=>m.label);
-  const totalQtd3=last3.reduce((s2,l)=>s2+(raw[l]?.q||0),0);
-  const velMensal=totalQtd3/3;
-  const velDiaria=velMensal/30;
+  const { demandaMensal, mediaRecente, mediaHistorica } = calcDemandaInteligente(sku);
 
-  // Last 1 month
-  const lastLabel=MONTH_SHEETS[MONTH_SHEETS.length-1].label;
-  const velUltMes=(raw[lastLabel]?.q||0);
+  // 3.2 Estoque ideal
+  const estoqueIdeal = Math.ceil(demandaMensal * (lead + seg));
 
-  // Coverage in days
-  const coberturaDias=velDiaria>0?Math.round(estoque/velDiaria):estoque>0?999:0;
+  // 3.3 Cobertura em meses
+  const coberturaMeses = demandaMensal > 0 ? estoque / demandaMensal : (estoque > 0 ? 999 : 0);
+  const coberturaLabel = coberturaMeses >= 999 ? '∞' : coberturaMeses.toFixed(1) + 'M';
 
-  // Status
-  let status='excesso';
-  if(coberturaDias<30) status='critico';
-  else if(coberturaDias<60) status='atencao';
-  else if(coberturaDias<=90) status='ok';
+  // 4. Classificação de status
+  let status;
+  if(coberturaMeses < 1)                 status = 'ruptura';
+  else if(coberturaMeses < lead)         status = 'risco';
+  else if(coberturaMeses <= lead + seg + 2) status = 'ideal';
+  else                                   status = 'excesso';
 
-  // Suggested purchase quantity to reach meta
-  const meta=getMetaDias();
-  const estoqueAlvo=Math.ceil(velDiaria*meta);
-  const sugestaoQtd=Math.max(0,estoqueAlvo-estoque);
-  const sugestaoValor=sugestaoQtd*custo;
+  // 3.4 Compra sugerida
+  const compraQtd   = Math.max(0, estoqueIdeal - estoque);
+  const compraValor = compraQtd * custo;
 
-  // Valor do estoque atual
-  const valorEstoque=estoque*custo;
+  // Capital parado (meses de excesso × demanda × custo)
+  const mesesExcesso = Math.max(0, coberturaMeses - (lead + seg + 2));
+  const capitalParado = Math.min(estoque, mesesExcesso * demandaMensal) * custo;
 
-  // Trend: last month vs 3m average
-  const trend=velMensal>0?Math.round((velUltMes-velMensal)/velMensal*100):0;
+  // Valor total em estoque
+  const valorEstoque = estoque * custo;
 
-  return {estoque,custo,velMensal,velDiaria,velUltMes,coberturaDias,
-          status,sugestaoQtd,sugestaoValor,valorEstoque,trend,estoqueAlvo};
+  // Trend (último mês vs demanda estimada)
+  const lastLabel = MONTH_SHEETS[MONTH_SHEETS.length-1].label;
+  const ultMes = APP.rawSalesBySku?.[sku]?.meses?.[lastLabel]?.q || 0;
+  const trend = demandaMensal > 0 ? Math.round((ultMes - demandaMensal) / demandaMensal * 100) : 0;
+
+  return {
+    estoque, custo, demandaMensal, mediaRecente, mediaHistorica,
+    estoqueIdeal, coberturaMeses, coberturaLabel, status,
+    compraQtd, compraValor, capitalParado, valorEstoque, trend
+  };
 }
 
-function statusLabel(s){ return {critico:'Crítico',atencao:'Atenção',ok:'OK',excesso:'Excesso'}[s]||s; }
-function statusColor(s){ return {critico:'#991B1B',atencao:'#D97706',ok:'#166534',excesso:'#1E40AF'}[s]||'#6B7280'; }
-function statusBg(s){ return {critico:'#FEE2E2',atencao:'#FEF3C7',ok:'#DCFCE7',excesso:'#DBEAFE'}[s]||'#F3F4F6'; }
-
-function cobBarColor(dias){
-  if(dias<30) return '#991B1B';
-  if(dias<60) return '#D97706';
-  if(dias<=90) return '#166534';
-  return '#1E40AF';
-}
+// ── Status helpers ────────────────────────────────────────────────────────────
+function statusLabel(s){ return {ruptura:'Ruptura',risco:'Risco',ideal:'Ideal',excesso:'Excesso'}[s]||s; }
+function statusColor(s){ return {ruptura:'#991B1B',risco:'#D97706',ideal:'#166534',excesso:'#1E40AF'}[s]||'#6B7280'; }
+function statusBg(s)   { return {ruptura:'#FEE2E2',risco:'#FEF3C7',ideal:'#DCFCE7',excesso:'#DBEAFE'}[s]||'#F3F4F6'; }
+function statusOrder(s){ return {ruptura:0,risco:1,ideal:2,excesso:3}[s]||4; }
 
 // ── Init filtros ──────────────────────────────────────────────────────────────
 function initComprasFiltros(){
-  const cats=[...new Set(APP.allSkus.map(s=>s.cat))].sort();
-  const marcas=[...new Set(APP.allSkus.map(s=>s.marca).filter(Boolean))].sort();
-  document.getElementById('compFiltCat').innerHTML=
+  const cats  = [...new Set(APP.allSkus.map(s=>s.cat))].sort();
+  const marcas= [...new Set(APP.allSkus.map(s=>s.marca).filter(Boolean))].sort();
+  document.getElementById('compFiltCat').innerHTML =
     '<option value="">Todas as categorias</option>'+cats.map(c=>`<option>${c}</option>`).join('');
-  document.getElementById('compFiltMarca').innerHTML=
+  document.getElementById('compFiltMarca').innerHTML =
     '<option value="">Todas as marcas</option>'+marcas.map(m=>`<option>${m}</option>`).join('');
 }
 
-// Get filtered SKUs with compras metrics
+// ── Get filtered SKUs ─────────────────────────────────────────────────────────
 function getCompSkus(){
-  const status=document.getElementById('compFiltStatus')?.value||'';
-  const cat=document.getElementById('compFiltCat')?.value||'';
-  const marca=document.getElementById('compFiltMarca')?.value||'';
-  const abc=document.getElementById('compFiltAbc')?.value||'';
-
-  const result=[];
+  const statusF = document.getElementById('compFiltStatus')?.value||'';
+  const catF    = document.getElementById('compFiltCat')?.value||'';
+  const marcaF  = document.getElementById('compFiltMarca')?.value||'';
+  const abcF    = document.getElementById('compFiltAbc')?.value||'';
+  const result  = [];
   for(const s of APP.allSkus){
-    // Only include SKUs that have estoque data
-    if(!(APP.custoMap?.[String(s.sku)])) continue;
-    const m=calcCompraMetrics(s);
-    if(status&&m.status!==status) continue;
-    if(cat&&s.cat!==cat) continue;
-    if(marca&&s.marca!==marca) continue;
-    if(abc&&s.abcV!==abc) continue;
-    result.push({s,m});
+    if(!APP.custoMap?.[String(s.sku)]) continue;
+    const m = calcCompraMetrics(s);
+    if(statusF && m.status !== statusF) continue;
+    if(catF    && s.cat    !== catF)    continue;
+    if(marcaF  && s.marca  !== marcaF)  continue;
+    if(abcF    && s.abcV   !== abcF)    continue;
+    result.push({s, m});
   }
   return result;
 }
 
 // ── Build principal ───────────────────────────────────────────────────────────
 function buildCompras(){
-  const all=getCompSkus();
+  const all = getCompSkus();
   buildCompKpis(all);
-  buildCompUrgency(all);
-  compPage=0;
+  buildCompInsights(all);
+  buildCompAlerts(all);
+  buildCompRankings(all);
+  compPage = 0;
   renderCompTable(all);
-  setTimeout(()=>{ buildCobCatChart(all); buildCobDistChart(all); },50);
+  setTimeout(()=>{ buildCobDistChart(all); buildCobCatChart(all); }, 50);
 }
 
 // ── KPIs ──────────────────────────────────────────────────────────────────────
 function buildCompKpis(all){
-  const byCritico=all.filter(x=>x.m.status==='critico');
-  const byAtencao=all.filter(x=>x.m.status==='atencao');
-  const totalSugestao=all.filter(x=>x.m.sugestaoQtd>0).reduce((s,x)=>s+x.m.sugestaoValor,0);
-  const totalEstoque=all.reduce((s,x)=>s+x.m.valorEstoque,0);
-  const avgCob=all.length?Math.round(all.reduce((s,x)=>s+Math.min(x.m.coberturaDias,180),0)/all.length):0;
-  const semVenda=all.filter(x=>x.m.velMensal===0&&x.m.estoque>0);
+  const lead = getLeadTime(), seg = getSeguranca();
+  const ruptura = all.filter(x=>x.m.status==='ruptura');
+  const risco   = all.filter(x=>x.m.status==='risco');
+  const excesso = all.filter(x=>x.m.status==='excesso');
+  const totalCompra  = all.reduce((s,x)=>s+x.m.compraValor, 0);
+  const totalParado  = all.reduce((s,x)=>s+x.m.capitalParado, 0);
+  const totalEstoque = all.reduce((s,x)=>s+x.m.valorEstoque, 0);
 
   document.getElementById('compKpis').innerHTML=`
     <div class="comp-kpi red">
-      <div class="comp-kpi-label">SKUs críticos</div>
-      <div class="comp-kpi-value" style="color:#991B1B">${byCritico.length}</div>
-      <div class="comp-kpi-sub">Cobertura &lt; 30 dias · ação imediata</div>
+      <div class="comp-kpi-label">Ruptura iminente</div>
+      <div class="comp-kpi-value" style="color:#991B1B">${ruptura.length}</div>
+      <div class="comp-kpi-sub">cobertura &lt; 1 mês</div>
     </div>
     <div class="comp-kpi amber">
-      <div class="comp-kpi-label">SKUs em atenção</div>
-      <div class="comp-kpi-value" style="color:#D97706">${byAtencao.length}</div>
-      <div class="comp-kpi-sub">Cobertura 30–60 dias · planejar compra</div>
+      <div class="comp-kpi-label">Em risco</div>
+      <div class="comp-kpi-value" style="color:#D97706">${risco.length}</div>
+      <div class="comp-kpi-sub">cobertura &lt; ${lead} meses (lead time)</div>
     </div>
     <div class="comp-kpi green">
-      <div class="comp-kpi-label">Investimento sugerido</div>
-      <div class="comp-kpi-value" style="color:var(--green)">${fmtK(totalSugestao)}</div>
-      <div class="comp-kpi-sub">Para atingir meta de ${getMetaDias()} dias de cobertura</div>
+      <div class="comp-kpi-label">Investimento necessário</div>
+      <div class="comp-kpi-value">${fmtK(totalCompra)}</div>
+      <div class="comp-kpi-sub">lead ${lead}M + seg ${seg}M = ${lead+seg}M de estoque ideal</div>
     </div>
     <div class="comp-kpi blue">
-      <div class="comp-kpi-label">Valor em estoque</div>
-      <div class="comp-kpi-value">${fmtK(totalEstoque)}</div>
-      <div class="comp-kpi-sub">${all.length} SKUs com dados de estoque</div>
+      <div class="comp-kpi-label">Capital parado (excesso)</div>
+      <div class="comp-kpi-value">${fmtK(totalParado)}</div>
+      <div class="comp-kpi-sub">${excesso.length} SKUs com excesso acima do ideal</div>
     </div>
     <div class="comp-kpi gray">
-      <div class="comp-kpi-label">Cobertura média</div>
-      <div class="comp-kpi-value">${avgCob}d</div>
-      <div class="comp-kpi-sub">${semVenda.length} SKUs sem venda nos últimos 3M</div>
+      <div class="comp-kpi-label">Estoque total (custo)</div>
+      <div class="comp-kpi-value">${fmtK(totalEstoque)}</div>
+      <div class="comp-kpi-sub">${all.length} SKUs monitorados</div>
     </div>`;
 }
 
-// ── Cards de urgência ─────────────────────────────────────────────────────────
-function buildCompUrgency(all){
-  const urgent=all.filter(x=>x.m.status==='critico'||x.m.status==='atencao')
-    .sort((a,b)=>a.m.coberturaDias-b.m.coberturaDias)
-    .slice(0,12);
+// ── Insights automáticos ──────────────────────────────────────────────────────
+function buildCompInsights(all){
+  const lead = getLeadTime();
+  const ins  = [];
+  const ruptura = all.filter(x=>x.m.status==='ruptura');
+  const risco   = all.filter(x=>x.m.status==='risco');
+  const excesso = all.filter(x=>x.m.status==='excesso');
 
-  document.getElementById('compUrgencyTitle').textContent=
-    `${all.filter(x=>x.m.status==='critico'||x.m.status==='atencao').length} SKUs precisam de reposição — ordenados por urgência`;
+  // Líderes em risco
+  const lideresRisco = [...ruptura, ...risco].filter(x=>x.s.abcV==='A').sort((a,b)=>a.m.coberturaMeses-b.m.coberturaMeses);
+  if(lideresRisco.length)
+    ins.push({type:'loser', tag:'⚠ Líderes em risco',
+      title:`${lideresRisco.length} produto${lideresRisco.length>1?'s':''} classe A com cobertura insuficiente`,
+      desc:`${lideresRisco[0].s.nome.slice(0,40)} — cobertura de ${lideresRisco[0].m.coberturaLabel} vs lead time de ${lead} meses.`});
 
-  if(!urgent.length){
-    document.getElementById('compUrgencyCards').innerHTML=
-      `<div style="color:var(--text3);font-size:13px;padding:16px 0">Nenhum SKU em estado crítico ou de atenção com os filtros atuais.</div>`;
-    return;
-  }
+  // Ruptura total
+  if(ruptura.length)
+    ins.push({type:'loser', tag:'🚨 Ruptura iminente',
+      title:`${ruptura.length} SKU${ruptura.length>1?'s com':' com'} cobertura menor que 1 mês`,
+      desc:`Risco crítico de falta de produto. Compra urgente necessária: ${fmtK(ruptura.reduce((s,x)=>s+x.m.compraValor,0))}.`});
 
-  document.getElementById('compUrgencyCards').innerHTML=urgent.map(({s,m})=>`
-    <div class="urgency-card ${m.status}">
-      <div class="urgency-card-name" title="${s.nome}">${s.nome}</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-        <span class="cob-badge ${m.status}">${statusLabel(m.status)} · ${m.coberturaDias}d</span>
-        <span style="font-size:10px;color:${getCatColor(s.cat)};font-weight:500">${s.cat}</span>
-      </div>
-      <div class="urgency-card-meta">
-        <span class="urgency-card-stat">Estoque: ${m.estoque.toLocaleString('pt-BR')} un.</span>
-        <span class="urgency-card-stat">Vel: ${m.velMensal.toFixed(0)} un/mês</span>
-        <span class="urgency-card-stat">Comprar: ${m.sugestaoQtd} un.</span>
-        <span class="urgency-card-stat">Invest: ${fmtK(m.sugestaoValor)}</span>
-        <span class="urgency-card-stat">ABC: ${s.abcV}</span>
-      </div>
+  // Capital parado
+  const totalParado = all.reduce((s,x)=>s+x.m.capitalParado,0);
+  if(totalParado > 50000)
+    ins.push({type:'warn', tag:'💰 Capital parado',
+      title:`${fmtK(totalParado)} imobilizados em estoque acima do ideal`,
+      desc:`${excesso.length} SKUs com excesso. Avaliar pausar compras desses itens para liberar capital.`});
+
+  // Compra concentrada em categorias
+  const byCat = {};
+  all.filter(x=>x.m.compraQtd>0).forEach(({s,m})=>{if(!byCat[s.cat])byCat[s.cat]=0;byCat[s.cat]+=m.compraValor;});
+  const topCat = Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0];
+  const totalCompra = all.reduce((s,x)=>s+x.m.compraValor,0);
+  if(topCat && totalCompra>0 && topCat[1]/totalCompra > 0.5)
+    ins.push({type:'info', tag:'→ Compra concentrada',
+      title:`${Math.round(topCat[1]/totalCompra*100)}% do investimento está em ${topCat[0]}`,
+      desc:`${fmtK(topCat[1])} de ${fmtK(totalCompra)} total. Verificar se a concentração é intencional.`});
+
+  // Alta demanda, baixa cobertura
+  const altaDemBaixaCob = all.filter(x=>x.m.demandaMensal>50&&x.m.coberturaMeses<lead).sort((a,b)=>b.m.demandaMensal-a.m.demandaMensal);
+  if(altaDemBaixaCob.length)
+    ins.push({type:'warn', tag:'📈 Alta demanda, baixa cobertura',
+      title:`${altaDemBaixaCob.length} produto${altaDemBaixaCob.length>1?'s':''} com giro alto e estoque crítico`,
+      desc:`${altaDemBaixaCob[0].s.nome.slice(0,35)} — ${Math.round(altaDemBaixaCob[0].m.demandaMensal)} un/mês com apenas ${altaDemBaixaCob[0].m.coberturaLabel} de cobertura.`});
+
+  // Sem movimento mas com estoque
+  const semMov = all.filter(x=>x.m.demandaMensal===0&&x.m.estoque>0);
+  if(semMov.length)
+    ins.push({type:'info', tag:'📦 Sem movimento',
+      title:`${semMov.length} SKU${semMov.length>1?'s':''} com estoque mas sem venda nos últimos meses`,
+      desc:`Capital imobilizado de ${fmtK(semMov.reduce((s,x)=>s+x.m.valorEstoque,0))}. Avaliar descontinuação ou liquidação.`});
+
+  document.getElementById('compInsights').innerHTML = ins.slice(0,6).map(i=>`
+    <div class="insight-card ${i.type}">
+      <div class="insight-card-tag">${i.tag}</div>
+      <div class="insight-card-title">${i.title}</div>
+      <div class="insight-card-desc">${i.desc}</div>
     </div>`).join('');
 }
 
-// ── Gráficos ──────────────────────────────────────────────────────────────────
-function buildCobCatChart(all){
-  ch('cCobCat');
-  const byCat={};
-  all.forEach(({s,m})=>{
-    if(!byCat[s.cat]) byCat[s.cat]={sumWt:0,sumVal:0};
-    const capped=Math.min(m.coberturaDias,180);
-    byCat[s.cat].sumWt+=capped*m.valorEstoque;
-    byCat[s.cat].sumVal+=m.valorEstoque;
+// ── Alertas ───────────────────────────────────────────────────────────────────
+function buildCompAlerts(all){
+  const alerts = [];
+  const lead = getLeadTime();
+
+  // SKU Classe A em ruptura
+  all.filter(x=>x.s.abcV==='A'&&x.m.status==='ruptura').slice(0,4).forEach(({s,m})=>
+    alerts.push({type:'red', icon:'🔴',
+      title:`${s.nome.slice(0,35)} — SKU A em ruptura`,
+      meta:`${s.cat} · ${s.sub||'—'} · cobertura ${m.coberturaLabel} · comprar ${m.compraQtd} un (${fmtK(m.compraValor)})`}));
+
+  // SKU Classe A em risco
+  all.filter(x=>x.s.abcV==='A'&&x.m.status==='risco').slice(0,3).forEach(({s,m})=>
+    alerts.push({type:'amber', icon:'🟡',
+      title:`${s.nome.slice(0,35)} — SKU A em risco`,
+      meta:`${s.cat} · cobertura ${m.coberturaLabel} vs lead de ${lead}M · comprar ${m.compraQtd} un`}));
+
+  // Subcategorias com excesso
+  const bySub = {};
+  all.filter(x=>x.m.status==='excesso').forEach(({s,m})=>{
+    const k = s.cat+'|'+s.sub;
+    if(!bySub[k]) bySub[k]={cat:s.cat,sub:s.sub,cap:0,skus:0};
+    bySub[k].cap+=m.capitalParado; bySub[k].skus++;
   });
-  const cats=Object.entries(byCat)
-    .map(([c,d])=>({c,avg:d.sumVal>0?Math.round(d.sumWt/d.sumVal):0}))
-    .sort((a,b)=>a.avg-b.avg);
-  const colors=cats.map(x=>cobBarColor(x.avg));
-  APP.charts.cCobCat=new Chart(document.getElementById('cCobCat'),{type:'bar',indexAxis:'y',
-    data:{labels:cats.map(x=>x.c),datasets:[{data:cats.map(x=>x.avg),backgroundColor:colors,borderRadius:5}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:ctx=>`${ctx.raw} dias de cobertura`}}},
-      scales:{x:{ticks:{callback:v=>v+'d',font:{size:10},color:TX},grid:{color:GC},min:0,
-        // Add reference line at 60
-      },y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
+  Object.values(bySub).sort((a,b)=>b.cap-a.cap).slice(0,3).forEach(d=>
+    alerts.push({type:'blue', icon:'🔵',
+      title:`Excesso em ${d.sub||d.cat}`,
+      meta:`${d.cat} · ${d.skus} SKUs · ${fmtK(d.cap)} em capital parado acima do ideal`}));
+
+  if(!alerts.length)
+    alerts.push({type:'blue', icon:'✅', title:'Nenhum alerta crítico no momento', meta:'Estoque dentro dos parâmetros configurados'});
+
+  document.getElementById('compAlertTitle').textContent = `Alertas operacionais (${alerts.filter(a=>a.type!=='blue'||a.icon==='✅').length})`;
+  document.getElementById('compAlerts').innerHTML = alerts.slice(0,8).map(a=>`
+    <div class="alert-card ${a.type}">
+      <div class="alert-icon">${a.icon}</div>
+      <div class="alert-body"><div class="alert-title">${a.title}</div><div class="alert-meta">${a.meta}</div></div>
+    </div>`).join('');
 }
 
+// ── Rankings ──────────────────────────────────────────────────────────────────
+function buildCompRankings(all){
+  // Maior necessidade de compra
+  const rankCompra = [...all].filter(x=>x.m.compraQtd>0).sort((a,b)=>b.m.compraValor-a.m.compraValor).slice(0,8);
+  const maxC = rankCompra[0]?.m.compraValor || 1;
+  document.getElementById('compRankCompra').innerHTML = rankCompra.length ?
+    rankCompra.map(({s,m},i)=>`
+      <div class="comp-rank-row">
+        <span class="comp-rank-num" style="background:${statusBg(m.status)};color:${statusColor(m.status)}">${i+1}</span>
+        <div class="comp-rank-info">
+          <div class="comp-rank-name" title="${s.nome}">${s.nome.length>28?s.nome.slice(0,28)+'…':s.nome}</div>
+          <div class="comp-rank-meta">${s.cat} · cob ${m.coberturaLabel} · ${Math.round(m.demandaMensal)} un/mês</div>
+        </div>
+        <div style="flex:1;margin:0 8px">
+          <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${Math.round(m.compraValor/maxC*100)}%;background:${statusColor(m.status)};border-radius:3px"></div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-family:'DM Mono',monospace;font-weight:600;color:${statusColor(m.status)};white-space:nowrap">${fmtK(m.compraValor)}</div>
+      </div>`).join('') :
+    '<div style="color:var(--text3);font-size:12px;padding:12px 0">Nenhuma compra necessária com os filtros atuais</div>';
+
+  // Maior excesso
+  const rankExcesso = [...all].filter(x=>x.m.capitalParado>0).sort((a,b)=>b.m.capitalParado-a.m.capitalParado).slice(0,8);
+  const maxE = rankExcesso[0]?.m.capitalParado || 1;
+  document.getElementById('compRankExcesso').innerHTML = rankExcesso.length ?
+    rankExcesso.map(({s,m},i)=>`
+      <div class="comp-rank-row">
+        <span class="comp-rank-num" style="background:#DBEAFE;color:#1E40AF">${i+1}</span>
+        <div class="comp-rank-info">
+          <div class="comp-rank-name" title="${s.nome}">${s.nome.length>28?s.nome.slice(0,28)+'…':s.nome}</div>
+          <div class="comp-rank-meta">${s.cat} · cob ${m.coberturaLabel} · ${Math.round(m.estoque)} un</div>
+        </div>
+        <div style="flex:1;margin:0 8px">
+          <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${Math.round(m.capitalParado/maxE*100)}%;background:#1E40AF;border-radius:3px"></div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-family:'DM Mono',monospace;font-weight:600;color:#1E40AF;white-space:nowrap">${fmtK(m.capitalParado)}</div>
+      </div>`).join('') :
+    '<div style="color:var(--text3);font-size:12px;padding:12px 0">Nenhum excesso detectado</div>';
+}
+
+// ── Gráficos ──────────────────────────────────────────────────────────────────
 function buildCobDistChart(all){
   ch('cCobDist');
-  const counts={critico:0,atencao:0,ok:0,excesso:0};
+  const counts = {ruptura:0, risco:0, ideal:0, excesso:0};
   all.forEach(x=>counts[x.m.status]++);
-  const labels=['Crítico (<30d)','Atenção (30–60d)','OK (60–90d)','Excesso (>90d)'];
-  const vals=[counts.critico,counts.atencao,counts.ok,counts.excesso];
-  const colors=['#991B1B','#D97706','#166534','#1E40AF'];
-  APP.charts.cCobDist=new Chart(document.getElementById('cCobDist'),{type:'doughnut',
-    data:{labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',
-      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
+  const labels = ['Ruptura (<1M)','Risco (<Lead)','Ideal','Excesso'];
+  const vals   = [counts.ruptura, counts.risco, counts.ideal, counts.excesso];
+  const colors = ['#991B1B','#D97706','#166534','#1E40AF'];
+  APP.charts.cCobDist = new Chart(document.getElementById('cCobDist'),{type:'doughnut',
+    data:{labels, datasets:[{data:vals, backgroundColor:colors, borderWidth:2, borderColor:'#fff'}]},
+    options:{responsive:true, maintainAspectRatio:false, cutout:'58%',
+      plugins:{legend:{position:'bottom', labels:{font:{size:10}, boxWidth:10, padding:10}},
         tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} SKUs`}}}}});
 }
 
-// ── Tabela de reposição ───────────────────────────────────────────────────────
-function renderCompTable(allIn){
-  const q=(document.getElementById('compSearch')?.value||'').toLowerCase();
-  let data=allIn||getCompSkus();
-  if(q) data=data.filter(x=>x.s.nome.toLowerCase().includes(q)||String(x.s.sku).includes(q));
-
-  // Sort: critical first, then by cobertura ascending
-  const statusOrder={critico:0,atencao:1,ok:2,excesso:3};
-  data=[...data].sort((a,b)=>{
-    const sd=statusOrder[a.m.status]-statusOrder[b.m.status];
-    return sd!==0?sd:a.m.coberturaDias-b.m.coberturaDias;
+function buildCobCatChart(all){
+  ch('cCobCat');
+  const byCat = {};
+  all.filter(x=>x.m.compraValor>0).forEach(({s,m})=>{
+    if(!byCat[s.cat])byCat[s.cat]=0;
+    byCat[s.cat]+=m.compraValor;
   });
+  const cats = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  if(!cats.length){
+    document.getElementById('cCobCat').parentElement.innerHTML='<div style="color:var(--text3);font-size:13px;padding:40px;text-align:center">Nenhuma compra necessária</div>';
+    return;
+  }
+  APP.charts.cCobCat = new Chart(document.getElementById('cCobCat'),{type:'bar', indexAxis:'y',
+    data:{labels:cats.map(([c])=>c), datasets:[{
+      data:cats.map(([,v])=>Math.round(v)),
+      backgroundColor:cats.map(([c])=>getCatColor(c)),
+      borderRadius:4
+    }]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>`Compra: ${fmtK(ctx.raw)}`}}},
+      scales:{x:{ticks:{callback:v=>fmtK(v),font:{size:10},color:TX},grid:{color:GC}},
+              y:{ticks:{font:{size:11},color:'#555'},grid:{display:false}}}}});
+}
 
-  const total=data.length;
-  const start=compPage*COMP_PAGE;
-  const slice=data.slice(start,start+COMP_PAGE);
+// ── Tabela principal ──────────────────────────────────────────────────────────
+function renderCompTable(allIn){
+  const q = (document.getElementById('compSearch')?.value||'').toLowerCase();
+  const sortBy = document.getElementById('compTblSort')?.value||'urgencia';
+  let data = allIn || getCompSkus();
+  if(q) data = data.filter(x=>x.s.nome.toLowerCase().includes(q)||String(x.s.sku).includes(q));
 
-  document.getElementById('compTableTitle').textContent=
-    `${total} produto${total!==1?'s':''} · ${data.filter(x=>x.m.sugestaoQtd>0).length} com sugestão de compra`;
+  const sortFns = {
+    urgencia: (a,b)=> statusOrder(a.m.status)-statusOrder(b.m.status) || a.m.coberturaMeses-b.m.coberturaMeses,
+    compra:   (a,b)=> b.m.compraValor - a.m.compraValor,
+    cobertura:(a,b)=> a.m.coberturaMeses - b.m.coberturaMeses,
+    excesso:  (a,b)=> b.m.capitalParado - a.m.capitalParado,
+  };
+  data = [...data].sort(sortFns[sortBy]||sortFns.urgencia);
 
-  const rows=slice.map(({s,m},i)=>{
-    const cobPct=Math.min(100,Math.round(m.coberturaDias/180*100));
-    const trendColor=m.trend>10?'#166534':m.trend<-10?'#991B1B':'var(--text3)';
-    const sugestaoStyle=m.sugestaoQtd>0?'font-weight:500;color:var(--text)':'color:var(--text3)';
+  const total = data.length;
+  const start = compPage * COMP_PAGE;
+  const slice = data.slice(start, start+COMP_PAGE);
+
+  document.getElementById('compTableTitle').textContent =
+    `${total} produto${total!==1?'s':''} · lead ${getLeadTime()}M + segurança ${getSeguranca()}M`;
+
+  const rows = slice.map(({s,m},i)=>{
+    const sc = statusColor(m.status);
+    const sb = statusBg(m.status);
+    const compraStyle = m.compraQtd>0 ? `font-weight:600;color:${sc}` : 'color:var(--text3)';
+    const cobStyle = m.coberturaMeses<getLeadTime() ? `color:${sc};font-weight:600` : 'color:var(--text2)';
     return `<tr>
       <td>${start+i+1}</td>
       <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.sku}</span></td>
-      <td class="prod-name" title="${s.nome}">${s.nome}</td>
-      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500;white-space:nowrap">${s.cat}</td>
+      <td class="prod-name" title="${s.nome}" style="max-width:160px">${s.nome.length>24?s.nome.slice(0,24)+'…':s.nome}</td>
+      <td style="font-size:11px;color:${getCatColor(s.cat)};font-weight:500">${s.cat}</td>
       <td style="font-size:11px;color:var(--text3)">${s.sub||'—'}</td>
       <td><span class="badge ${s.abcV}">${s.abcV}</span></td>
-      <td class="num" style="font-family:'DM Mono',monospace">${m.estoque.toLocaleString('pt-BR')}</td>
-      <td class="num" style="font-size:11px;font-family:'DM Mono',monospace">${m.velMensal.toFixed(1)}</td>
+      <td class="num">${m.estoque.toLocaleString('pt-BR')}</td>
+      <td class="num" style="font-family:'DM Mono',monospace">${m.demandaMensal.toFixed(1)}</td>
       <td>
-        <div class="cob-bar-wrap">
-          <div class="cob-bar-track"><div class="cob-bar-fill" style="width:${cobPct}%;background:${cobBarColor(m.coberturaDias)}"></div></div>
-          <span class="cob-badge ${m.status}" style="font-size:10px;padding:2px 7px">${m.coberturaDias>=180?'180+d':m.coberturaDias+'d'}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:50px;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${Math.min(100,Math.round(m.coberturaMeses/(getLeadTime()+getSeguranca()+2)*100))}%;background:${sc};border-radius:3px"></div>
+          </div>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;${cobStyle}">${m.coberturaLabel}</span>
         </div>
       </td>
-      <td class="num" style="${sugestaoStyle}">${m.sugestaoQtd>0?m.sugestaoQtd.toLocaleString('pt-BR')+'&nbsp;un.':'—'}</td>
-      <td class="num" style="${sugestaoStyle}">${m.sugestaoQtd>0?fmtK(m.sugestaoValor):'—'}</td>
-      <td class="num" style="color:${trendColor};font-size:11px">${m.trend!==0?(m.trend>0?'+':'')+m.trend+'%':'—'}</td>
+      <td class="num">${m.estoqueIdeal.toLocaleString('pt-BR')}</td>
+      <td class="num" style="${compraStyle}">${m.compraQtd>0?m.compraQtd.toLocaleString('pt-BR')+' un':'—'}</td>
+      <td class="num" style="${compraStyle}">${m.compraQtd>0?fmtK(m.compraValor):'—'}</td>
+      <td><span style="display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace;background:${sb};color:${sc}">${statusLabel(m.status)}</span></td>
+      <td class="num" style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text3)">${m.capitalParado>100?fmtK(m.capitalParado):'—'}</td>
     </tr>`;
   }).join('');
 
   document.getElementById('compTable').innerHTML=`<div class="tbl-wrap"><table>
     <thead><tr>
       <th>#</th><th>SKU</th><th>Produto</th><th>Categoria</th><th>Subcategoria</th><th>ABC</th>
-      <th style="text-align:right">Estoque</th>
-      <th style="text-align:right">Vel/mês</th>
+      <th class="r" style="text-align:right">Estoque</th>
+      <th class="r" style="text-align:right">Dem/mês</th>
       <th>Cobertura</th>
-      <th style="text-align:right">Sugestão compra</th>
-      <th style="text-align:right">Investimento</th>
-      <th style="text-align:right">Tendência</th>
+      <th class="r" style="text-align:right">Est. ideal</th>
+      <th class="r" style="text-align:right">Compra (un)</th>
+      <th class="r" style="text-align:right">Compra (R$)</th>
+      <th>Status</th>
+      <th class="r" style="text-align:right">Cap. parado</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table></div>`;
 
   document.getElementById('compPag').innerHTML=total>COMP_PAGE?`
-    <button class="pag-btn" onclick="compPage--;buildCompras()" ${compPage===0?'disabled':''}>← Anterior</button>
+    <button class="pag-btn" onclick="compPage--;renderCompTable()" ${compPage===0?'disabled':''}>← Anterior</button>
     <span class="pag-info">${start+1}–${Math.min(start+COMP_PAGE,total)} de ${total}</span>
-    <button class="pag-btn" onclick="compPage++;buildCompras()" ${start+COMP_PAGE>=total?'disabled':''}>Próximo →</button>`:'';
+    <button class="pag-btn" onclick="compPage++;renderCompTable()" ${start+COMP_PAGE>=total?'disabled':''}>Próximo →</button>`:'';
 }
 
 // ── Exportar CSV ──────────────────────────────────────────────────────────────
 function exportComprasCSV(){
-  const all=getCompSkus();
-  const meta=getMetaDias();
-  const header=['SKU','Produto','Categoria','Subcategoria','Marca','ABC','Estoque Atual','Vel/mês (un)','Cobertura (dias)','Status','Sugestão Compra (un)','Investimento (R$)','Custo Unit (R$)'];
-  const rows=all.map(({s,m})=>[
+  const all = getCompSkus();
+  const lead = getLeadTime(), seg = getSeguranca();
+  const header = ['SKU','Produto','Categoria','Subcategoria','Marca','ABC',
+    'Estoque Atual','Demanda Mensal','Media Recente','Media Historica',
+    'Cobertura (meses)','Estoque Ideal','Compra Sugerida (un)','Compra Sugerida (R$)','Status','Capital Parado (R$)',
+    'Lead Time','Seguranca'];
+  const rows = all.map(({s,m})=>[
     s.sku, `"${s.nome}"`, s.cat, s.sub||'', s.marca||'', s.abcV,
-    m.estoque, m.velMensal.toFixed(1), m.coberturaDias,
-    statusLabel(m.status), m.sugestaoQtd, m.sugestaoValor.toFixed(2), m.custo.toFixed(2)
+    m.estoque, m.demandaMensal.toFixed(1), m.mediaRecente.toFixed(1), m.mediaHistorica.toFixed(1),
+    m.coberturaMeses>=999?'∞':m.coberturaMeses.toFixed(1),
+    m.estoqueIdeal, m.compraQtd, m.compraValor.toFixed(2),
+    statusLabel(m.status), m.capitalParado.toFixed(2),
+    lead, seg
   ]);
-  const csv=[header,...rows].map(r=>r.join(';')).join('\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
+  const csv = [header,...rows].map(r=>r.join(';')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
   a.href=url; a.download=`compras_joli_${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
 }
+
 
 
 loadData();
