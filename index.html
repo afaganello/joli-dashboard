@@ -1387,6 +1387,10 @@ function buildDashboard(){
   initComprasFiltros();
 }
 
+function ch(id){if(APP.charts[id]){try{APP.charts[id].destroy()}catch(e){}delete APP.charts[id]}}
+const TX='#A09C98',GC='rgba(0,0,0,.05)';
+
+
 // ── FILTER ENGINE ─────────────────────────────────────────────────────────────
 
 function getActiveMonths(){
