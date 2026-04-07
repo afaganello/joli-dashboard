@@ -516,6 +516,50 @@ tbody tr:hover td{background:#FAFAF8}
 .comp-bar-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
 .comp-bar-fill{height:100%;border-radius:4px;transition:width .4s}
 .comp-value{width:70px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);flex-shrink:0}
+
+/* ── INSIGHT CARDS V2 ── */
+.insight-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-bottom:4px}
+.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;border-left:4px solid;transition:box-shadow .15s;position:relative}
+.insight-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.09)}
+.insight-card.winner,.insight-card.pos{border-left-color:var(--green);background:#FAFFFE}
+.insight-card.loser,.insight-card.neg{border-left-color:#DC2626;background:#FFFAFA}
+.insight-card.watch,.insight-card.warn{border-left-color:#D97706;background:#FFFDF5}
+.insight-card.info{border-left-color:#2563EB;background:#F8FAFF}
+.insight-card-icon{font-size:20px;margin-bottom:6px;line-height:1}
+.insight-card-tag{font-size:9px;font-family:"DM Mono",monospace;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.insight-card.winner .insight-card-tag,.insight-card.pos .insight-card-tag{color:var(--green)}
+.insight-card.loser .insight-card-tag,.insight-card.neg .insight-card-tag{color:#DC2626}
+.insight-card.watch .insight-card-tag,.insight-card.warn .insight-card-tag{color:#D97706}
+.insight-card.info .insight-card-tag{color:#2563EB}
+.insight-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.3}
+.insight-card-desc{font-size:12px;color:var(--text2);line-height:1.55}
+.insight-card-impact{display:inline-flex;align-items:center;margin-top:9px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:"DM Mono",monospace}
+.insight-card.winner .insight-card-impact,.insight-card.pos .insight-card-impact{background:#DCFCE7;color:#166534}
+.insight-card.loser .insight-card-impact,.insight-card.neg .insight-card-impact{background:#FEE2E2;color:#991B1B}
+.insight-card.watch .insight-card-impact,.insight-card.warn .insight-card-impact{background:#FEF3C7;color:#92400E}
+.insight-card.info .insight-card-impact{background:#DBEAFE;color:#1E40AF}
+/* ── TOOLTIP "?" ── */
+.metric-tip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--border);color:var(--text3);font-size:9px;font-weight:700;cursor:help;margin-left:4px;vertical-align:middle;position:relative;flex-shrink:0}
+.metric-tip:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1A1917;color:#fff;padding:6px 10px;border-radius:6px;font-size:11px;font-family:"DM Sans",sans-serif;font-weight:400;white-space:nowrap;max-width:240px;white-space:normal;z-index:999;line-height:1.4;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.metric-tip:hover::before{content:"";position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:#1A1917}
+/* ── RODAPÉ EXPLICATIVO ── */
+.calc-footer{background:#F7F5F0;border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-top:24px}
+.calc-footer-title{font-size:11px;font-family:"DM Mono",monospace;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.calc-footer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.calc-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px}
+.calc-item-metric{font-size:11px;font-weight:600;color:var(--text);margin-bottom:4px;font-family:"DM Sans",sans-serif}
+.calc-item-formula{font-size:10px;font-family:"DM Mono",monospace;color:var(--blue);background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px}
+.calc-item-desc{font-size:10px;color:var(--text3);line-height:1.4}
+/* ── PRICE×VOLUME SCATTER ── */
+.pv-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.pv-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;gap:12px}
+.pv-quadrant-legend{display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:10px;font-family:"DM Mono",monospace;margin-bottom:10px}
+.pv-quad{padding:4px 8px;border-radius:4px;text-align:center}
+/* ── KPI CARD UPGRADE ── */
+.rent-kpi-label{font-size:10px;color:var(--text3);font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center}
+.rent-kpi-value{font-family:"Syne",sans-serif;font-size:26px;font-weight:700;line-height:1;color:var(--text);margin-bottom:5px}
+.rent-kpi-sub{font-size:11px;color:var(--text3);line-height:1.4}
+
 </style>
 </head>
 <body>
@@ -1031,6 +1075,29 @@ tbody tr:hover td{background:#FAFAF8}
       <div style="height:420px;position:relative;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;padding:8px"><canvas id="cScatter"></canvas></div>
     </div>
 
+    <!-- ── PARTE 1: Preço × Volume ── -->
+    <div class="pv-section" id="pvSection">
+      <div class="pv-header">
+        <div>
+          <div class="chart-title">Análise Preço × Volume <span class="metric-tip" data-tip="Mostra como variações de preço impactam o volume vendido. Importante: quedas de volume podem ser causadas por estoque, sazonalidade ou concorrência — não apenas preço.">?</span></div>
+          <div class="chart-subtitle" style="margin-bottom:0">Cada ponto = 1 SKU · tamanho = receita · cor = margem · filtros aplicados</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+          <select id="pvFiltCat" onchange="buildPriceVolumeChart(getRentSkus().map(s=>({s,m:calcSkuMetrics(s)})))" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+            <option value="">Todas categorias</option>
+          </select>
+        </div>
+      </div>
+      <div class="pv-quadrant-legend">
+        <div class="pv-quad" style="background:#DCFCE722;border:1px solid #DCFCE7;color:#166534">↑P ↑V — Oportunidade</div>
+        <div class="pv-quad" style="background:#FEE2E222;border:1px solid #FEE2E2;color:#991B1B">↑P ↓V — Risco elástico</div>
+        <div class="pv-quad" style="background:#DBEAFE22;border:1px solid #DBEAFE;color:#1E40AF">↓P ↑V — Ganho de share</div>
+        <div class="pv-quad" style="background:#FEF3C722;border:1px solid #FEF3C7;color:#92400E">↓P ↓V — Problema estrutural</div>
+      </div>
+      <div style="height:360px;position:relative"><canvas id="cPriceVolume"></canvas></div>
+      <div id="pvInsights" style="margin-top:12px"></div>
+    </div>
+
     <!-- ── 6.1 Campeões + 6.2 Destruidores ── -->
     <div class="chart-2col" style="margin-bottom:16px">
       <div class="chart-box">
@@ -1042,6 +1109,46 @@ tbody tr:hover td{background:#FAFAF8}
         <div class="chart-title">⚠️ Destruidores de margem</div>
         <div class="chart-subtitle" style="margin-bottom:12px">Receita relevante com margem baixa — requerem ação</div>
         <div id="destruidoresTable"></div>
+      </div>
+    </div>
+
+    <!-- ── RODAPÉ EXPLICATIVO — RENTABILIDADE ── -->
+    <div class="calc-footer" id="rentFooter">
+      <div class="calc-footer-title">📐 Como os números são calculados</div>
+      <div class="calc-footer-grid">
+        <div class="calc-item">
+          <div class="calc-item-metric">Margem bruta <span class="metric-tip" data-tip="Percentual do preço de venda que sobra após deduzir o custo do produto. Não inclui frete, impostos ou despesas operacionais.">?</span></div>
+          <div class="calc-item-formula">= lucro bruto ÷ receita × 100</div>
+          <div class="calc-item-desc">Ex: vendeu R$100, custo R$36 → margem = 64%</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Lucro bruto <span class="metric-tip" data-tip="Receita total menos o custo de aquisição dos produtos vendidos. Não considera despesas fixas ou variáveis da operação.">?</span></div>
+          <div class="calc-item-formula">= receita − (custo × qtd vendida)</div>
+          <div class="calc-item-desc">Custo unitário vem da aba Estoque do Google Sheets</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Ticket médio <span class="metric-tip" data-tip="Valor médio recebido por unidade vendida no período. Varia com promoções, mix de canais ou negociações especiais.">?</span></div>
+          <div class="calc-item-formula">= receita total ÷ quantidade vendida</div>
+          <div class="calc-item-desc">Calculado no período selecionado pelo filtro</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Variação de preço <span class="metric-tip" data-tip="Compara o ticket médio do primeiro mês com o último mês do período. Pode refletir mudanças de preço, mix de produtos ou negociações.">?</span></div>
+          <div class="calc-item-formula">= (ticket final − ticket inicial) ÷ ticket inicial</div>
+          <div class="calc-item-desc">Baseado no ticket médio do 1º vs último mês do período</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Elasticidade <span class="metric-tip" data-tip="Mede a sensibilidade do volume a variações de preço. Valor negativo = normal (preço sobe, volume cai). Abaixo de -1.5 = produto muito sensível a preço.">?</span></div>
+          <div class="calc-item-formula">= Δ% volume ÷ Δ% preço (mês a mês)</div>
+          <div class="calc-item-desc">Considera apenas meses com variação de preço &gt; 0.5%</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Crescimento <span class="metric-tip" data-tip="Compara a receita do período atual com o período imediatamente anterior de mesmo tamanho. Se não há período anterior suficiente, compara 2ª metade vs 1ª metade do histórico.">?</span></div>
+          <div class="calc-item-formula">= (receita atual − receita anterior) ÷ anterior</div>
+          <div class="calc-item-desc">Período anterior = janela equivalente antes do filtro atual</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;background:#FFF9F0;border:1px solid #FEE0B2;border-radius:var(--radius-sm);font-size:11px;color:#92400E;line-height:1.5">
+        ⚠ <strong>Sobre o gráfico Preço × Volume:</strong> quedas de volume podem não ser causadas apenas por aumento de preço. Fatores como ruptura de estoque, sazonalidade, ações da concorrência ou mudanças no mix de clientes também influenciam. Use este gráfico como ponto de partida para investigação, não como conclusão definitiva.
       </div>
     </div>
 
@@ -1156,6 +1263,43 @@ tbody tr:hover td{background:#FAFAF8}
         <div class="chart-title">📦 Maior excesso de estoque</div>
         <div class="chart-subtitle" style="margin-bottom:10px">Top SKUs por capital parado (R$)</div>
         <div id="compRankExcesso"></div>
+      </div>
+    </div>
+
+    <!-- Rodapé explicativo -->
+    <div class="calc-footer" id="compFooter" style="margin-bottom:16px">
+      <div class="calc-footer-title">📐 Como os números são calculados</div>
+      <div class="calc-footer-grid">
+        <div class="calc-item">
+          <div class="calc-item-metric">Demanda mensal <span class="metric-tip" data-tip="Média ajustada dos últimos 3 meses, comparada com o percentil 75 do histórico. Usa o maior dos dois para evitar subestimação. Meses com zero vendas cercados por meses com vendas são excluídos (possível ruptura).">?</span></div>
+          <div class="calc-item-formula">= max(média 3M recente, percentil 75 histórico)</div>
+          <div class="calc-item-desc">Meses com provável ruptura de estoque são excluídos da média</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Cobertura <span class="metric-tip" data-tip="Quantos meses o estoque atual suporta sem novas compras, baseado na demanda mensal estimada.">?</span></div>
+          <div class="calc-item-formula">= estoque atual ÷ demanda mensal</div>
+          <div class="calc-item-desc">Em meses. Ideal = lead time + segurança (padrão: 5+1=6M)</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Estoque ideal <span class="metric-tip" data-tip="Quantidade que garante não ficar sem produto durante o tempo de reposição, mais um buffer de segurança para absorver variações de demanda.">?</span></div>
+          <div class="calc-item-formula">= demanda × (lead time + segurança)</div>
+          <div class="calc-item-desc">Lead time = tempo de reposição · Segurança = margem de proteção</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Compra sugerida <span class="metric-tip" data-tip="Quantidade a comprar para atingir o estoque ideal. Se o estoque atual já supera o ideal, o valor é zero (não comprar).">?</span></div>
+          <div class="calc-item-formula">= max(0, estoque ideal − estoque atual)</div>
+          <div class="calc-item-desc">Zero = não há necessidade de compra no momento</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Capital parado <span class="metric-tip" data-tip="Valor financeiro do estoque que está acima do nível ideal. Representa capital imobilizado que poderia estar aplicado ou usado em outros produtos.">?</span></div>
+          <div class="calc-item-formula">= unidades acima do ideal × custo unitário</div>
+          <div class="calc-item-desc">Indica oportunidade de liberar capital pausando compras</div>
+        </div>
+        <div class="calc-item">
+          <div class="calc-item-metric">Status <span class="metric-tip" data-tip="Ruptura: cobertura menor que 1 mês. Risco: cobertura menor que o lead time. Ideal: dentro da faixa saudável. Excesso: cobertura superior ao ideal + 2 meses extras.">?</span></div>
+          <div class="calc-item-formula">Ruptura &lt;1M · Risco &lt;lead · Ideal · Excesso</div>
+          <div class="calc-item-desc">Baseado nos parâmetros configurados no topo da tela</div>
+        </div>
       </div>
     </div>
 
@@ -3079,6 +3223,8 @@ function initRentFiltros(){
     '<option value="">Todas as marcas</option>'+marcas.map(m=>`<option>${m}</option>`).join('');
   const sel=document.getElementById('rentEvolCat');
   if(sel) sel.innerHTML='<option value="">Portfólio filtrado</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+  const pvSel=document.getElementById('pvFiltCat');
+  if(pvSel) pvSel.innerHTML='<option value="">Todas categorias</option>'+cats.map(c=>`<option>${c}</option>`).join('');
 }
 function onRentFilter(){
   const cat=document.getElementById('rentFiltCat')?.value||'';
@@ -3099,7 +3245,7 @@ function buildRentabilidade(){
   }
   const metrics=skus.map(s=>({s,m:calcSkuMetrics(s)}));
   buildRentKpis(metrics);
-  buildRentInsights(metrics);
+  buildRentInsightsV2(metrics);
   buildRentCatCards(metrics);
   buildCampeoesDestruidores(metrics);
   rentPage=0;
@@ -3111,6 +3257,7 @@ function buildRentabilidade(){
     buildReceitaVsLucroSubChart(metrics);
     buildMargemEvolChart(metrics);
     buildScatterChart(metrics);
+    buildPriceVolumeChart(metrics);
   },50);
 }
 
@@ -3783,7 +3930,7 @@ function getCompSkus(){
 function buildCompras(){
   const all = getCompSkus();
   buildCompKpis(all);
-  buildCompInsights(all);
+  buildCompInsightsV2(all);
   buildCompAlerts(all);
   buildCompRankings(all);
   compPage = 0;
@@ -4106,6 +4253,281 @@ function exportComprasCSV(){
   const a    = document.createElement('a');
   a.href=url; a.download=`compras_joli_${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
+}
+
+
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INSIGHT CARD BUILDER — helper reutilizável
+// ══════════════════════════════════════════════════════════════════════════════
+
+function buildInsightCards(cards, containerId){
+  // Sort by impact value (descending), limit to 6
+  const sorted = [...cards].sort((a,b)=>(b.impactVal||0)-(a.impactVal||0)).slice(0,6);
+  document.getElementById(containerId).innerHTML = sorted.map(c=>`
+    <div class="insight-card ${c.type}">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="font-size:22px;line-height:1;flex-shrink:0">${c.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div class="insight-card-tag">${c.tag}</div>
+          <div class="insight-card-title">${c.title}</div>
+          <div class="insight-card-desc">${c.desc}</div>
+          ${c.impact?`<div class="insight-card-impact">${c.impact}</div>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PARTE 1 — ANÁLISE PREÇO × VOLUME
+// ══════════════════════════════════════════════════════════════════════════════
+
+function buildPriceVolumeChart(metrics){
+  ch('cPriceVolume');
+
+  const catF = document.getElementById('pvFiltCat')?.value||'';
+  let pts = metrics.filter(x=>{
+    if(!x.m.varPreco||!x.m.varVol) return false;
+    if(Math.abs(x.m.varPreco)<1&&Math.abs(x.m.varVol)<1) return false; // no movement
+    if(x.m.totalV<2000) return false;
+    if(catF&&x.s.cat!==catF) return false;
+    return true;
+  }).map(({s,m})=>({
+    x: parseFloat(m.varPreco.toFixed(1)),
+    y: parseFloat(m.varVol.toFixed(1)),
+    r: Math.max(5, Math.min(24, Math.sqrt(m.totalV/600))),
+    nome: s.nome.slice(0,28), cat: s.cat, sub: s.sub,
+    fat: m.totalV, lucro: m.lucro, mg: m.margemPct,
+    mg_r: Math.round(m.margemPct)
+  }));
+
+  // Color by margin
+  const colors = pts.map(p=>{
+    if(p.mg>=40)  return '#166534CC';
+    if(p.mg>=20)  return '#1D4ED8CC';
+    if(p.mg>=0)   return '#D97706CC';
+    return '#991B1BCC';
+  });
+
+  // Quadrant plugin
+  const pvPlugin={id:'pvQuadrant',beforeDraw(chart){
+    const {ctx,chartArea:{left,right,top,bottom},scales:{x,y}}=chart;
+    const cx=x.getPixelForValue(0), cy=y.getPixelForValue(0);
+    ctx.save();
+    ctx.fillStyle='rgba(22,101,52,0.04)';  ctx.fillRect(cx,top,right-cx,cy-top);   // ↑P↑V
+    ctx.fillStyle='rgba(153,27,27,0.04)';  ctx.fillRect(cx,cy,right-cx,bottom-cy); // ↑P↓V
+    ctx.fillStyle='rgba(29,78,216,0.04)';  ctx.fillRect(left,top,cx-left,cy-top);  // ↓P↑V
+    ctx.fillStyle='rgba(217,119,6,0.04)';  ctx.fillRect(left,cy,cx-left,bottom-cy);// ↓P↓V
+    ctx.strokeStyle='rgba(0,0,0,.15)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(cx,top);ctx.lineTo(cx,bottom);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(left,cy);ctx.lineTo(right,cy);ctx.stroke();
+    ctx.setLineDash([]);ctx.restore();
+  }};
+
+  APP.charts.cPriceVolume = new Chart(document.getElementById('cPriceVolume'),{
+    type:'bubble',
+    plugins:[pvPlugin],
+    data:{datasets:[{
+      data: pts.map(p=>({x:p.x,y:p.y,r:p.r,nome:p.nome,cat:p.cat,fat:p.fat,lucro:p.lucro,mg:p.mg})),
+      backgroundColor: colors,
+      borderColor: colors.map(c=>c.replace('CC','FF')),
+      borderWidth: 1.5
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>{
+          const d=ctx.raw; const p=pts[ctx.dataIndex];
+          return [`${p.nome}`,`Δ preço: ${d.x>=0?'+':''}${d.x}%`,`Δ volume: ${d.y>=0?'+':''}${d.y}%`,
+                  `Margem: ${p.mg_r}%`,`Receita: ${fmtK(d.fat)}`];
+        }}}},
+      scales:{
+        x:{title:{display:true,text:'Variação de preço (%)',font:{size:10}},
+           ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX},grid:{color:GC},
+           afterDataLimits(ax){const s=Math.max(ax.max-ax.min,40);const m=(ax.max+ax.min)/2;ax.min=Math.min(ax.min,m-s/2,-5);ax.max=Math.max(ax.max,m+s/2,5);}},
+        y:{title:{display:true,text:'Variação de volume (%)',font:{size:10}},
+           ticks:{callback:v=>(v>=0?'+':'')+v+'%',font:{size:10},color:TX},grid:{color:GC},
+           afterDataLimits(ax){const s=Math.max(ax.max-ax.min,40);const m=(ax.max+ax.min)/2;ax.min=Math.min(ax.min,m-s/2,-10);ax.max=Math.max(ax.max,m+s/2,10);}}
+      }}
+  });
+
+  // Build price×volume insights
+  buildPVInsights(pts);
+}
+
+function buildPVInsights(pts){
+  if(!pts.length){ document.getElementById('pvInsights').innerHTML=''; return; }
+  const ins=[];
+
+  // ↑P↑V — oportunidade
+  const pvOpport = pts.filter(p=>p.x>2&&p.y>2).sort((a,b)=>b.fat-a.fat);
+  if(pvOpport.length) ins.push({type:'winner',icon:'🚀',tag:'Oportunidade',
+    title:`${pvOpport.length} produto${pvOpport.length>1?'s':''}: preço subiu e volume também`,
+    desc:`${pvOpport[0].nome} — +${pvOpport[0].x.toFixed(1)}% preço e +${pvOpport[0].y.toFixed(1)}% volume. Forte poder de precificação.`,
+    impact:`+${fmtK(pvOpport.reduce((s,p)=>s+p.fat,0))} receita`,
+    impactVal: pvOpport.reduce((s,p)=>s+p.fat,0)});
+
+  // ↑P↓V — risco elástico
+  const pvRisk = pts.filter(p=>p.x>3&&p.y<-5).sort((a,b)=>b.fat-a.fat);
+  if(pvRisk.length) ins.push({type:'loser',icon:'⚠️',tag:'Risco elástico',
+    title:`${pvRisk.length} produto${pvRisk.length>1?'s':''}: aumento de preço derrubou volume`,
+    desc:`${pvRisk[0].nome} — preço +${pvRisk[0].x.toFixed(1)}% causou queda de ${pvRisk[0].y.toFixed(1)}% no volume. Avaliar reversão.`,
+    impact:`${fmtK(pvRisk.reduce((s,p)=>s+p.fat,0))} em receita afetada`,
+    impactVal: pvRisk.reduce((s,p)=>s+p.fat,0)});
+
+  // ↓P↓V — problema estrutural
+  const pvProb = pts.filter(p=>p.x<-3&&p.y<-5).sort((a,b)=>b.fat-a.fat);
+  if(pvProb.length) ins.push({type:'loser',icon:'🔻',tag:'Problema estrutural',
+    title:`${pvProb.length} produto${pvProb.length>1?'s':''}: preço e volume caindo juntos`,
+    desc:`${pvProb[0].nome} — queda simultânea de preço (${pvProb[0].x.toFixed(1)}%) e volume (${pvProb[0].y.toFixed(1)}%). Possível problema de mix ou demanda estrutural.`,
+    impact:`${fmtK(pvProb.reduce((s,p)=>s+p.fat,0))} em receita`,
+    impactVal: pvProb.reduce((s,p)=>s+p.fat,0)});
+
+  // ↓P↑V — ganho de share
+  const pvShare = pts.filter(p=>p.x<-2&&p.y>5).sort((a,b)=>b.fat-a.fat);
+  if(pvShare.length) ins.push({type:'info',icon:'📈',tag:'Ganho de share',
+    title:`${pvShare.length} produto${pvShare.length>1?'s':''}: preço menor gerou mais volume`,
+    desc:`${pvShare[0].nome} — redução de ${Math.abs(pvShare[0].x).toFixed(1)}% no preço trouxe +${pvShare[0].y.toFixed(1)}% de volume. Avaliar se o ganho de margem total é positivo.`,
+    impact:`+${fmtK(pvShare.reduce((s,p)=>s+p.fat,0))} receita`,
+    impactVal: pvShare.reduce((s,p)=>s+p.fat,0)});
+
+  document.getElementById('pvInsights').innerHTML = ins.slice(0,4).map(c=>`
+    <div class="insight-card ${c.type}" style="margin-bottom:8px">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="font-size:18px;line-height:1;flex-shrink:0">${c.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div class="insight-card-tag">${c.tag}</div>
+          <div class="insight-card-title">${c.title}</div>
+          <div class="insight-card-desc">${c.desc}</div>
+          ${c.impact?`<div class="insight-card-impact">${c.impact}</div>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PARTE 2 — UPGRADE INSIGHTS RENTABILIDADE
+// ══════════════════════════════════════════════════════════════════════════════
+
+function buildRentInsightsV2(metrics){
+  const totalFat = metrics.reduce((s,x)=>s+x.m.totalV,0)||1;
+  const totalLucro = metrics.reduce((s,x)=>s+x.m.lucro,0)||1;
+  const mgGlobal = totalLucro/totalFat*100;
+  const cards = [];
+
+  // Group by subcat
+  const bySub={};
+  metrics.forEach(({s,m})=>{
+    const k=s.cat+'|||'+s.sub;
+    if(!bySub[k])bySub[k]={cat:s.cat,sub:s.sub,fat:0,lucro:0,skus:[]};
+    bySub[k].fat+=m.totalV;bySub[k].lucro+=m.lucro;bySub[k].skus.push({s,m});
+  });
+  const subs=Object.values(bySub).map(d=>({...d,mg:d.fat>0?d.lucro/d.fat*100:0}));
+
+  // 1. Subcat mais rentável
+  const topLucro=[...subs].sort((a,b)=>b.lucro-a.lucro)[0];
+  if(topLucro) cards.push({type:'winner',icon:'🏆',tag:'Mais rentável',
+    title:`"${topLucro.sub}" lidera em lucro bruto`,
+    desc:`${fmtK(topLucro.lucro)} de lucro com margem de ${topLucro.mg.toFixed(1)}% em ${topLucro.cat}.`,
+    impact:fmtK(topLucro.lucro)+' lucro bruto',impactVal:topLucro.lucro});
+
+  // 2. Alta receita, baixa margem
+  const altaRxBM=[...subs].filter(d=>d.fat/totalFat>0.08&&d.mg<mgGlobal-10).sort((a,b)=>b.fat-a.fat)[0];
+  if(altaRxBM) cards.push({type:'watch',icon:'⚠️',tag:'Atenção — margem abaixo da média',
+    title:`"${altaRxBM.sub}": receita alta, margem baixa`,
+    desc:`${Math.round(altaRxBM.fat/totalFat*100)}% da receita com apenas ${altaRxBM.mg.toFixed(1)}% de margem (média: ${mgGlobal.toFixed(1)}%). Potencial de R$${fmtK(altaRxBM.fat*(mgGlobal-altaRxBM.mg)/100)} em lucro adicional com otimização.`,
+    impact:`Potencial +${fmtK(altaRxBM.fat*(mgGlobal-altaRxBM.mg)/100)}`,impactVal:altaRxBM.fat*(mgGlobal-altaRxBM.mg)/100});
+
+  // 3. Produto destruindo margem
+  const piorProd=metrics.filter(x=>x.m.margemPct<0&&x.m.totalV>1000).sort((a,b)=>a.m.margemPct-b.m.margemPct)[0];
+  if(piorProd) cards.push({type:'loser',icon:'🚨',tag:'Margem negativa — ação imediata',
+    title:`"${piorProd.s.nome.slice(0,30)}" vendendo abaixo do custo`,
+    desc:`Margem de ${piorProd.m.margemPct.toFixed(1)}% em ${piorProd.s.sub}/${piorProd.s.cat}. Prejuízo de ${fmtK(Math.abs(piorProd.m.lucro))} no período.`,
+    impact:`Prejuízo ${fmtK(Math.abs(piorProd.m.lucro))}`,impactVal:Math.abs(piorProd.m.lucro)});
+
+  // 4. Crescimento concentrado
+  const topGrow=[...subs].filter(d=>d.fat>3000).map(d=>{
+    const g=d.skus.reduce((s,x)=>s+x.m.growth*x.m.totalV,0)/Math.max(d.fat,1);
+    return {...d,growth:Math.round(g)};
+  }).sort((a,b)=>b.growth-a.growth)[0];
+  if(topGrow&&topGrow.growth>20) cards.push({type:'winner',icon:'📈',tag:'Crescimento',
+    title:`"${topGrow.sub}" crescendo acima da média`,
+    desc:`~${topGrow.growth}% de crescimento vs período anterior em ${topGrow.cat}. ${Math.round(topGrow.fat/totalFat*100)}% da receita.`,
+    impact:`+${topGrow.growth}% crescimento`,impactVal:topGrow.fat});
+
+  // 5. Pricing power (inelásticos com margem a melhorar)
+  const pw=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia>-0.8&&x.m.elastMedia<0&&x.m.margemPct<35&&x.m.totalV>3000);
+  if(pw.length){const potencial=pw.reduce((s,x)=>s+x.m.totalV*0.05,0);
+    cards.push({type:'info',icon:'💰',tag:'Pricing power',
+      title:`${pw.length} SKU${pw.length>1?'s':''} podem ter preço reajustado com segurança`,
+      desc:`Demanda inelástica (pouco sensível a preço). +5% no preço geraria aproximadamente ${fmtK(potencial)} adicional.`,
+      impact:`+5% = +${fmtK(potencial)}`,impactVal:potencial});}
+
+  // 6. Alta margem, baixa participação
+  const oport=[...subs].filter(d=>d.mg>50&&d.fat/totalFat<0.08).sort((a,b)=>b.mg-a.mg)[0];
+  if(oport) cards.push({type:'info',icon:'🔍',tag:'Oportunidade de escala',
+    title:`"${oport.sub}": alta margem, baixa participação`,
+    desc:`Margem de ${oport.mg.toFixed(1)}% com apenas ${Math.round(oport.fat/totalFat*100)}% da receita. Ampliar mix pode multiplicar resultado.`,
+    impact:`${oport.mg.toFixed(1)}% margem`,impactVal:oport.fat});
+
+  buildInsightCards(cards,'rentInsights');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PARTE 2B — UPGRADE INSIGHTS COMPRAS
+// ══════════════════════════════════════════════════════════════════════════════
+
+function buildCompInsightsV2(all){
+  const lead = getLeadTime(), seg = getSeguranca();
+  const cards = [];
+  const ruptura=all.filter(x=>x.m.status==='ruptura');
+  const risco  =all.filter(x=>x.m.status==='risco');
+  const excesso=all.filter(x=>x.m.status==='excesso');
+  const lideresRisco=[...ruptura,...risco].filter(x=>x.s.abcV==='A').sort((a,b)=>a.m.coberturaMeses-b.m.coberturaMeses);
+  const totalCompra=all.reduce((s,x)=>s+x.m.compraValor,0);
+  const totalParado=all.reduce((s,x)=>s+x.m.capitalParado,0);
+
+  if(lideresRisco.length) cards.push({type:'loser',icon:'🚨',tag:'Líderes classe A em risco',
+    title:`${lideresRisco.length} SKU${lideresRisco.length>1?'s':''} A com cobertura crítica`,
+    desc:`${lideresRisco[0].s.nome.slice(0,35)} — ${lideresRisco[0].m.coberturaLabel} de cobertura vs lead time de ${lead} meses. Risco de ruptura iminente em produtos de maior impacto.`,
+    impact:`Compra urgente: ${fmtK(lideresRisco.reduce((s,x)=>s+x.m.compraValor,0))}`,
+    impactVal:lideresRisco.reduce((s,x)=>s+x.m.compraValor,0)});
+
+  if(ruptura.length) cards.push({type:'loser',icon:'⚠️',tag:'Ruptura iminente',
+    title:`${ruptura.length} SKU${ruptura.length>1?'s':''} com menos de 1 mês de estoque`,
+    desc:`Cobertura insuficiente para absorver qualquer variação de demanda. Compra imediata necessária.`,
+    impact:`${fmtK(ruptura.reduce((s,x)=>s+x.m.compraValor,0))} necessários`,
+    impactVal:ruptura.reduce((s,x)=>s+x.m.compraValor,0)});
+
+  if(totalParado>50000) cards.push({type:'watch',icon:'💰',tag:'Capital parado',
+    title:`${fmtK(totalParado)} imobilizados em excesso de estoque`,
+    desc:`${excesso.length} SKUs com estoque acima do ideal (lead ${lead}M + seg ${seg}M). Pausar compras desses itens libera capital para produtos em risco.`,
+    impact:`${fmtK(totalParado)} para liberar`,impactVal:totalParado});
+
+  const altaDem=all.filter(x=>x.m.demandaMensal>50&&x.m.coberturaMeses<lead).sort((a,b)=>b.m.demandaMensal-a.m.demandaMensal);
+  if(altaDem.length) cards.push({type:'watch',icon:'📦',tag:'Alta demanda, cobertura baixa',
+    title:`${altaDem.length} produto${altaDem.length>1?'s':''} de alto giro com estoque crítico`,
+    desc:`${altaDem[0].s.nome.slice(0,35)} — ${Math.round(altaDem[0].m.demandaMensal)} un/mês com apenas ${altaDem[0].m.coberturaLabel} de cobertura.`,
+    impact:`Compra: ${fmtK(altaDem.reduce((s,x)=>s+x.m.compraValor,0))}`,
+    impactVal:altaDem.reduce((s,x)=>s+x.m.compraValor,0)});
+
+  const byCat={};
+  all.filter(x=>x.m.compraQtd>0).forEach(({s,m})=>{if(!byCat[s.cat])byCat[s.cat]=0;byCat[s.cat]+=m.compraValor;});
+  const topCat=Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0];
+  if(topCat&&totalCompra>0&&topCat[1]/totalCompra>0.5) cards.push({type:'info',icon:'🎯',tag:'Compra concentrada',
+    title:`${Math.round(topCat[1]/totalCompra*100)}% do investimento vai para ${topCat[0]}`,
+    desc:`${fmtK(topCat[1])} de ${fmtK(totalCompra)} total. Verificar se a concentração reflete prioridade estratégica.`,
+    impact:`${fmtK(topCat[1])} em ${topCat[0]}`,impactVal:topCat[1]});
+
+  const semMov=all.filter(x=>x.m.demandaMensal===0&&x.m.estoque>0);
+  if(semMov.length) cards.push({type:'info',icon:'📭',tag:'Sem movimento',
+    title:`${semMov.length} SKU${semMov.length>1?'s':''} com estoque parado sem venda`,
+    desc:`Capital de ${fmtK(semMov.reduce((s,x)=>s+x.m.valorEstoque,0))} imobilizado. Avaliar descontinuação ou promoção.`,
+    impact:`${fmtK(semMov.reduce((s,x)=>s+x.m.valorEstoque,0))} parado`,
+    impactVal:semMov.reduce((s,x)=>s+x.m.valorEstoque,0)});
+
+  buildInsightCards(cards,'compInsights');
 }
 
 
