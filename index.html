@@ -456,9 +456,7 @@ tbody tr:hover td{background:#FAFAF8}
 .rent-kpi.blue{border-top:4px solid #1D4ED8}.rent-kpi.purple{border-top:4px solid #5B21B6}
 .rent-kpi.red{border-top:4px solid #991B1B}
 .rent-kpi::before{display:none}
-.rent-kpi-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
-.rent-kpi-value{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;line-height:1;color:var(--text);margin-bottom:6px}
-.rent-kpi-sub{font-size:11px;color:var(--text3);line-height:1.4}
+
 /* Scatter container */
 .scatter-container{position:relative;height:380px}
 .elast-table{width:100%}
@@ -479,9 +477,7 @@ tbody tr:hover td{background:#FAFAF8}
 .rent-filter-row select,.rent-filter-row input{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
 .rent-filter-row select:focus,.rent-filter-row input:focus{border-color:var(--text)}
 /* Insight cards */
-.insight-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:20px}
-.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;border-left:3px solid}
-.insight-card.winner{border-left-color:var(--green)}.insight-card.loser{border-left-color:var(--red)}.insight-card.watch{border-left-color:#D97706}.insight-card.info{border-left-color:var(--blue)}
+
 .insight-card-tag{font-size:10px;font-family:'DM Mono',monospace;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
 .insight-card.winner .insight-card-tag{color:var(--green)}.insight-card.loser .insight-card-tag{color:var(--red)}.insight-card.watch .insight-card-tag{color:#D97706}.insight-card.info .insight-card-tag{color:var(--blue)}
 .insight-card-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px}
@@ -1113,38 +1109,38 @@ tbody tr:hover td{background:#FAFAF8}
     </div>
 
     <!-- ── RODAPÉ EXPLICATIVO — RENTABILIDADE ── -->
-    <div class="calc-footer" id="rentFooter">
-      <div class="calc-footer-title">📐 Como os números são calculados</div>
-      <div class="calc-footer-grid">
-        <div class="calc-item">
-          <div class="calc-item-metric">Margem bruta <span class="metric-tip" data-tip="Percentual do preço de venda que sobra após deduzir o custo do produto. Não inclui frete, impostos ou despesas operacionais.">?</span></div>
-          <div class="calc-item-formula">= lucro bruto ÷ receita × 100</div>
-          <div class="calc-item-desc">Ex: vendeu R$100, custo R$36 → margem = 64%</div>
+    <div id="rentFooter" style="background:#F7F5F0;border:1px solid #E5E2DC;border-radius:8px;padding:20px 24px;margin-top:24px">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#8C8580;margin-bottom:14px;display:flex;align-items:center;gap:6px">📐 Como os números são calculados</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Margem bruta <span class="metric-tip" data-tip="Percentual do preço de venda que sobra após deduzir o custo do produto. Não inclui frete, impostos ou despesas operacionais.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= lucro bruto ÷ receita × 100</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Ex: vendeu R$100, custo R$36 → margem = 64%</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Lucro bruto <span class="metric-tip" data-tip="Receita total menos o custo de aquisição dos produtos vendidos. Não considera despesas fixas ou variáveis da operação.">?</span></div>
-          <div class="calc-item-formula">= receita − (custo × qtd vendida)</div>
-          <div class="calc-item-desc">Custo unitário vem da aba Estoque do Google Sheets</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Lucro bruto <span class="metric-tip" data-tip="Receita total menos o custo de aquisição dos produtos vendidos. Não considera despesas fixas ou variáveis da operação.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= receita − (custo × qtd vendida)</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Custo unitário vem da aba Estoque do Google Sheets</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Ticket médio <span class="metric-tip" data-tip="Valor médio recebido por unidade vendida no período. Varia com promoções, mix de canais ou negociações especiais.">?</span></div>
-          <div class="calc-item-formula">= receita total ÷ quantidade vendida</div>
-          <div class="calc-item-desc">Calculado no período selecionado pelo filtro</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Ticket médio <span class="metric-tip" data-tip="Valor médio recebido por unidade vendida no período. Varia com promoções, mix de canais ou negociações especiais.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= receita total ÷ quantidade vendida</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Calculado no período selecionado pelo filtro</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Variação de preço <span class="metric-tip" data-tip="Compara o ticket médio do primeiro mês com o último mês do período. Pode refletir mudanças de preço, mix de produtos ou negociações.">?</span></div>
-          <div class="calc-item-formula">= (ticket final − ticket inicial) ÷ ticket inicial</div>
-          <div class="calc-item-desc">Baseado no ticket médio do 1º vs último mês do período</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Variação de preço <span class="metric-tip" data-tip="Compara o ticket médio do primeiro mês com o último mês do período. Pode refletir mudanças de preço, mix de produtos ou negociações.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= (ticket final − ticket inicial) ÷ ticket inicial</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Baseado no ticket médio do 1º vs último mês do período</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Elasticidade <span class="metric-tip" data-tip="Mede a sensibilidade do volume a variações de preço. Valor negativo = normal (preço sobe, volume cai). Abaixo de -1.5 = produto muito sensível a preço.">?</span></div>
-          <div class="calc-item-formula">= Δ% volume ÷ Δ% preço (mês a mês)</div>
-          <div class="calc-item-desc">Considera apenas meses com variação de preço &gt; 0.5%</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Elasticidade <span class="metric-tip" data-tip="Mede a sensibilidade do volume a variações de preço. Valor negativo = normal (preço sobe, volume cai). Abaixo de -1.5 = produto muito sensível a preço.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= Δ% volume ÷ Δ% preço (mês a mês)</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Considera apenas meses com variação de preço &gt; 0.5%</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Crescimento <span class="metric-tip" data-tip="Compara a receita do período atual com o período imediatamente anterior de mesmo tamanho. Se não há período anterior suficiente, compara 2ª metade vs 1ª metade do histórico.">?</span></div>
-          <div class="calc-item-formula">= (receita atual − receita anterior) ÷ anterior</div>
-          <div class="calc-item-desc">Período anterior = janela equivalente antes do filtro atual</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Crescimento <span class="metric-tip" data-tip="Compara a receita do período atual com o período imediatamente anterior de mesmo tamanho. Se não há período anterior suficiente, compara 2ª metade vs 1ª metade do histórico.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= (receita atual − receita anterior) ÷ anterior</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Período anterior = janela equivalente antes do filtro atual</div>
         </div>
       </div>
       <div style="margin-top:12px;padding:10px 14px;background:#FFF9F0;border:1px solid #FEE0B2;border-radius:var(--radius-sm);font-size:11px;color:#92400E;line-height:1.5">
@@ -1267,38 +1263,38 @@ tbody tr:hover td{background:#FAFAF8}
     </div>
 
     <!-- Rodapé explicativo -->
-    <div class="calc-footer" id="compFooter" style="margin-bottom:16px">
-      <div class="calc-footer-title">📐 Como os números são calculados</div>
-      <div class="calc-footer-grid">
-        <div class="calc-item">
-          <div class="calc-item-metric">Demanda mensal <span class="metric-tip" data-tip="Média ajustada dos últimos 3 meses, comparada com o percentil 75 do histórico. Usa o maior dos dois para evitar subestimação. Meses com zero vendas cercados por meses com vendas são excluídos (possível ruptura).">?</span></div>
-          <div class="calc-item-formula">= max(média 3M recente, percentil 75 histórico)</div>
-          <div class="calc-item-desc">Meses com provável ruptura de estoque são excluídos da média</div>
+    <div id="compFooter" style="background:#F7F5F0;border:1px solid #E5E2DC;border-radius:8px;padding:20px 24px;margin-bottom:16px">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#8C8580;margin-bottom:14px;display:flex;align-items:center;gap:6px">📐 Como os números são calculados</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Demanda mensal <span class="metric-tip" data-tip="Média ajustada dos últimos 3 meses, comparada com o percentil 75 do histórico. Usa o maior dos dois para evitar subestimação. Meses com zero vendas cercados por meses com vendas são excluídos (possível ruptura).">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= max(média 3M recente, percentil 75 histórico)</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Meses com provável ruptura de estoque são excluídos da média</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Cobertura <span class="metric-tip" data-tip="Quantos meses o estoque atual suporta sem novas compras, baseado na demanda mensal estimada.">?</span></div>
-          <div class="calc-item-formula">= estoque atual ÷ demanda mensal</div>
-          <div class="calc-item-desc">Em meses. Ideal = lead time + segurança (padrão: 5+1=6M)</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Cobertura <span class="metric-tip" data-tip="Quantos meses o estoque atual suporta sem novas compras, baseado na demanda mensal estimada.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= estoque atual ÷ demanda mensal</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Em meses. Ideal = lead time + segurança (padrão: 5+1=6M)</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Estoque ideal <span class="metric-tip" data-tip="Quantidade que garante não ficar sem produto durante o tempo de reposição, mais um buffer de segurança para absorver variações de demanda.">?</span></div>
-          <div class="calc-item-formula">= demanda × (lead time + segurança)</div>
-          <div class="calc-item-desc">Lead time = tempo de reposição · Segurança = margem de proteção</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Estoque ideal <span class="metric-tip" data-tip="Quantidade que garante não ficar sem produto durante o tempo de reposição, mais um buffer de segurança para absorver variações de demanda.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= demanda × (lead time + segurança)</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Lead time = tempo de reposição · Segurança = margem de proteção</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Compra sugerida <span class="metric-tip" data-tip="Quantidade a comprar para atingir o estoque ideal. Se o estoque atual já supera o ideal, o valor é zero (não comprar).">?</span></div>
-          <div class="calc-item-formula">= max(0, estoque ideal − estoque atual)</div>
-          <div class="calc-item-desc">Zero = não há necessidade de compra no momento</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Compra sugerida <span class="metric-tip" data-tip="Quantidade a comprar para atingir o estoque ideal. Se o estoque atual já supera o ideal, o valor é zero (não comprar).">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= max(0, estoque ideal − estoque atual)</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Zero = não há necessidade de compra no momento</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Capital parado <span class="metric-tip" data-tip="Valor financeiro do estoque que está acima do nível ideal. Representa capital imobilizado que poderia estar aplicado ou usado em outros produtos.">?</span></div>
-          <div class="calc-item-formula">= unidades acima do ideal × custo unitário</div>
-          <div class="calc-item-desc">Indica oportunidade de liberar capital pausando compras</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Capital parado <span class="metric-tip" data-tip="Valor financeiro do estoque que está acima do nível ideal. Representa capital imobilizado que poderia estar aplicado ou usado em outros produtos.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">= unidades acima do ideal × custo unitário</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Indica oportunidade de liberar capital pausando compras</div>
         </div>
-        <div class="calc-item">
-          <div class="calc-item-metric">Status <span class="metric-tip" data-tip="Ruptura: cobertura menor que 1 mês. Risco: cobertura menor que o lead time. Ideal: dentro da faixa saudável. Excesso: cobertura superior ao ideal + 2 meses extras.">?</span></div>
-          <div class="calc-item-formula">Ruptura &lt;1M · Risco &lt;lead · Ideal · Excesso</div>
-          <div class="calc-item-desc">Baseado nos parâmetros configurados no topo da tela</div>
+        <div style="background:#fff;border:1px solid #E5E2DC;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:#1A1917;margin-bottom:4px">Status <span class="metric-tip" data-tip="Ruptura: cobertura menor que 1 mês. Risco: cobertura menor que o lead time. Ideal: dentro da faixa saudável. Excesso: cobertura superior ao ideal + 2 meses extras.">?</span></div>
+          <div style="font-size:10px;font-family:'DM Mono',monospace;color:#1D4ED8;background:#EFF6FF;border-radius:3px;padding:2px 6px;display:inline-block;margin-bottom:5px">Ruptura &lt;1M · Risco &lt;lead · Ideal · Excesso</div>
+          <div style="font-size:10px;color:#8C8580;line-height:1.4">Baseado nos parâmetros configurados no topo da tela</div>
         </div>
       </div>
     </div>
@@ -3266,54 +3262,54 @@ function buildRentKpis(metrics){
   const totalFat=metrics.reduce((s,x)=>s+x.m.totalV,0);
   const totalLucro=metrics.reduce((s,x)=>s+x.m.lucro,0);
   const mg=totalFat>0?totalLucro/totalFat*100:0;
-  // Variação de margem vs período anterior
-  const prevLucro=metrics.reduce((s,x)=>s+(x.m.prevV>0?x.m.prevV*(mg/100):0),0);
   const prevFat=metrics.reduce((s,x)=>s+x.m.prevV,0);
+  const prevLucro=prevFat>0?prevFat*(mg/100):0;
   const prevMg=prevFat>0?prevLucro/prevFat*100:0;
   const deltaMg=mg-prevMg;
-  // Top 10 lucro concentração
   const sorted=[...metrics].sort((a,b)=>b.m.lucro-a.m.lucro);
   const top10L=sorted.slice(0,10).reduce((s,x)=>s+x.m.lucro,0);
   const concTop10=totalLucro>0?Math.round(top10L/totalLucro*100):0;
-  // SKUs críticos
   const skusCriticos=metrics.filter(x=>x.m.margemPct<20&&x.m.margemPct>=0&&x.m.totalV>0).length;
-  // Oportunidade de reajuste (inelásticos com margem <30)
   const skusOport=metrics.filter(x=>x.m.elastMedia!==null&&x.m.elastMedia>-0.8&&x.m.elastMedia<0&&x.m.margemPct<35).length;
 
+  const kS='background:#fff;border:1px solid #E5E2DC;border-radius:8px;padding:18px 20px;position:relative;overflow:hidden;';
+  const lS='font-size:10px;color:#8C8580;font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:4px';
+  const vS='font-family:"Syne",sans-serif;font-size:26px;font-weight:700;line-height:1;color:#1A1917;margin-bottom:5px';
+  const sS='font-size:11px;color:#8C8580;line-height:1.4';
+  const bar=(color)=>`<div style="position:absolute;top:0;left:0;right:0;height:4px;background:${color};border-radius:8px 8px 0 0"></div>`;
+
   document.getElementById('rentKpis').innerHTML=`
-    <div class="rent-kpi green">
-      <div class="rent-kpi-label">Lucro bruto total</div>
-      <div class="rent-kpi-value">${fmtK(totalLucro)}</div>
-      <div class="rent-kpi-sub">${fmtK(totalFat)} em receita</div>
+    <div style="${kS}">${bar('#166534')}
+      <div style="${lS}">Lucro bruto total</div>
+      <div style="${vS}">${fmtK(totalLucro)}</div>
+      <div style="${sS}">${fmtK(totalFat)} em receita</div>
     </div>
-    <div class="rent-kpi ${mg>=40?'green':mg>=20?'blue':mg>=0?'amber':'red'}">
-      <div class="rent-kpi-label">Margem bruta média</div>
-      <div class="rent-kpi-value">${mg.toFixed(1)}%</div>
-      <div class="rent-kpi-sub">${metrics.length} SKUs com custo</div>
+    <div style="${kS}">${bar(mg>=40?'#166534':mg>=20?'#1D4ED8':mg>=0?'#D97706':'#DC2626')}
+      <div style="${lS}">Margem bruta média</div>
+      <div style="${vS};color:${mg>=40?'#166534':mg>=20?'#1D4ED8':mg>=0?'#D97706':'#DC2626'}">${mg.toFixed(1)}%</div>
+      <div style="${sS}">${metrics.length} SKUs com custo cadastrado</div>
     </div>
-    <div class="rent-kpi ${deltaMg>=0?'green':'red'}">
-      <div class="rent-kpi-label">Variação de margem</div>
-      <div class="rent-kpi-value" style="color:${deltaMg>=0?'#166534':'#991B1B'}">${deltaMg>=0?'+':''}${deltaMg.toFixed(1)} p.p.</div>
-      <div class="rent-kpi-sub">vs período anterior equivalente</div>
+    <div style="${kS}">${bar(deltaMg>=0?'#166534':'#DC2626')}
+      <div style="${lS}">Variação de margem</div>
+      <div style="${vS};color:${deltaMg>=0?'#166534':'#DC2626'}">${deltaMg>=0?'+':''}${deltaMg.toFixed(1)} p.p.</div>
+      <div style="${sS}">vs período anterior equivalente</div>
     </div>
-    <div class="rent-kpi purple">
-      <div class="rent-kpi-label">Lucro Top 10 SKUs</div>
-      <div class="rent-kpi-value">${concTop10}%</div>
-      <div class="rent-kpi-sub">concentração em 10 produtos</div>
+    <div style="${kS}">${bar('#5B21B6')}
+      <div style="${lS}">Lucro Top 10 SKUs</div>
+      <div style="${vS}">${concTop10}%</div>
+      <div style="${sS}">concentração nos 10 produtos líderes</div>
     </div>
-    <div class="rent-kpi ${skusCriticos>10?'red':'amber'}">
-      <div class="rent-kpi-label">SKUs margem crítica</div>
-      <div class="rent-kpi-value" style="color:${skusCriticos>10?'#991B1B':'#D97706'}">${skusCriticos}</div>
-      <div class="rent-kpi-sub">margem entre 0% e 20%</div>
+    <div style="${kS}">${bar(skusCriticos>10?'#DC2626':'#D97706')}
+      <div style="${lS}">SKUs margem crítica</div>
+      <div style="${vS};color:${skusCriticos>10?'#DC2626':'#D97706'}">${skusCriticos}</div>
+      <div style="${sS}">margem entre 0% e 20%</div>
     </div>
-    <div class="rent-kpi blue">
-      <div class="rent-kpi-label">Oportunidade de reajuste</div>
-      <div class="rent-kpi-value">${skusOport}</div>
-      <div class="rent-kpi-sub">inelásticos com margem &lt;35%</div>
+    <div style="${kS}">${bar('#1D4ED8')}
+      <div style="${lS}">Oportunidade de reajuste</div>
+      <div style="${vS}">${skusOport}</div>
+      <div style="${sS}">inelásticos com margem &lt;35%</div>
     </div>`;
 }
-
-// ── 9. Insights com subcategoria ──────────────────────────────────────────────
 function buildRentInsights(metrics){
   const ins=[];
   const totalFat=metrics.reduce((s,x)=>s+x.m.totalV,0)||1;
@@ -3940,43 +3936,47 @@ function buildCompras(){
 
 // ── KPIs ──────────────────────────────────────────────────────────────────────
 function buildCompKpis(all){
-  const lead = getLeadTime(), seg = getSeguranca();
-  const ruptura = all.filter(x=>x.m.status==='ruptura');
-  const risco   = all.filter(x=>x.m.status==='risco');
-  const excesso = all.filter(x=>x.m.status==='excesso');
-  const totalCompra  = all.reduce((s,x)=>s+x.m.compraValor, 0);
-  const totalParado  = all.reduce((s,x)=>s+x.m.capitalParado, 0);
-  const totalEstoque = all.reduce((s,x)=>s+x.m.valorEstoque, 0);
+  const lead=getLeadTime(),seg=getSeguranca();
+  const ruptura=all.filter(x=>x.m.status==='ruptura');
+  const risco  =all.filter(x=>x.m.status==='risco');
+  const excesso=all.filter(x=>x.m.status==='excesso');
+  const totalCompra =all.reduce((s,x)=>s+x.m.compraValor,0);
+  const totalParado =all.reduce((s,x)=>s+x.m.capitalParado,0);
+  const totalEstoque=all.reduce((s,x)=>s+x.m.valorEstoque,0);
+
+  const kS='background:#fff;border:1px solid #E5E2DC;border-radius:8px;padding:18px 20px;position:relative;overflow:hidden;';
+  const lS='font-size:10px;color:#8C8580;font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px';
+  const vS='font-family:"Syne",sans-serif;font-size:26px;font-weight:700;line-height:1;margin-bottom:5px';
+  const sS='font-size:11px;color:#8C8580;line-height:1.4';
+  const bar=(color)=>`<div style="position:absolute;top:0;left:0;right:0;height:4px;background:${color};border-radius:8px 8px 0 0"></div>`;
 
   document.getElementById('compKpis').innerHTML=`
-    <div class="comp-kpi red">
-      <div class="comp-kpi-label">Ruptura iminente</div>
-      <div class="comp-kpi-value" style="color:#991B1B">${ruptura.length}</div>
-      <div class="comp-kpi-sub">cobertura &lt; 1 mês</div>
+    <div style="${kS}">${bar('#DC2626')}
+      <div style="${lS}">Ruptura iminente</div>
+      <div style="${vS};color:#DC2626">${ruptura.length}</div>
+      <div style="${sS}">cobertura &lt; 1 mês</div>
     </div>
-    <div class="comp-kpi amber">
-      <div class="comp-kpi-label">Em risco</div>
-      <div class="comp-kpi-value" style="color:#D97706">${risco.length}</div>
-      <div class="comp-kpi-sub">cobertura &lt; ${lead} meses (lead time)</div>
+    <div style="${kS}">${bar('#D97706')}
+      <div style="${lS}">Em risco</div>
+      <div style="${vS};color:#D97706">${risco.length}</div>
+      <div style="${sS}">cobertura &lt; ${lead} meses (lead time)</div>
     </div>
-    <div class="comp-kpi green">
-      <div class="comp-kpi-label">Investimento necessário</div>
-      <div class="comp-kpi-value">${fmtK(totalCompra)}</div>
-      <div class="comp-kpi-sub">lead ${lead}M + seg ${seg}M = ${lead+seg}M de estoque ideal</div>
+    <div style="${kS}">${bar('#166534')}
+      <div style="${lS}">Investimento necessário</div>
+      <div style="${vS}">${fmtK(totalCompra)}</div>
+      <div style="${sS}">lead ${lead}M + seg ${seg}M = ${lead+seg}M ideal</div>
     </div>
-    <div class="comp-kpi blue">
-      <div class="comp-kpi-label">Capital parado (excesso)</div>
-      <div class="comp-kpi-value">${fmtK(totalParado)}</div>
-      <div class="comp-kpi-sub">${excesso.length} SKUs com excesso acima do ideal</div>
+    <div style="${kS}">${bar('#1D4ED8')}
+      <div style="${lS}">Capital parado (excesso)</div>
+      <div style="${vS}">${fmtK(totalParado)}</div>
+      <div style="${sS}">${excesso.length} SKUs acima do ideal</div>
     </div>
-    <div class="comp-kpi gray">
-      <div class="comp-kpi-label">Estoque total (custo)</div>
-      <div class="comp-kpi-value">${fmtK(totalEstoque)}</div>
-      <div class="comp-kpi-sub">${all.length} SKUs monitorados</div>
+    <div style="${kS}">${bar('#6B7280')}
+      <div style="${lS}">Estoque total (custo)</div>
+      <div style="${vS}">${fmtK(totalEstoque)}</div>
+      <div style="${sS}">${all.length} SKUs monitorados</div>
     </div>`;
 }
-
-// ── Insights automáticos ──────────────────────────────────────────────────────
 function buildCompInsights(all){
   const lead = getLeadTime();
   const ins  = [];
@@ -4263,26 +4263,33 @@ function exportComprasCSV(){
 // ══════════════════════════════════════════════════════════════════════════════
 
 function buildInsightCards(cards, containerId){
-  // Sort by impact value (descending), limit to 6
-  const sorted = [...cards].sort((a,b)=>(b.impactVal||0)-(a.impactVal||0)).slice(0,6);
-  document.getElementById(containerId).innerHTML = sorted.map(c=>`
-    <div class="insight-card ${c.type}">
-      <div style="display:flex;align-items:flex-start;gap:10px">
-        <div style="font-size:22px;line-height:1;flex-shrink:0">${c.icon}</div>
-        <div style="flex:1;min-width:0">
-          <div class="insight-card-tag">${c.tag}</div>
-          <div class="insight-card-title">${c.title}</div>
-          <div class="insight-card-desc">${c.desc}</div>
-          ${c.impact?`<div class="insight-card-impact">${c.impact}</div>`:''}
+  const sorted=[...cards].sort((a,b)=>(b.impactVal||0)-(a.impactVal||0)).slice(0,6);
+  const typeMap={
+    winner:{border:'#16A34A',bg:'#F0FDF4',tagColor:'#15803D',impactBg:'#DCFCE7',impactColor:'#166534'},
+    pos:   {border:'#16A34A',bg:'#F0FDF4',tagColor:'#15803D',impactBg:'#DCFCE7',impactColor:'#166534'},
+    loser: {border:'#DC2626',bg:'#FFF5F5',tagColor:'#DC2626',impactBg:'#FEE2E2',impactColor:'#991B1B'},
+    neg:   {border:'#DC2626',bg:'#FFF5F5',tagColor:'#DC2626',impactBg:'#FEE2E2',impactColor:'#991B1B'},
+    watch: {border:'#D97706',bg:'#FFFBEB',tagColor:'#B45309',impactBg:'#FEF3C7',impactColor:'#92400E'},
+    warn:  {border:'#D97706',bg:'#FFFBEB',tagColor:'#B45309',impactBg:'#FEF3C7',impactColor:'#92400E'},
+    info:  {border:'#2563EB',bg:'#EFF6FF',tagColor:'#1D4ED8',impactBg:'#DBEAFE',impactColor:'#1E40AF'},
+  };
+  document.getElementById(containerId).innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${
+    sorted.map(c=>{
+      const t=typeMap[c.type]||typeMap.info;
+      return `<div style="background:${t.bg};border:1px solid ${t.border}33;border-left:4px solid ${t.border};border-radius:8px;padding:16px 18px;transition:box-shadow .15s">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="font-size:22px;line-height:1;flex-shrink:0;margin-top:1px">${c.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:9px;font-family:'DM Mono',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:${t.tagColor};margin-bottom:5px">${c.tag}</div>
+            <div style="font-size:13px;font-weight:600;color:#1A1917;margin-bottom:5px;line-height:1.35">${c.title}</div>
+            <div style="font-size:12px;color:#57534E;line-height:1.55">${c.desc}</div>
+            ${c.impact?`<div style="display:inline-flex;align-items:center;margin-top:9px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;background:${t.impactBg};color:${t.impactColor}">${c.impact}</div>`:''}
+          </div>
         </div>
-      </div>
-    </div>`).join('');
+      </div>`;
+    }).join('')
+  }</div>`;
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// PARTE 1 — ANÁLISE PREÇO × VOLUME
-// ══════════════════════════════════════════════════════════════════════════════
-
 function buildPriceVolumeChart(metrics){
   ch('cPriceVolume');
 
